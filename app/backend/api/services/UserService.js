@@ -10,6 +10,8 @@ const faker = require('faker');
 module.exports = {
   async login ({ email, password }) {
 
+    try {
+
     const user = await User.findOne({ email });
     if (!user) throw { status: 404, message : 'USER.EMAIL.NOT_FOUND' };
 
@@ -26,26 +28,59 @@ module.exports = {
       }),
       user: user
     };
+
+    } catch(err) {
+
+      throw err;
+
+    }
+
   },
   async create (data) {
-    const user = await User.findOne({ email: data.email});
-    if(user) throw { status: 409, message: 'USER.EXIST' };
-    data.password = faker.internet.password(6); // à remplacer par des vrais passwords dans add new users
-    await User.create(data);
-    await EmailService.AddingNotif(data.name, data.email, data.password); //  remplacer par data dans les paramètres et déstructurer la methode signature
+
+    try {
+      const user = await User.findOne({ email: data.email});
+    
+      if(user) throw { status: 409, message: 'USER.EXIST' };
+    
+      data.password = faker.internet.password(6); // à remplacer par des vrais passwords dans add new users
+    
+    
+      await User.create(data);
+      await EmailService.AddingNotif(data.name, data.email, data.password); //  remplacer par data dans les paramètres et déstructurer la methode signature
+    } catch(err) {
+      throw err;
+    }
+
     
   },
   async findOne (id) {
-    const user = await User.findOne({ _id: id }) ;
-    if(!user) throw { status: 404, message: 'USER.NOT.EXIST' };
-    
-    return user;
+
+    try {
+
+      const user = await User.findOne({ _id: id }) ;
+      if(!user) throw { status: 404, message: 'USER.NOT.EXIST' };
+      
+      return user;
+
+    } catch(err) {
+      
+      throw err;
+    }
+
   },
 
   async getListOfUsers () {
-    const users = await User.find({ isDeleted: {$all: false}}).select('name email role active ');
 
-    return users;
+    try {
+      const users = await User.find({ isDeleted: {$all: false}}).select('name email role active ');
+
+      return users;
+    } catch (err) {
+      
+      throw err;
+    }
+
   },
 
   async findCRM (page, limit) {

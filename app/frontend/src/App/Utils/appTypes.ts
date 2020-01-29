@@ -38,8 +38,14 @@ export interface ISelectedData {
   departureTicket?: string
   typeOfTransport: string
   departure: ICity,
-  destination: ICity
+  destination: ICity,
+  destinationCharges: IdestinationCharge,
   _id?: string
+}
+
+export interface IdestinationCharge {
+  adultPrice: number
+  childPrice: number
 }
 
 export interface IFinalSelected {

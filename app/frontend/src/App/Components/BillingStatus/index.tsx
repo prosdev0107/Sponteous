@@ -33,16 +33,17 @@ const Bilingstatus: React.SFC<IProps> = ({
           selected={['randomly:']}
         />
         <div className="billing_status-tours">
-          {tours.map(({ destination, childPrice,adultPrice }, i) => (
+          {tours.map(({ destination, childPrice,adultPrice, destinationCharges }, i) => {
+            return (
             <p className="billing_status-tour" key={i}>
               <span>{destination.name}</span>
               <span>
-                {`£ ${adultPrice * quantity.Adult + childPrice * quantity.Youth} for ${quantity.Adult + quantity.Youth} ${
+                {`£ ${(destinationCharges.adultPrice * quantity.Adult + destinationCharges.childPrice * quantity.Youth) + (adultPrice * quantity.Adult + childPrice * quantity.Youth)} for ${quantity.Adult + quantity.Youth} ${
                   quantity.Adult + quantity.Youth > 1 ? ' passengers' : ' passenger'
                 }`}
               </span>
             </p>
-          ))}
+          )})}
           <div className="billing_status-deselected">
             <span>Deselection</span>
             <span>+ £ {deselectionPrice}</span>

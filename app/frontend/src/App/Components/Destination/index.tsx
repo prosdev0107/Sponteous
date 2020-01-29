@@ -190,6 +190,10 @@ export default class Destination extends Component<IProps, IState> {
         typeOfTransport: data.typeOfTransport,
         type: 'selectedTrid',
         dateStart: +moment.utc(dates.start).add(offset, 'minutes'),
+        destinationCharges: {
+          adultPrice: data['destinationCharges'].adultPrice || 0,
+          childPrice: data['destinationCharges'].childPrice || 0
+        },
         dateEnd: +moment
           .utc(dates.end)
           .add(offset, 'minutes')
@@ -359,8 +363,14 @@ export default class Destination extends Component<IProps, IState> {
     const { selected, deselect, data } = this.props
     const { discount, duration, destination , typeOfTransport } = data
     const { calendar, dates } = this.state
-    const finalCost = 2*(data.adultPrice * this.props.data["Adult"] + data.childPrice * this.props.data["Youth"])
+    let finalCost;
 
+    if(data['destinationCharges']){
+      finalCost = (data['destinationCharges'].adultPrice * this.props.data["Adult"] + data['destinationCharges'].childPrice * this.props.data["Youth"])+(data.adultPrice * this.props.data["Adult"] + data.childPrice * this.props.data["Youth"])
+    }else {
+      finalCost = 2*(data.adultPrice * this.props.data["Adult"] + data.childPrice * this.props.data["Youth"])
+    }
+    
     const durationTime = moment.duration({ minutes: duration }) as IDuration
     const formatedDuration = durationTime.format('h[h] m[m]')
 

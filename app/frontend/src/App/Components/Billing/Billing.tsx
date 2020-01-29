@@ -9,7 +9,9 @@ import {
   PassengerForm
 } from '../PassengerForm/PassengerForm'
 import ee from '../../Utils/emitter'
-import { IPaymentFormControls, PaymentForm } from '../PaymentForm/PaymentForm'
+import { IPaymentFormControls,
+   PaymentForm
+   } from '../PaymentForm/PaymentForm'
 import './styles.scss'
 import { ICardInfoFormControls } from '../CardInfoForm/types'
 import { IState, IProps, ISuccessValues } from './types'

@@ -544,6 +544,7 @@ module.exports = {
     }
 
     function getMostExpensiveTrip({ quantity, trips }) {
+      
       const selectedTrips = trips.filter(x => !x.deselected && !x.trip.fake);
 
       let mostExpensiveTrip;
@@ -597,24 +598,25 @@ module.exports = {
 
   departureBeforeDestination(departureTickets, destinationTickets, trip) {
     let bool = false;
+    let destinationCharges = 0;
+    
     departureTickets.forEach((departure) => {
       // trip.tickets = [];
       destinationTickets.forEach((destination) => {
         if (departure.date.start.getTime() < destination.date.start.getTime()) {
           if (trip.tickets.indexOf(destination) < 0) trip.tickets.push(destination)
-
+          destinationCharges = {adultPrice: destination.adultPrice, childPrice: destination.childPrice }
           bool = true;
         }
       })
     })
-
-    return bool;
+    return {isValid: bool, destinationCharges: destinationCharges}
   },
 
   async hasOpposite(trip) {
     // const oppositeTrip = await Trip.findOne({destination: trip.departure, departure: trip.destination, 
     //                   carrier: trip.carrier, type: trip.type}).sort({destination : 1})
-
+    
     const oppositeTrip = await Trip.aggregate([{
       "$match": {
         destination: trip.departure, departure: trip.destination,
@@ -630,40 +632,41 @@ module.exports = {
       }
     }
     ])
-
     if (oppositeTrip != undefined) return oppositeTrip;
 
     return null
   },
 
+
   async hasEnoughTickets(trip) {
     const oppositeTrip = await this.hasOpposite(trip)
     let oppositeTickets = []
     let tripTickets = []
-
     // for (const ticket of trip.tickets) {
     //   // tripTickets.push(await Ticket.findById({_id: ticket._id.toString()}).sort({_id : 1}))
     //   tripTickets.push(ticket)
-    // }
+    // }123
+    
     tripTickets = trip.tickets;
-
+    
     if (oppositeTrip != null) {
 
       if (oppositeTrip[0]) oppositeTickets = oppositeTrip[0].tickets_data;
 
       if (!(tripTickets.length && oppositeTickets.length)) {
 
-        return false;
+        return {isValid: false};
       } else {
+        
+        const {isValid, destinationCharges} = this.departureBeforeDestination(tripTickets, oppositeTickets, trip)
 
-        return this.departureBeforeDestination(tripTickets, oppositeTickets, trip)
+        return {isValid: isValid, destinationCharges: destinationCharges};
       }
     } else {
-      return false
+      return {isValid: false}
     }
 
   },
-
   async findDashboard({ page, limit, adult, youth, priceStart, priceEnd, dateStart, dateEnd, departure, timezone }) {
     if (departure === "No_departure_found") {
       return [];
@@ -745,10 +748,12 @@ module.exports = {
     ]);
     let res = []
     for (const trip of data) {
-      if (await this.hasEnoughTickets(trip)) {
+      const {isValid, destinationCharges} = await this.hasEnoughTickets(trip);
+      if (isValid) {
         trip["Adult"] = adult
         trip["Youth"] = youth
         trip["typeOfTransport"] = trip.type
+        trip["destinationCharges"] = destinationCharges
         res.push(trip)
       }
     }

@@ -7,132 +7,130 @@ import { DEFAULT_SEARCH_RESULT } from 'src/Admin/Utils/constants';
 
 class DropDownSelect extends React.Component<IProps, IState> {
 
-    readonly state: IState = {
-        isListVisible: false,
-        inputValue: "",
-        results: []
-      }
-    
-      componentDidUpdate() {
-        if (this.state.isListVisible) {
-          document.addEventListener('click', this.toggleListVisibility)
-        } else if (!this.state.isListVisible) {
-          document.removeEventListener('click', this.toggleListVisibility)
-        } 
-      }
-    
-      toggleListVisibility = (): void => {
-        this.setState(prevState => ({ isListVisible: !prevState.isListVisible }))
-      }
-    
-      handleSelectOption = (el: IOption): void => {
-        const { onChange} = this.props
-        this.setState({ isListVisible: false,
-                        inputValue: el.name})
-        onChange({
-          target: {
-            id: this.props.id,
-            value: (el.name === DEFAULT_SEARCH_RESULT.name || !this.verifyCountry(el.name))  ? "" : el.name
-          }
-        })
-      }
+  readonly state: IState = {
+    isListVisible: false,
+    inputValue: "",
+    results: []
+  }
 
-      verifyCountry = (country: string): boolean => {
-        const{options} = this.props
-    
-        for (const value of options) {
-          if (value.name.toLowerCase() === country.toLowerCase())
-          {
-            return true
-          } 
-        }
-        return false
-      }
+  componentDidUpdate() {
+    if (this.state.isListVisible) {
+      document.addEventListener('click', this.toggleListVisibility)
+    } else if (!this.state.isListVisible) {
+      document.removeEventListener('click', this.toggleListVisibility)
+    }
+  }
 
-      handleSearch = (e: React.ChangeEvent<HTMLInputElement>): void => {
-        const {options} = this.props
-           const tableau: IOption[] = options.filter((value: IOption) => {
-            const name = value.name.toLowerCase()
-            if(name.includes(e.target.value.toLowerCase())){
-              return value
-            } 
-              return
-           })
+  toggleListVisibility = (): void => {
+    this.setState(prevState => ({ isListVisible: !prevState.isListVisible }))
+  }
 
-        if (!tableau.length) {
-          tableau.push(DEFAULT_SEARCH_RESULT)
-        }
-        this.setState({results: tableau })
+  handleSelectOption = (el: IOption): void => {
+    const { onChange, saveAsObject } = this.props
+    this.setState({ isListVisible: false, inputValue: el.name })
+    onChange({
+      target: {
+        id: this.props.id,
+        value: saveAsObject ? { _id: el._id, name: el.name } : (el.name === DEFAULT_SEARCH_RESULT.name || !this.verifyCountry(el.name)) ? "" : el.name
+      }
+    })
+  }
 
-        const country: IOption = {
-          _id:'54',
-          name: e.target.value
-        }
-        this.handleSelectOption(country)  
+  verifyCountry = (country: string): boolean => {
+    const { options } = this.props
+
+    for (const value of options) {
+      if (value.name.toLowerCase() === country.toLowerCase()) {
+        return true
       }
-      
-      renderOptions = (optionsArr: IOption[]): JSX.Element[] => {
-          return ( 
-            optionsArr.map(
-            (el: IOption): JSX.Element => {
-              return (
-                <div
-                  key={el._id}
-                  onClick={() => this.handleSelectOption(el)}
-                  className="spon-dropdown__list-item">
-                  <p>{el.name}</p>
-                </div>
-              )
-            }
-          )
-        )
+    }
+    return false
+  }
+
+  handleSearch = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const { options } = this.props
+    const tableau: IOption[] = options.filter((value: IOption) => {
+      const name = value.name.toLowerCase()
+      if (name.includes(e.target.value.toLowerCase())) {
+        return value
       }
-    
-      render() {
-        const { results,isListVisible, inputValue} = this.state
-        const { options,label, placeholder,className } = this.props
-        
-        const dropdownClass = classnames('spon-dropdown', {
-          [`${className}`]: className
-        })
-        const dropdownElementClass = classnames('spon-dropdown__element', {
-          'spon-dropdown__element--active': isListVisible
-        })
-        const dropdownIcon = classnames('spon-dropdown__placeholder-icon', {
-          'spon-dropdown__placeholder-icon--active': isListVisible
-        })
-        const dropdownList = classnames('spon-dropdown__list', {
-          'spon-dropdown__list--active': isListVisible
-        })
-    
-        return (
-          <div className={dropdownClass}>
-            <p className="spon-dropdown__label">{label}</p>
+      return
+    })
+
+    if (!tableau.length) {
+      tableau.push(DEFAULT_SEARCH_RESULT)
+    }
+    this.setState({ results: tableau })
+
+    const country: IOption = {
+      _id: '54',
+      name: e.target.value
+    }
+    this.handleSelectOption(country)
+  }
+
+  renderOptions = (optionsArr: IOption[]): JSX.Element[] => {
+    return (
+      optionsArr.map(
+        (el: IOption): JSX.Element => {
+          return (
             <div
-              className={dropdownElementClass}
-              onClick={this.toggleListVisibility}
-              onChange={() => this.setState({isListVisible:true})}>
-              <div className="spon-dropdown__placeholder">
-                  <input type="text" 
-                    className="spon-dropdown__input"
-                    placeholder={placeholder} 
-                    value={this.props.selectedValue || inputValue}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      this.setState({inputValue: e.target.value})
-                      this.handleSearch(e)
-                    }}
-                  />
-                <div>
-                  <img className={dropdownIcon} src={arrowDown} />
-                </div>
-              </div>
-                
-              <div className={dropdownList}>{!this.state.results.length ? 
-                this.renderOptions(options) : this.renderOptions(results)}</div>
+              key={el._id}
+              onClick={() => this.handleSelectOption(el)}
+              className="spon-dropdown__list-item">
+              <p>{el.name}</p>
+            </div>
+          )
+        }
+      )
+    )
+  }
+
+  render() {
+    const { results, isListVisible, inputValue } = this.state
+    const { options, label, placeholder, className } = this.props
+
+    const dropdownClass = classnames('spon-dropdown', {
+      [`${className}`]: className
+    })
+    const dropdownElementClass = classnames('spon-dropdown__element', {
+      'spon-dropdown__element--active': isListVisible
+    })
+    const dropdownIcon = classnames('spon-dropdown__placeholder-icon', {
+      'spon-dropdown__placeholder-icon--active': isListVisible
+    })
+    const dropdownList = classnames('spon-dropdown__list', {
+      'spon-dropdown__list--active': isListVisible
+    })
+
+    return (
+      <div className={dropdownClass}>
+        <p className="spon-dropdown__label">{label}</p>
+        <div
+          className={dropdownElementClass}
+          onClick={this.toggleListVisibility}
+          onChange={() => this.setState({ isListVisible: true })}>
+          <div className="spon-dropdown__placeholder">
+            <input type="text"
+              className="spon-dropdown__input"
+              placeholder={placeholder}
+              value={this.props.selectedValue || inputValue}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                this.setState({ inputValue: e.target.value })
+                this.handleSearch(e)
+              }}
+            />
+            <div>
+              <img className={dropdownIcon} src={arrowDown} />
             </div>
           </div>
-        )
-    }
+
+          <div className={dropdownList}>{!this.state.results.length ?
+            this.renderOptions(options) : this.renderOptions(results)}</div>
+        </div>
+      </div>
+    )
+  }
 }
 
 export default DropDownSelect

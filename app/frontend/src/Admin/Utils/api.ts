@@ -312,3 +312,26 @@ export const editCityState = (id: string, value: boolean, token: string) =>
     }
 )
 
+export const editCityDeparture = (id: string, value: boolean, token: string) =>
+  axios.patch(
+    `${API_URL}/city/${id}`,
+    { isDeparture: value },
+    {
+      headers: {
+        'Content-type': 'application/json',
+        token
+      }
+    }
+)
+
+export const editCityDestination = (id: string, value: boolean, token: string) =>
+  axios.patch(
+    `${API_URL}/city/${id}`,
+    { isDestination: value },
+    {
+      headers: {
+        'Content-type': 'application/json',
+        token
+      }
+    }
+)

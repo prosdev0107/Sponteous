@@ -630,7 +630,7 @@ module.exports = {
         foreignField: '_id',
         as: 'tickets_data'
       }
-    }
+    } 
     ])
     if (oppositeTrip != undefined) return oppositeTrip;
 

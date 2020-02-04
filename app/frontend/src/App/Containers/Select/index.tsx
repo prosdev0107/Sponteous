@@ -33,6 +33,7 @@ import { IState, IProps, IFiltersChange, IBookedType } from './types'
 import './styles.scss'
 import Title from 'src/App/Components/Title'
 import { ITicket } from 'src/Common/Utils/globalTypes';
+import { DESTINATIONFILTERS } from 'src/Admin/Utils/constants'
 
 
 const MAX = 5
@@ -53,6 +54,7 @@ class SelectContainer extends Component<
     page: 0,
     isLoading: true,
     isCalendarOpen: false,
+    isSorting: 0
   }
 
   private filters = React.createRef<Filters>()
@@ -62,7 +64,7 @@ class SelectContainer extends Component<
     const { quantity, departure } = this.props
     this.handleFetchTrips(this.state.page, 10, 0, 0, 0, 0, quantity.Adult, quantity.Youth, departure).then(
       () => {
-        this.setState({ isLoading: false })
+        this.setState({ isLoading: false, isSorting: 0 });
         if (this.state.trips.length >= 10 && this.state.trips.length > 0) {
           this.attachScrollEvent()
         }
@@ -97,11 +99,10 @@ class SelectContainer extends Component<
       departure
     )
       .then(({ data }) => {
-        console.log("fetch",data);
         this.setState((state: IState) => ({
           isLoading: false,
           trips: [...data],
-          tripsLocal: [...data]
+          tripsLocal: [...data],
         }))
         return data.length
       })
@@ -125,15 +126,15 @@ class SelectContainer extends Component<
   isInDateRange = (tickets: any, dateStart: any, dateEnd: any) => {
     let filteredTicket
     filteredTicket = tickets.filter((ticket: any) => this.checkDateRange(ticket, dateStart, dateEnd))
-    console.log("filteredTicket",filteredTicket)
+    console.log("filteredTicket", filteredTicket)
     return filteredTicket;
   }
   checkDateRange = (ticket: any, dateStart: any, dateEnd: any) => {
     console.log(+moment(dateStart).format('x'));
-    let start=new Date(ticket.date.start).getTime()
-     let end=new Date(ticket.date.end).getTime()
+    let start = new Date(ticket.date.start).getTime()
+    let end = new Date(ticket.date.end).getTime()
     console.log(start);
-    return +moment(dateStart).format('x')<=start  && +moment(dateEnd).format('x') >= end
+    return +moment(dateStart).format('x') <= start && +moment(dateEnd).format('x') >= end
   }
   handleFetchInitialTripsWithFilter = () => {
     this.state.trips = this.state.tripsLocal;
@@ -143,47 +144,47 @@ class SelectContainer extends Component<
     console.log('tripsLocal', tripsLocal)
     console.log('trips', trips)
     let pricefilter = trips.filter((trip: any) => this.isInPriceRange(trip, trip.Adult, trip.Youth, min, max))
-    let dateFilter:any=[] ;
-     pricefilter.filter((trip: any) => {
-   let ticket= this.isInDateRange(trip.tickets, start, end)
-     pricefilter.forEach(item=>{
-       console.log(ticket)
-       if(ticket.length!==0)
-       if(item._id===ticket[0].trip)
-       dateFilter.push(item);
-     })
-    
+    let dateFilter: any = [];
+    pricefilter.filter((trip: any) => {
+      let ticket = this.isInDateRange(trip.tickets, start, end)
+      pricefilter.forEach(item => {
+        console.log(ticket)
+        if (ticket.length !== 0)
+          if (item._id === ticket[0].trip)
+            dateFilter.push(item);
+      })
+
     })
     console.log('dateFilter', dateFilter)
     this.setState({ trips: pricefilter })
 
-    this.setState({ trips:dateFilter})
+    this.setState({ trips: dateFilter })
 
-  //   this.setState(
-  //     {
-  //       page: 0,
-  //       isLoading: true,
-  //       trips: []
-  //     },
-  //     () => {
-  //       const {
-  //         page,
-  //         filters: { min, max, start, end }
-  //       } = this.state
-  //       const { quantity,departure } = this.props
-  //       this.handleFetchTrips(
-  //         page,
-  //         1000,
-  //         min,
-  //         max,
-  //         start !== undefined ? +moment(start).format('x') : 0,
-  //         end !== undefined ? +moment(end).format('x') : 0,
-  //         quantity.Adult,
-  //         quantity.Youth,
-  //         departure
-  //       )
-  //     }
-  //   )
+    //   this.setState(
+    //     {
+    //       page: 0,
+    //       isLoading: true,
+    //       trips: []
+    //     },
+    //     () => {
+    //       const {
+    //         page,
+    //         filters: { min, max, start, end }
+    //       } = this.state
+    //       const { quantity,departure } = this.props
+    //       this.handleFetchTrips(
+    //         page,
+    //         1000,
+    //         min,
+    //         max,
+    //         start !== undefined ? +moment(start).format('x') : 0,
+    //         end !== undefined ? +moment(end).format('x') : 0,
+    //         quantity.Adult,
+    //         quantity.Youth,
+    //         departure
+    //       )
+    //     }
+    //   )
   }
 
   handleBookTrips = () => {
@@ -221,7 +222,7 @@ class SelectContainer extends Component<
 
     API.bookTrips(data)
       .then(res => {
-        console.log('resbjhs',res.data);
+        console.log('resbjhs', res.data);
         const bookedTrips = res.data.trips
         const selectedTrips = this.props.selected.map((item: ISelectedData) => {
           const filteredTrip: IBookedType = bookedTrips.find(
@@ -250,7 +251,7 @@ class SelectContainer extends Component<
         })
 
         this.props.updateSelected(selectedTrips)
-      this.props.history.push('/destinations/deselect')
+        this.props.history.push('/destinations/deselect')
       })
       .catch(err => this.props.showError(err))
   }
@@ -331,7 +332,7 @@ class SelectContainer extends Component<
     )
 
   }
-  
+
   handleClearFilterDates = () => {
     const {
       filters: { start, end }
@@ -370,11 +371,16 @@ class SelectContainer extends Component<
     }
   }
 
+  handleChange = (e: any) => {
+    const value: number = parseInt(DESTINATIONFILTERS[e.target.value]._id);
+    this.setState({ isSorting: value });
+  }
+
   calendarOpened = () => this.setState({ isCalendarOpen: true })
 
   calendarClosed = () => this.setState({ isCalendarOpen: false })
-  
-  editTrips=()=>{
+
+  editTrips = () => {
     const { selected, quantity } = this.props
 
     for (var i = 0; i < selected.length; i++) {
@@ -388,7 +394,7 @@ class SelectContainer extends Component<
     this.props.history.push('/destinations/editSelection')
   }
   render() {
-    const { isCalendarOpen, filters } = this.state
+    const { isCalendarOpen, filters, trips } = this.state
     const { isMax, quantity, selected, departure } = this.props
     return (
       <section className={`select-cnt ${isCalendarOpen ? 'calendar' : ''}`}>
@@ -405,10 +411,10 @@ class SelectContainer extends Component<
               this.filters.current!.handleClearFilters()
               this.handleFetchTrips(this.state.page, 10, 0, 0, 0, 0, quantity.Adult, quantity.Youth, departure).then(
                 () => {
-                  this.setState({ isLoading: false })
+                  this.setState({ isLoading: false, isSorting: 0 })
                   if (this.state.trips.length >= 10 && this.state.trips.length > 0) {
                     this.attachScrollEvent()
-                  } 
+                  }
                 }
               )
             }
@@ -430,19 +436,61 @@ class SelectContainer extends Component<
             />
           </section>
           <section className="select-cnt-inner-destinations">
-            <Title
-              className="select-cnt-inner-title"
-              text={`We found ${this.state.trips.length} destinations for you`}
-              selected={[`${this.state.trips.length} destinations`]}
-            />
+            <div>
+              <div style={{ float: 'left' }}>
+                <Title
+                  className="select-cnt-inner-title"
+                  text={`We found ${this.state.trips.length} destinations for you`}
+                  selected={[`${this.state.trips.length} destinations`]}
+                />
+              </div>
+              <div style={{ float: 'right' }}>
+                <span className="filters-filter-value">Sort By: </span>
+                <select name="drpFilterDestination" id="drpFilterDestination" placeholder="Recommended"
+                  className="spon-trip-modal__dropdown"
+                  onChange={(e: any) => this.handleChange(e)} defaultValue={this.state.isSorting.toString()}>
+                  {DESTINATIONFILTERS.map(x =>
+                    <option key={x._id} value={x._id}> {x.name}</option>
+                  )};
+                </select>
+              </div>
+            </div>
             <div className="select-cnt-inner-destination-list">
               {this.state.isLoading ? <div>Loading..</div> : null}
-              {!this.state.isLoading && this.state.trips.length === 0 ? (
+              {!this.state.isLoading && trips.length === 0 ? (
                 <div>No ticket found</div>
               ) : null}
-              {!this.state.isLoading &&(this.state.trips!=undefined)&&
-                this.state.trips.length > 0 &&
-                this.state.trips.map((trip: ITrip, index) => {
+              {!this.state.isLoading && (trips != undefined) &&
+                trips.length > 0 &&
+                trips.slice().sort((a: any, b: any) => {
+                  if (this.state.isSorting == 1) {
+                    return a.destination.name.localeCompare(b.destination.name);
+                  }
+
+                  if (this.state.isSorting == 2) {
+                    let finalCostA = 0, finalCostB = 0;
+
+                    if (a['destinationCharges']) {
+                      finalCostA = (a['destinationCharges'].adultPrice * a["Adult"] + a['destinationCharges'].childPrice * a["Youth"]) + (a.adultPrice * a["Adult"] + a.childPrice * a["Youth"])
+                    } else {
+                      finalCostA = 2 * (a.adultPrice * a["Adult"] + a.childPrice * a["Youth"])
+                    }
+
+                    a['finalCost'] = finalCostA;
+
+                    if (b['destinationCharges']) {
+                      finalCostB = (b['destinationCharges'].adultPrice * b["Adult"] + b['destinationCharges'].childPrice * b["Youth"]) + (b.adultPrice * b["Adult"] + b.childPrice * b["Youth"])
+                    } else {
+                      finalCostB = 2 * (b.adultPrice * b["Adult"] + b.childPrice * b["Youth"])
+                    }
+
+                    b['finalCost'] = finalCostB;
+
+                    return parseFloat(a.finalCost) - parseFloat(b.finalCost);
+                  }
+
+                  return a;
+                }).map((trip: ITrip, index) => {
                   trip.type = 'trip'
                   const filtered = this.props.selected.filter(
                     (item: ISelectedData) => {
@@ -458,7 +506,6 @@ class SelectContainer extends Component<
                   )
                   const isSelected = filtered.length > 0
                   return (
-
                     <Destination
                       key={index}
                       index={trip._id}
@@ -493,7 +540,7 @@ const mapStateToProps = (state: IStore) => ({
   quantity: selectQuantity(state),
   selected: selectSelected(state),
   departure: selectDeparture(state)
-}) 
+})
 
 export default connect(
   mapStateToProps,

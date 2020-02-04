@@ -26,7 +26,8 @@ export interface IState {
   }
   page: number
   isLoading: boolean
-  isCalendarOpen: boolean
+  isCalendarOpen: boolean,
+  isSorting: number
 }
 
 export interface IProps {

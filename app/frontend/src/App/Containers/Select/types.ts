@@ -17,7 +17,7 @@ export interface IFilters {
 
 export interface IState {
   trips: ITrip[]
-  tripsLocal:ITrip[]
+  tripsLocal: ITrip[]
   filters: {
     start: Date | undefined
     end: Date | undefined
@@ -27,6 +27,10 @@ export interface IState {
   page: number
   isLoading: boolean
   isCalendarOpen: boolean
+  isMapViewOpen: boolean
+  showingInfoWindow: boolean
+  activeMarker: any
+  selectedPlace: any
 }
 
 export interface IProps {

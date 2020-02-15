@@ -8,6 +8,7 @@ export interface IProps {
   data: ITrip | ISelectedData
   isMax: boolean
   quantity?: IPassenger
+  isCalendarOpen: boolean
   onSelect?: (data: ISelectedData) => void
   onDeselect?: (data: string | ISelectedData) => void
   onModify?: (tripId: string) => void

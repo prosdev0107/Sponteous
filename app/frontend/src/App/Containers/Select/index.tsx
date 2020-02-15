@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import ReactDOM from 'react-dom'
+
 import moment from 'moment'
 import { connect } from 'react-redux'
 
@@ -32,15 +34,25 @@ import { ISelectedData, ITrip } from '../../Utils/appTypes'
 import { IState, IProps, IFiltersChange, IBookedType } from './types'
 import './styles.scss'
 import Title from 'src/App/Components/Title'
-import { ITicket } from 'src/Common/Utils/globalTypes';
+import { ITicket } from 'src/Common/Utils/globalTypes'
+import {
+  Map,
+  InfoWindow,
+  Marker,
+  GoogleApiWrapper,
+  MapProps
+} from 'google-maps-react'
+import { compose } from 'redux'
 
+import marker from '../../Utils/Media/marker.png'
+import markerSelected from '../../Utils/Media/marker-selected.png'
 
 const MAX = 5
 
 class SelectContainer extends Component<
-  RouteComponentProps<{}> & IProps,
+  RouteComponentProps<{}> & MapProps & IProps,
   IState
-  > {
+> {
   readonly state: IState = {
     trips: [],
     tripsLocal: [],
@@ -53,6 +65,10 @@ class SelectContainer extends Component<
     page: 0,
     isLoading: true,
     isCalendarOpen: false,
+    isMapViewOpen: false,
+    showingInfoWindow: false,
+    activeMarker: {},
+    selectedPlace: {}
   }
 
   private filters = React.createRef<Filters>()
@@ -60,14 +76,22 @@ class SelectContainer extends Component<
   componentDidMount() {
     window.scrollTo(0, 0)
     const { quantity, departure } = this.props
-    this.handleFetchTrips(this.state.page, 10, 0, 0, 0, 0, quantity.Adult, quantity.Youth, departure).then(
-      () => {
-        this.setState({ isLoading: false })
-        if (this.state.trips.length >= 10 && this.state.trips.length > 0) {
-          this.attachScrollEvent()
-        }
+    this.handleFetchTrips(
+      this.state.page,
+      10,
+      0,
+      0,
+      0,
+      0,
+      quantity.Adult,
+      quantity.Youth,
+      departure
+    ).then(() => {
+      this.setState({ isLoading: false })
+      if (this.state.trips.length >= 10 && this.state.trips.length > 0) {
+        this.attachScrollEvent()
       }
-    )
+    })
   }
 
   componentWillUnmount() {
@@ -97,7 +121,7 @@ class SelectContainer extends Component<
       departure
     )
       .then(({ data }) => {
-        console.log("fetch",data);
+        console.log('fetch', data)
         this.setState((state: IState) => ({
           isLoading: false,
           trips: [...data],
@@ -118,72 +142,85 @@ class SelectContainer extends Component<
       }, [])
       .sort()
   }
-  isInPriceRange = (trip: any, adult: any, youth: any, priceStart: any, priceEnd: any) => {
-    const totalPrice = 2 * ((trip.adultPrice * adult) + (trip.childPrice * youth));
-    return totalPrice <= priceEnd && totalPrice >= priceStart;
+  isInPriceRange = (
+    trip: any,
+    adult: any,
+    youth: any,
+    priceStart: any,
+    priceEnd: any
+  ) => {
+    const totalPrice = 2 * (trip.adultPrice * adult + trip.childPrice * youth)
+    return totalPrice <= priceEnd && totalPrice >= priceStart
   }
   isInDateRange = (tickets: any, dateStart: any, dateEnd: any) => {
     let filteredTicket
-    filteredTicket = tickets.filter((ticket: any) => this.checkDateRange(ticket, dateStart, dateEnd))
-    console.log("filteredTicket",filteredTicket)
-    return filteredTicket;
+    filteredTicket = tickets.filter((ticket: any) =>
+      this.checkDateRange(ticket, dateStart, dateEnd)
+    )
+    console.log('filteredTicket', filteredTicket)
+    return filteredTicket
   }
   checkDateRange = (ticket: any, dateStart: any, dateEnd: any) => {
-    console.log(+moment(dateStart).format('x'));
-    let start=new Date(ticket.date.start).getTime()
-     let end=new Date(ticket.date.end).getTime()
-    console.log(start);
-    return +moment(dateStart).format('x')<=start  && +moment(dateEnd).format('x') >= end
+    console.log(+moment(dateStart).format('x'))
+    let start = new Date(ticket.date.start).getTime()
+    let end = new Date(ticket.date.end).getTime()
+    console.log(start)
+    return (
+      +moment(dateStart).format('x') <= start &&
+      +moment(dateEnd).format('x') >= end
+    )
   }
   handleFetchInitialTripsWithFilter = () => {
-    this.state.trips = this.state.tripsLocal;
-    const { trips, tripsLocal,
+    this.state.trips = this.state.tripsLocal
+    const {
+      trips,
+      tripsLocal,
       filters: { min, max, start, end }
     } = this.state
     console.log('tripsLocal', tripsLocal)
     console.log('trips', trips)
-    let pricefilter = trips.filter((trip: any) => this.isInPriceRange(trip, trip.Adult, trip.Youth, min, max))
-    let dateFilter:any=[] ;
-     pricefilter.filter((trip: any) => {
-   let ticket= this.isInDateRange(trip.tickets, start, end)
-     pricefilter.forEach(item=>{
-       console.log(ticket)
-       if(ticket.length!==0)
-       if(item._id===ticket[0].trip)
-       dateFilter.push(item);
-     })
-    
+    let pricefilter = trips.filter((trip: any) =>
+      this.isInPriceRange(trip, trip.Adult, trip.Youth, min, max)
+    )
+    let dateFilter: any = []
+    pricefilter.filter((trip: any) => {
+      let ticket = this.isInDateRange(trip.tickets, start, end)
+      pricefilter.forEach(item => {
+        console.log(ticket)
+        if (ticket.length !== 0)
+          if (item._id === ticket[0].trip) dateFilter.push(item)
+      })
     })
     console.log('dateFilter', dateFilter)
     this.setState({ trips: pricefilter })
 
-    this.setState({ trips:dateFilter})
+    this.setState({ trips: dateFilter })
 
-  //   this.setState(
-  //     {
-  //       page: 0,
-  //       isLoading: true,
-  //       trips: []
-  //     },
-  //     () => {
-  //       const {
-  //         page,
-  //         filters: { min, max, start, end }
-  //       } = this.state
-  //       const { quantity,departure } = this.props
-  //       this.handleFetchTrips(
-  //         page,
-  //         1000,
-  //         min,
-  //         max,
-  //         start !== undefined ? +moment(start).format('x') : 0,
-  //         end !== undefined ? +moment(end).format('x') : 0,
-  //         quantity.Adult,
-  //         quantity.Youth,
-  //         departure
-  //       )
-  //     }
-  //   )
+    //   this.setState(
+    //     {
+    //       page: 0,
+    //       isLoading: true,
+    //       trips: []
+    //     },
+    //     () => {
+    //       const {
+    //         page,
+    //         filters: { min, max, start, end }
+    //       } = this.state
+    //       const { quantity,departure } = this.props
+    //       this.handleFetchTrips(
+    //         page,
+    //         1000,
+    //         min,
+    //         max,
+    //         start !== undefined ? +moment(start).format('x') : 0,
+    //         end !== undefined ? +moment(end).format('x') : 0,
+    //         quantity.Adult,
+    //         quantity.Youth,
+    //         departure
+    //       )
+    //     }
+    //   )
   }
 
   handleBookTrips = () => {
@@ -207,7 +244,6 @@ class SelectContainer extends Component<
       }
     })
 
-
     const data: IBookedData = {
       departure,
       Adult: quantity.Adult,
@@ -221,7 +257,7 @@ class SelectContainer extends Component<
 
     API.bookTrips(data)
       .then(res => {
-        console.log('resbjhs',res.data);
+        console.log('resbjhs', res.data)
         const bookedTrips = res.data.trips
         const selectedTrips = this.props.selected.map((item: ISelectedData) => {
           const filteredTrip: IBookedType = bookedTrips.find(
@@ -244,18 +280,19 @@ class SelectContainer extends Component<
           }
         })
 
-        selectedTrips.forEach((trip) => {
-          trip["Adult"] = data.Adult
-          trip["Youth"] = data.Youth
+        selectedTrips.forEach(trip => {
+          trip['Adult'] = data.Adult
+          trip['Youth'] = data.Youth
         })
 
         this.props.updateSelected(selectedTrips)
-      this.props.history.push('/destinations/deselect')
+        this.props.history.push('/destinations/deselect')
       })
       .catch(err => this.props.showError(err))
   }
 
   onSelect = (data: ISelectedData) => {
+    console.log(data)
     if (!this.props.isMax) {
       this.props.addSelected(data)
     }
@@ -263,6 +300,16 @@ class SelectContainer extends Component<
 
   onDeselect = (tripId: string) => {
     this.props.removeSelected(tripId)
+  }
+
+  isSelectedPlace = (id: any) => {
+    let result = false
+    this.props.selected.map(place => {
+      if (place._id === id) {
+        result = true
+      }
+    })
+    return result
   }
 
   attachScrollEvent = () => {
@@ -310,11 +357,17 @@ class SelectContainer extends Component<
   }
 
   handleFilterChange = (filters: IFiltersChange, callback?: () => void) => {
-    const start = filters.start ? new Date(filters.start.getTime() - (filters.start.getTimezoneOffset() * 60000)) :
-      new Date()
+    const start = filters.start
+      ? new Date(
+          filters.start.getTime() - filters.start.getTimezoneOffset() * 60000
+        )
+      : new Date()
     const starto = moment(start.getTime()).endOf('month')
-    const end = filters.end ? new Date(filters.end.getTime() - (filters.end.getTimezoneOffset() * 60000)) : new Date(starto.toString())
-
+    const end = filters.end
+      ? new Date(
+          filters.end.getTime() - filters.end.getTimezoneOffset() * 60000
+        )
+      : new Date(starto.toString())
 
     filters.start = start
     filters.end = end
@@ -325,13 +378,11 @@ class SelectContainer extends Component<
           ...state.filters,
           ...filters
         }
-      })
-      ,
+      }),
       () => callback && callback()
     )
-
   }
-  
+
   handleClearFilterDates = () => {
     const {
       filters: { start, end }
@@ -370,16 +421,65 @@ class SelectContainer extends Component<
     }
   }
 
-  calendarOpened = () => this.setState({ isCalendarOpen: true })
+  calendarOpened = () => {
+    console.log('calendar opend')
+    this.setState({ isCalendarOpen: true })
+  }
 
   calendarClosed = () => this.setState({ isCalendarOpen: false })
-  
-  editTrips=()=>{
+
+  openMapView = () => {
+    this.setState((state: IState) => ({
+      isMapViewOpen: !state.isMapViewOpen
+    }))
+  }
+
+  onMarkerClick = (props: any, marker: any) => {
+    this.setState({
+      selectedPlace: props,
+      activeMarker: marker,
+      showingInfoWindow: true
+    })
+  }
+
+  onInfoWindowOpen = () => {
+    const { isMax, quantity } = this.props
+    const { _id, data } = this.state.selectedPlace
+    const filtered = this.props.selected.filter((item: ISelectedData) => {
+      if (item.tripId === _id) {
+        return true
+      }
+      return false
+    })
+    const isSelected = filtered.length > 0
+    const destination = (
+      <Destination
+        key={_id}
+        index={_id}
+        data={data}
+        quantity={quantity}
+        selected={isSelected}
+        onSelect={this.onSelect}
+        onDeselect={this.onDeselect}
+        isMax={isMax}
+        onCalendarOpen={this.calendarOpened}
+        onCalendarClose={this.calendarClosed}
+        isCalendarOpen={this.state.isCalendarOpen}
+      />
+    )
+
+    ReactDOM.render(
+      React.Children.only(destination),
+      document.getElementById('iwc')
+    )
+  }
+
+  editTrips = () => {
     const { selected, quantity } = this.props
 
     for (var i = 0; i < selected.length; i++) {
-      selected[i]['Adult'] = quantity.Adult;
-      selected[i]['Youth'] = quantity.Youth;
+      selected[i]['Adult'] = quantity.Adult
+      selected[i]['Youth'] = quantity.Youth
     }
 
     saveToLS('editSelection', selected)
@@ -390,36 +490,140 @@ class SelectContainer extends Component<
   render() {
     const { isCalendarOpen, filters } = this.state
     const { isMax, quantity, selected, departure } = this.props
+    const isMapViewOpen = this.state.isMapViewOpen
+    let locations: any = []
+    if (this.state.trips && this.state.trips.length > 0) {
+      locations = this.state.trips.map(function(x: any) {
+        return {
+          _id: x._id,
+          data: x,
+          location: {
+            lat: x.destination.latitude,
+            lng: x.destination.longitude
+          }
+        }
+      })
+    }
+    const center = locations[0]
+    let lat = 42.39,
+      lng = -72.52
+    if (center) {
+      lat = parseFloat(center.location.lat)
+      lng = parseFloat(center.location.lng)
+    }
     return (
-      <section className={`select-cnt ${isCalendarOpen ? 'calendar' : ''}`}>
-        <MainBlock className="select-cnt-block">
-          <Search
-            departure={departure}
-            setDeparture={this.props.setDeparture}
-            setQuantity={this.props.setQuantity}
-            quantity={quantity}
-            onSubmit={() => {
-              this.setState({ isLoading: true })
-              this.setState({ tripsLocal: [] })
-              this.setState({ trips: [] })
-              this.filters.current!.handleClearFilters()
-              this.handleFetchTrips(this.state.page, 10, 0, 0, 0, 0, quantity.Adult, quantity.Youth, departure).then(
-                () => {
-                  this.setState({ isLoading: false })
-                  if (this.state.trips.length >= 10 && this.state.trips.length > 0) {
-                    this.attachScrollEvent()
-                  } 
-                }
-              )
-            }
+      <div>
+        {!isMapViewOpen ? (
+          <section className={`select-cnt ${isCalendarOpen ? 'calendar' : ''}`}>
+            <MainBlock className="select-cnt-block">
+              <Search
+                departure={departure}
+                setDeparture={this.props.setDeparture}
+                setQuantity={this.props.setQuantity}
+                quantity={quantity}
+                onSubmit={() => {
+                  this.setState({ isLoading: true })
+                  this.setState({ tripsLocal: [] })
+                  this.setState({ trips: [] })
+                  this.filters.current!.handleClearFilters()
+                  this.handleFetchTrips(
+                    this.state.page,
+                    10,
+                    0,
+                    0,
+                    0,
+                    0,
+                    quantity.Adult,
+                    quantity.Youth,
+                    departure
+                  ).then(() => {
+                    this.setState({ isLoading: false })
+                    if (
+                      this.state.trips.length >= 10 &&
+                      this.state.trips.length > 0
+                    ) {
+                      this.attachScrollEvent()
+                    }
+                  })
+                }}
+                initialValue={departure}
+              />
+              <Steps />
+            </MainBlock>
+            <section className="select-cnt-inner">
+              <section className="select-cnt-inner-filters">
+                <Filters
+                  ref={this.filters}
+                  onChange={this.handleFilterChange}
+                  fetchTrips={this.handleFetchInitialTripsWithFilter}
+                  clearDates={this.handleClearFilterDates}
+                  clearPrice={this.handleClearFilterPrice}
+                  filters={filters}
+                  isMapViewOn={this.state.isMapViewOpen}
+                  openMapView={this.openMapView}
+                />
+              </section>
+              <section className="select-cnt-inner-destinations">
+                <Title
+                  className="select-cnt-inner-title"
+                  text={`We found ${
+                    this.state.trips.length
+                  } destinations for you`}
+                  selected={[`${this.state.trips.length} destinations`]}
+                />
+                <div className="select-cnt-inner-destination-list">
+                  {this.state.isLoading ? <div>Loading..</div> : null}
+                  {!this.state.isLoading && this.state.trips.length === 0 ? (
+                    <div>No ticket found</div>
+                  ) : null}
+                  {!this.state.isLoading &&
+                    this.state.trips != undefined &&
+                    this.state.trips.length > 0 &&
+                    this.state.trips.map((trip: ITrip, index) => {
+                      trip.type = 'trip'
+                      const filtered = this.props.selected.filter(
+                        (item: ISelectedData) => {
+                          if (item.tripId === trip._id) {
+                            ;(trip.dateStart = item.dateStart),
+                              (trip.dateEnd = item.dateEnd)
 
-            }
-            initialValue={departure}
-          />
-          <Steps />
-        </MainBlock>
-        <section className="select-cnt-inner">
-          <section className="select-cnt-inner-filters">
+                            return true
+                          }
+
+                          return false
+                        }
+                      )
+                      const isSelected = filtered.length > 0
+                      return (
+                        <Destination
+                          key={index}
+                          index={trip._id}
+                          data={trip}
+                          quantity={quantity}
+                          selected={isSelected}
+                          onSelect={this.onSelect}
+                          onDeselect={this.onDeselect}
+                          isMax={isMax}
+                          onCalendarOpen={this.calendarOpened}
+                          onCalendarClose={this.calendarClosed}
+                          isCalendarOpen={false}
+                        />
+                      )
+                    })}
+                </div>
+              </section>
+            </section>
+            <SelectPanel
+              step={STEP_IDS.SELECT}
+              selected={selected}
+              isMax={isMax}
+              max={MAX}
+              onEdit={this.editTrips}
+              onNext={this.handleBookTrips}
+            />
+          </section>
+        ) : (
+          <section className="map-cnt">
             <Filters
               ref={this.filters}
               onChange={this.handleFilterChange}
@@ -427,63 +631,65 @@ class SelectContainer extends Component<
               clearDates={this.handleClearFilterDates}
               clearPrice={this.handleClearFilterPrice}
               filters={filters}
+              isMapViewOn={this.state.isMapViewOpen}
+              openMapView={this.openMapView}
+            />
+            <Map
+              google={this.props.google}
+              zoom={14}
+              initialCenter={{
+                lat: lat,
+                lng: lng
+              }}
+              zoomControl={false}
+              mapTypeControl={false}
+              fullscreenControl={false}
+              scaleControl={false}>
+              {locations.map((location: any, index: number) => {
+                return (
+                  <Marker
+                    key={index}
+                    name={'Current location'}
+                    position={{
+                      lat: location.location.lat,
+                      lng: location.location.lng
+                    }}
+                    icon={{
+                      url: this.isSelectedPlace(location._id)
+                        ? markerSelected
+                        : marker
+                    }}
+                    _id={location._id}
+                    data={location.data}
+                    onClick={this.onMarkerClick}
+                  />
+                )
+              })}
+
+              <InfoWindow
+                marker={this.state.activeMarker}
+                visible={this.state.showingInfoWindow}
+                onOpen={() => {
+                  console.log('infoWindowOpen')
+                  this.onInfoWindowOpen()
+                }}
+                onClose={() => {
+                  console.log('infoWindowClose')
+                }}>
+                <div id="iwc" />
+              </InfoWindow>
+            </Map>
+            <SelectPanel
+              step={STEP_IDS.SELECT}
+              selected={selected}
+              isMax={isMax}
+              max={MAX}
+              onEdit={this.editTrips}
+              onNext={this.handleBookTrips}
             />
           </section>
-          <section className="select-cnt-inner-destinations">
-            <Title
-              className="select-cnt-inner-title"
-              text={`We found ${this.state.trips.length} destinations for you`}
-              selected={[`${this.state.trips.length} destinations`]}
-            />
-            <div className="select-cnt-inner-destination-list">
-              {this.state.isLoading ? <div>Loading..</div> : null}
-              {!this.state.isLoading && this.state.trips.length === 0 ? (
-                <div>No ticket found</div>
-              ) : null}
-              {!this.state.isLoading &&(this.state.trips!=undefined)&&
-                this.state.trips.length > 0 &&
-                this.state.trips.map((trip: ITrip, index) => {
-                  trip.type = 'trip'
-                  const filtered = this.props.selected.filter(
-                    (item: ISelectedData) => {
-                      if (item.tripId === trip._id) {
-                        ; (trip.dateStart = item.dateStart),
-                          (trip.dateEnd = item.dateEnd)
-
-                        return true
-                      }
-
-                      return false
-                    }
-                  )
-                  const isSelected = filtered.length > 0
-                  return (
-
-                    <Destination
-                      key={index}
-                      index={trip._id}
-                      data={trip}
-                      quantity={quantity}
-                      selected={isSelected}
-                      onSelect={this.onSelect}
-                      onDeselect={this.onDeselect}
-                      isMax={isMax}
-                      onCalendarOpen={this.calendarOpened}
-                      onCalendarClose={this.calendarClosed}
-                    />)
-                })}
-            </div>
-          </section>
-        </section>
-        <SelectPanel
-          step={STEP_IDS.SELECT}
-          selected={selected}
-          isMax={isMax}
-          max={MAX}
-          onEdit={this.editTrips}
-          onNext={this.handleBookTrips}
-        />
-      </section>
+        )}
+      </div>
     )
   }
 }
@@ -493,12 +699,21 @@ const mapStateToProps = (state: IStore) => ({
   quantity: selectQuantity(state),
   selected: selectSelected(state),
   departure: selectDeparture(state)
-}) 
+})
 
-export default connect(
-  mapStateToProps,
-  {
-    addSelected, removeSelected, updateSelected, clearSelected, setQuantity,
-    setDeparture
-  }
+export default compose(
+  connect(
+    mapStateToProps,
+    {
+      addSelected,
+      removeSelected,
+      updateSelected,
+      clearSelected,
+      setQuantity,
+      setDeparture
+    }
+  ),
+  GoogleApiWrapper({
+    apiKey: 'AIzaSyCOvJSJiJaKykPQ0dfzYWO1OVRBNlnN8FU'
+  })
 )(withToast(SelectContainer))

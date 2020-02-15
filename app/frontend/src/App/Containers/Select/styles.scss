@@ -94,3 +94,17 @@
     }
   }
 }
+.map-cnt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  height: 100vh;
+  z-index: 2;
+  background: white;
+  border-top: 10px solid #4142a6;
+}
+
+#iwc .destination {
+  margin: unset !important;
+}

@@ -8,25 +8,25 @@ services:
   backend:
     build:
       context: ./app/backend
-      dockerfile: Dockerfile.${APP_ENV}
+      dockerfile: Dockerfile.development
     volumes:
       - ./app/backend:/usr/src/app
     depends_on:
       - mongo
       - redis
     environment:
-      NODE_ENV: ${APP_ENV}
-    command: /usr/src/app/bin/${APP_ENV}-entrypoint.sh
+      NODE_ENV: development
+    command: /usr/src/app/bin/development-entrypoint.sh
   # Frontend Container.
   frontend:
     build:
       context: ./app/frontend
-      dockerfile: Dockerfile.${APP_ENV}
+      dockerfile: Dockerfile.development
     volumes:
       - ./app/frontend:/usr/src/app
     environment:
-      NODE_ENV: ${APP_ENV}
-    command: /usr/src/app/bin/${APP_ENV}-entrypoint.sh
+      NODE_ENV: development
+    command: /usr/src/app/bin/development-entrypoint.sh
   # Mongo Container.
   mongo:
     image: mongo:4
@@ -35,8 +35,8 @@ services:
     ports:
       - 27018:27017
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_ROOT_USERNAME: SponteousDevManager
+      MONGO_INITDB_ROOT_PASSWORD: GZiV12OmdDmmxkX2
   # Redis Container.
   redis:
     image: redis:3

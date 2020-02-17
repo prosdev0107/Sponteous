@@ -30,7 +30,7 @@ export const ERRORS = {
   ORDERS_FETCH: `Can't fetch orders list`,
   ORDERS_EDIT: 'Error when edit order',
   USER_FETCH: `Cant't fetch user list`,
-  USER_ADD: 'Error when add user' ,
+  USER_ADD: 'Error when add user',
   USER_EDIT: 'Error when edit user',
   USER_DELETE: 'Error when delete user',
   USER_UPDATE: 'Error when update user',
@@ -52,22 +52,22 @@ export const SUCCESS = {
   CITY_EDIT: 'City updated successfully',
   CITY_DELETE: 'City deleted successfully',
   CITY_UPDATE: 'city update successfully',
-  USER_ADD: 'user added successfully' ,
-  USER_EDIT: 'user edited successfully' ,
+  USER_ADD: 'user added successfully',
+  USER_EDIT: 'user edited successfully',
   USER_DELETE: 'User deleted succesfully',
-  USER_UPDATE: 'user updated successfully' ,
+  USER_UPDATE: 'user updated successfully',
   USER_RESET: 'User password reset successfully',
   DEFAULT: 'Success'
 }
 
 export const DEFAULT_TICKET_DATA = {
   _id: '',
-  trip: { 
-    _id: '', 
-    departure: '', 
-    destination: '', 
-    carrier: '', 
-    type:'', 
+  trip: {
+    _id: '',
+    departure: '',
+    destination: '',
+    carrier: '',
+    type: '',
     duration: 0
   },
   quantity: 0,
@@ -154,28 +154,29 @@ export const DEFAULT_TRIP_DATA = {
 
 
 export const TAGS = [
-  'City','Beach','Nightlife','Art & Culture','Family',
+  'City', 'Beach', 'Nightlife', 'Art & Culture', 'Family',
   'Nature',
   'History'
 ]
 
 
 export const COUNTRIES = [
-  { _id: "0",
-    name:"Albania"
+  {
+    _id: "0",
+    name: "Albania"
   },
   {
     _id: "1",
-    name:"Andorra"
+    name: "Andorra"
   },
   {
     _id: "2",
-    name:"Armenia"
+    name: "Armenia"
 
   },
   {
     _id: "3",
-    name: "Austria" 
+    name: "Austria"
   },
   {
     _id: "4",
@@ -196,7 +197,7 @@ export const COUNTRIES = [
   {
     _id: "8",
     name: "Bulgaria"
-  }, 
+  },
   {
     _id: "11",
     name: "Canada"
@@ -255,7 +256,7 @@ export const COUNTRIES = [
   },
   {
     _id: "24",
-    name:"Kazakhstan"
+    name: "Kazakhstan"
   },
   {
     _id: "25",
@@ -266,12 +267,12 @@ export const COUNTRIES = [
     name: "Latvia"
   },
   {
-    _id:"27",
-    name:"Liechtenstein"
+    _id: "27",
+    name: "Liechtenstein"
   },
   {
-    _id:"28",
-    name:"Lithuania"
+    _id: "28",
+    name: "Lithuania"
   },
   {
     _id: "29",
@@ -295,7 +296,7 @@ export const COUNTRIES = [
   },
   {
     _id: "34",
-    name:"Montenegro"
+    name: "Montenegro"
   },
   {
     _id: "35",
@@ -332,7 +333,7 @@ export const COUNTRIES = [
   {
     _id: "43",
     name: "Serbia"
-  },  
+  },
   {
     _id: "44",
     name: "Slovakia"
@@ -359,7 +360,7 @@ export const COUNTRIES = [
   },
   {
     _id: "50",
-    name:"United States (USA)"
+    name: "United States (USA)"
   },
   {
     _id: "51",
@@ -367,13 +368,13 @@ export const COUNTRIES = [
   },
   {
     _id: "52",
-    name:"Turkey"
+    name: "Turkey"
   },
   {
     _id: "53",
-    name:"Vatican City"
+    name: "Vatican City"
   },
-  
+
 ]
 
 export const DEFAULT_SEARCH_RESULT = {
@@ -392,3 +393,17 @@ export const DEFAULT_USER_DATA = {
   isDeleted: false
 }
 
+export const DESTINATIONFILTERS = [
+  {
+    _id: "0",
+    name: "Recommended"
+  },
+  {
+    _id: "1",
+    name: "A to Z"
+  },
+  {
+    _id: "2",
+    name: "Price (lowest first)"
+  }
+]

@@ -12,7 +12,7 @@ const SocketService = require('./api/services/SocketService');
 const helmet = require('helmet');
 
 // Load .env file
-dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
+dotenv.config({ path: `.env.development` });
 
 // Set config for global use
 global.log = require('./config/logger');

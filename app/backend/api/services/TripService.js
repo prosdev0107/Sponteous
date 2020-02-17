@@ -192,7 +192,7 @@ module.exports = {
 
   async getListOfDepartureNames ({timezone}) {
     timezone = +timezone
-    const trips = await Trip.find({ deleted: false });
+    const trips = await Trip.find({ deleted: false, 'departure.isDeparture': true });
     let departuresNames = []
     
      for (const trip of trips) {

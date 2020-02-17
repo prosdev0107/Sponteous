@@ -8,8 +8,10 @@ const citySchema = new Schema({
   country: String,
   photo: String,
   tags: [String],
-  isManual:{ type: Boolean, default: false },
-  isEnabled: { type: Boolean, default: false }
+  isManual: { type: Boolean, default: false },
+  isEnabled: { type: Boolean, default: false },
+  isDestination: { type: Boolean, default: true },
+  isDeparture: { type: Boolean, default: true }
 });
 
 module.exports = mongoose.model('City', citySchema);

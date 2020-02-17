@@ -17,12 +17,12 @@ export const PaymentFormSchema = Yup.object().shape({
   address: Yup.string()
     .min(1, Message.addressMin)
     .max(20, Message.addressMax)
-    .matches(/^[\p{L}\d.\/ ]{1,20}$/u, Message.addresPattern)
+    // .matches(/^[\p{L}\d.\/ ]{1,20}$/u, Message.addresPattern)
     .required(Message.required),
   city: Yup.string()
     .min(1, Message.cityMin)
     .max(20, Message.cityMax)
-    .matches(/^\p{L}{1,20}$/u, Message.cityPattern)
+    // .matches(/^\p{L}{1,20}$/u, Message.cityPattern)
     .required(Message.required),
   zipCode: Yup.string()
     .min(6, Message.zipCodeMin)

@@ -15,6 +15,8 @@ export interface ICity {
   tags?: string[];   
   isManual?: boolean;
   isEnabled?: boolean;
+  isDestination?: boolean;
+  isDeparture?: boolean;
 }
 
 export interface IUser {

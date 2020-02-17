@@ -31,6 +31,7 @@ export interface IState {
   showingInfoWindow: boolean
   activeMarker: any
   selectedPlace: any
+  isSorting: number
 }
 
 export interface IProps {

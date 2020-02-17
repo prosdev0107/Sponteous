@@ -43,6 +43,7 @@ import {
   MapProps
 } from 'google-maps-react'
 import { compose } from 'redux'
+import { DESTINATIONFILTERS } from 'src/Admin/Utils/constants'
 
 import marker from '../../Utils/Media/marker.png'
 import markerSelected from '../../Utils/Media/marker-selected.png'
@@ -68,7 +69,8 @@ class SelectContainer extends Component<
     isMapViewOpen: false,
     showingInfoWindow: false,
     activeMarker: {},
-    selectedPlace: {}
+    selectedPlace: {},
+    isSorting: 0
   }
 
   private filters = React.createRef<Filters>()
@@ -87,7 +89,7 @@ class SelectContainer extends Component<
       quantity.Youth,
       departure
     ).then(() => {
-      this.setState({ isLoading: false })
+      this.setState({ isLoading: false, isSorting: 0 })
       if (this.state.trips.length >= 10 && this.state.trips.length > 0) {
         this.attachScrollEvent()
       }
@@ -121,7 +123,6 @@ class SelectContainer extends Component<
       departure
     )
       .then(({ data }) => {
-        console.log('fetch', data)
         this.setState((state: IState) => ({
           isLoading: false,
           trips: [...data],
@@ -474,6 +475,11 @@ class SelectContainer extends Component<
     )
   }
 
+  handleChange = (e: any) => {
+    const value: number = parseInt(DESTINATIONFILTERS[e.target.value]._id)
+    this.setState({ isSorting: value })
+  }
+
   editTrips = () => {
     const { selected, quantity } = this.props
 
@@ -488,7 +494,7 @@ class SelectContainer extends Component<
     this.props.history.push('/destinations/editSelection')
   }
   render() {
-    const { isCalendarOpen, filters } = this.state
+    const { isCalendarOpen, filters, trips } = this.state
     const { isMax, quantity, selected, departure } = this.props
     const isMapViewOpen = this.state.isMapViewOpen
     let locations: any = []
@@ -537,7 +543,7 @@ class SelectContainer extends Component<
                     quantity.Youth,
                     departure
                   ).then(() => {
-                    this.setState({ isLoading: false })
+                    this.setState({ isLoading: false, isSorting: 0 })
                     if (
                       this.state.trips.length >= 10 &&
                       this.state.trips.length > 0
@@ -564,52 +570,124 @@ class SelectContainer extends Component<
                 />
               </section>
               <section className="select-cnt-inner-destinations">
-                <Title
-                  className="select-cnt-inner-title"
-                  text={`We found ${
-                    this.state.trips.length
-                  } destinations for you`}
-                  selected={[`${this.state.trips.length} destinations`]}
-                />
+                <div>
+                  <div style={{ float: 'left' }}>
+                    <Title
+                      className="select-cnt-inner-title"
+                      text={`We found ${
+                        this.state.trips.length
+                      } destinations for you`}
+                      selected={[`${this.state.trips.length} destinations`]}
+                    />
+                  </div>
+                  <div style={{ float: 'right' }}>
+                    <span className="filters-filter-value">Sort By: </span>
+                    <select
+                      name="drpFilterDestination"
+                      id="drpFilterDestination"
+                      placeholder="Recommended"
+                      className="spon-trip-modal__dropdown"
+                      onChange={(e: any) => this.handleChange(e)}
+                      defaultValue={this.state.isSorting.toString()}>
+                      {DESTINATIONFILTERS.map(x => (
+                        <option key={x._id} value={x._id}>
+                          {' '}
+                          {x.name}
+                        </option>
+                      ))}
+                      ;
+                    </select>
+                  </div>
+                </div>
                 <div className="select-cnt-inner-destination-list">
                   {this.state.isLoading ? <div>Loading..</div> : null}
-                  {!this.state.isLoading && this.state.trips.length === 0 ? (
+                  {!this.state.isLoading && trips.length === 0 ? (
                     <div>No ticket found</div>
                   ) : null}
                   {!this.state.isLoading &&
-                    this.state.trips != undefined &&
-                    this.state.trips.length > 0 &&
-                    this.state.trips.map((trip: ITrip, index) => {
-                      trip.type = 'trip'
-                      const filtered = this.props.selected.filter(
-                        (item: ISelectedData) => {
-                          if (item.tripId === trip._id) {
-                            ;(trip.dateStart = item.dateStart),
-                              (trip.dateEnd = item.dateEnd)
+                    trips != undefined &&
+                    trips.length > 0 &&
+                    trips
+                      .slice()
+                      .sort((a: any, b: any) => {
+                        if (this.state.isSorting == 1) {
+                          return a.destination.name.localeCompare(
+                            b.destination.name
+                          )
+                        }
 
-                            return true
+                        if (this.state.isSorting == 2) {
+                          let finalCostA = 0,
+                            finalCostB = 0
+
+                          if (a['destinationCharges']) {
+                            finalCostA =
+                              a['destinationCharges'].adultPrice * a['Adult'] +
+                              a['destinationCharges'].childPrice * a['Youth'] +
+                              (a.adultPrice * a['Adult'] +
+                                a.childPrice * a['Youth'])
+                          } else {
+                            finalCostA =
+                              2 *
+                              (a.adultPrice * a['Adult'] +
+                                a.childPrice * a['Youth'])
                           }
 
-                          return false
+                          a['finalCost'] = finalCostA
+
+                          if (b['destinationCharges']) {
+                            finalCostB =
+                              b['destinationCharges'].adultPrice * b['Adult'] +
+                              b['destinationCharges'].childPrice * b['Youth'] +
+                              (b.adultPrice * b['Adult'] +
+                                b.childPrice * b['Youth'])
+                          } else {
+                            finalCostB =
+                              2 *
+                              (b.adultPrice * b['Adult'] +
+                                b.childPrice * b['Youth'])
+                          }
+
+                          b['finalCost'] = finalCostB
+
+                          return (
+                            parseFloat(a.finalCost) - parseFloat(b.finalCost)
+                          )
                         }
-                      )
-                      const isSelected = filtered.length > 0
-                      return (
-                        <Destination
-                          key={index}
-                          index={trip._id}
-                          data={trip}
-                          quantity={quantity}
-                          selected={isSelected}
-                          onSelect={this.onSelect}
-                          onDeselect={this.onDeselect}
-                          isMax={isMax}
-                          onCalendarOpen={this.calendarOpened}
-                          onCalendarClose={this.calendarClosed}
-                          isCalendarOpen={false}
-                        />
-                      )
-                    })}
+
+                        return a
+                      })
+                      .map((trip: ITrip, index) => {
+                        trip.type = 'trip'
+                        const filtered = this.props.selected.filter(
+                          (item: ISelectedData) => {
+                            if (item.tripId === trip._id) {
+                              ;(trip.dateStart = item.dateStart),
+                                (trip.dateEnd = item.dateEnd)
+
+                              return true
+                            }
+
+                            return false
+                          }
+                        )
+                        const isSelected = filtered.length > 0
+                        return (
+                          <Destination
+                            key={index}
+                            index={trip._id}
+                            data={trip}
+                            quantity={quantity}
+                            selected={isSelected}
+                            onSelect={this.onSelect}
+                            onDeselect={this.onDeselect}
+                            isMax={isMax}
+                            onCalendarOpen={this.calendarOpened}
+                            onCalendarClose={this.calendarClosed}
+                            isCalendarOpen={false}
+                          />
+                        )
+                      })}
                 </div>
               </section>
             </section>

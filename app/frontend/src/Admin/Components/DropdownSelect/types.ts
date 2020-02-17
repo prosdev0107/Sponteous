@@ -11,6 +11,7 @@ export interface IState {
     placeholder: string
     className?: string
     selectedValue?: string
+    saveAsObject?: boolean
     onChange: (
       e: { target: { id: string; value: { _id: string; name: string } | string } }
     ) => void

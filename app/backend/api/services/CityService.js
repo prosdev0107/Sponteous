@@ -16,7 +16,6 @@ module.exports = {
     const city = await City.findOne({ name: data.name});
     if(city) throw { status: 409, message: 'CITY.EXIST' };
 
-    //photo saving
     const indexOfData = data.photo.indexOf(',') + 1;
     const photo = data.photo.substring(indexOfData);
 
@@ -44,7 +43,6 @@ module.exports = {
         console.log('photo saving successful')
       } 
     });
-    //
 
     data.photo = photoPath;
 
@@ -174,6 +172,9 @@ module.exports = {
       data.photo = city.photo;
     }
 
+    data.isDestination = city.isDestination;
+    data.isDeparture = city.isDeparture;
+
     const updatedCity = await City.findByIdAndUpdate(id, data, { new: true });
 
     const departureTrips = await Trip.find({'departure._id': ObjectId(id)});
@@ -182,6 +183,7 @@ module.exports = {
         'departure.name': updatedCity.name,
         'departure.photo': updatedCity.photo,
         'departure.isEnabled': updatedCity.isEnabled,
+        'departure.isDeparture': updatedCity.isDeparture,
         'departure.tags': updatedCity.tags,
         'departure.country': updatedCity.country,
         'departure.isManual': updatedCity.isManual
@@ -197,7 +199,8 @@ module.exports = {
         'destination.isEnabled': updatedCity.isEnabled,
         'destination.tags': updatedCity.tags,
         'destination.country': updatedCity.country,
-        'destination.isManual': updatedCity.isManual
+        'destination.isManual': updatedCity.isManual,
+        'destination.isDestination': updatedCity.isDestination,
       }}, { new: true });
     });
 

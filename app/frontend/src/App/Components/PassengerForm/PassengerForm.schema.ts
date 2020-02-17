@@ -22,16 +22,16 @@ export const PassengerFormSchema = Yup.object().shape({
   firstName: Yup.string()
     .min(1, Message.nameMin)
     .max(29, Message.nameMax)
-    .matches(/^\p{L}+$/u, Message.namePattern)
+    // .matches(/^\p{L}+$/u, Message.namePattern)
     .required(Message.required),
   middleName: Yup.string()
     .min(1, Message.nameMin)
-    .max(29, Message.nameMax)
-    .matches(/^\p{L}+$/u, Message.namePattern),
+    // .matches(/^\p{L}+$/u, Message.namePattern)
+    .max(29, Message.nameMax),
   lastName: Yup.string()
     .min(1, Message.nameMin)
     .max(29, Message.nameMax)
-    .matches(/^\p{L}+$/u, Message.namePattern)
+    // .matches(/^\p{L}+$/u, Message.namePattern)
     .required(Message.required),
   phone: Yup.string()
     .min(6, Message.phoneMin)

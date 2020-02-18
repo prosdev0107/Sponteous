@@ -99,7 +99,7 @@
   flex-direction: column;
   align-items: center;
   position: relative;
-  height: 100vh;
+  height: 93vh;
   z-index: 2;
   background: white;
   border-top: 10px solid #4142a6;
@@ -107,4 +107,29 @@
 
 #iwc .destination {
   margin: unset !important;
+}
+
+// Map Infowindow style
+.gm-style .gm-style-iw-c {
+  padding: 0 !important;
+  max-width: unset !important;
+}
+.gm-style .gm-style-iw-d {
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  max-width: unset !important;
+}
+.gm-ui-hover-effect {
+  visibility: hidden;
+}
+.destination-bottom {
+  border: none !important;
+}
+@media (max-width: 575.98px) {
+  .destination {
+    width: 260px;
+  }
+  .gm-bundled-control-on-bottom {
+    visibility: hidden;
+  }
 }

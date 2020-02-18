@@ -176,5 +176,9 @@
       border: 1px solid $gray;
       outline: none;
     }
+    &-btn:hover,
+    :focus {
+      border-color: #4142a6;
+    }
   }
 }

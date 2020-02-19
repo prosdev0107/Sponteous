@@ -608,7 +608,8 @@ class SelectContainer extends Component<
 
   openMapView = () => {
     this.setState((state: IState) => ({
-      isMapViewOpen: !state.isMapViewOpen
+      isMapViewOpen: !state.isMapViewOpen,
+      isCalendarOpen: false
     }))
   }
 

@@ -914,6 +914,7 @@ class SelectContainer extends Component<
               mapTypeControl={false}
               fullscreenControl={false}
               scaleControl={false}
+              gestureHandling={'greedy'}
               onReady={(mapProps, map) => this._mapLoaded(mapProps, map)}
               onClick={this.mapClicked}>
               {locations.map((location: any, index: number) => {

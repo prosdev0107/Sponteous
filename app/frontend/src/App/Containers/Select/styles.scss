@@ -68,6 +68,11 @@
         width: 90%;
         margin: 0 0 3rem 0;
       }
+      &-filter-value {
+        color: #d8d8d8;
+        font-family: Poppins;
+        font-size: 12px;
+      }
     }
     &-destinations {
     }
@@ -122,13 +127,14 @@
 .gm-ui-hover-effect {
   visibility: hidden;
 }
-.destination-bottom {
-  border: none !important;
+
+#iwc {
+  width: 300px;
+  .destination-bottom {
+    border: none !important;
+  }
 }
 @media (max-width: 575.98px) {
-  .destination {
-    width: 260px;
-  }
   .gm-bundled-control-on-bottom {
     visibility: hidden;
   }

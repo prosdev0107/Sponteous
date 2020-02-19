@@ -22,6 +22,11 @@
   background-color: $white;
   margin-bottom: 2rem;
   margin-right: 1rem;
+  @media (max-width: 575.98px) {
+    .destination {
+      width: 290px;
+    }
+  }
 
   &:nth-of-type(3n) {
     margin-right: auto;

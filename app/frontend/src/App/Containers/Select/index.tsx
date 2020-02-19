@@ -679,7 +679,8 @@ class SelectContainer extends Component<
   mapClicked = () => {
     console.log('mapclicked')
     this.setState({
-      showingInfoWindow: false
+      showingInfoWindow: false,
+      isCalendarOpen: false
     })
   }
 
@@ -904,7 +905,7 @@ class SelectContainer extends Component<
             />
             <Map
               google={this.props.google}
-              zoom={14}
+              zoom={5}
               initialCenter={{
                 lat: lat,
                 lng: lng

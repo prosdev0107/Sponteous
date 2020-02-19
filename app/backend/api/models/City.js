@@ -11,7 +11,9 @@ const citySchema = new Schema({
   isManual: { type: Boolean, default: false },
   isEnabled: { type: Boolean, default: false },
   isDestination: { type: Boolean, default: true },
-  isDeparture: { type: Boolean, default: true }
+  isDeparture: { type: Boolean, default: true },
+  latitude: String,
+  longitude: String
 });
 
 module.exports = mongoose.model('City', citySchema);

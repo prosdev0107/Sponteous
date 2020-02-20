@@ -247,7 +247,8 @@ class SelectContainer extends Component<
     showingInfoWindow: false,
     activeMarker: {},
     selectedPlace: {},
-    isSorting: 0
+    isSorting: 0,
+    filterVisible: false
   }
 
   private filters = React.createRef<Filters>()
@@ -685,8 +686,14 @@ class SelectContainer extends Component<
     })
   }
 
+  hanleToggleFilterVisible = () => {
+    this.setState((state: IState) => ({
+      filterVisible: !state.filterVisible
+    }))
+  }
+
   render() {
-    const { isCalendarOpen, filters, trips } = this.state
+    const { isCalendarOpen, filters, trips, filterVisible } = this.state
     const { isMax, quantity, selected, departure } = this.props
     const isMapViewOpen = this.state.isMapViewOpen
     let locations: any = []
@@ -759,129 +766,137 @@ class SelectContainer extends Component<
                   filters={filters}
                   isMapViewOn={this.state.isMapViewOpen}
                   openMapView={this.openMapView}
+                  filterVisible={filterVisible}
+                  hanleToggleFilterVisible={this.hanleToggleFilterVisible}
                 />
               </section>
-              <section className="select-cnt-inner-destinations">
-                <div>
-                  <div style={{ float: 'left' }}>
-                    <Title
-                      className="select-cnt-inner-title"
-                      text={`We found ${
-                        this.state.trips.length
-                      } destinations for you`}
-                      selected={[`${this.state.trips.length} destinations`]}
-                    />
+              {!filterVisible && (
+                <section className="select-cnt-inner-destinations">
+                  <div>
+                    <div style={{ float: 'left' }}>
+                      <Title
+                        className="select-cnt-inner-title"
+                        text={`We found ${
+                          this.state.trips.length
+                        } destinations for you`}
+                        selected={[`${this.state.trips.length} destinations`]}
+                      />
+                    </div>
+                    <div style={{ float: 'right' }}>
+                      <span className="filters-filter-value">Sort By: </span>
+                      <select
+                        name="drpFilterDestination"
+                        id="drpFilterDestination"
+                        placeholder="Recommended"
+                        className="spon-trip-modal__dropdown"
+                        onChange={(e: any) => this.handleChange(e)}
+                        defaultValue={this.state.isSorting.toString()}>
+                        {DESTINATIONFILTERS.map(x => (
+                          <option key={x._id} value={x._id}>
+                            {' '}
+                            {x.name}
+                          </option>
+                        ))}
+                        ;
+                      </select>
+                    </div>
                   </div>
-                  <div style={{ float: 'right' }}>
-                    <span className="filters-filter-value">Sort By: </span>
-                    <select
-                      name="drpFilterDestination"
-                      id="drpFilterDestination"
-                      placeholder="Recommended"
-                      className="spon-trip-modal__dropdown"
-                      onChange={(e: any) => this.handleChange(e)}
-                      defaultValue={this.state.isSorting.toString()}>
-                      {DESTINATIONFILTERS.map(x => (
-                        <option key={x._id} value={x._id}>
-                          {' '}
-                          {x.name}
-                        </option>
-                      ))}
-                      ;
-                    </select>
-                  </div>
-                </div>
-                <div className="select-cnt-inner-destination-list">
-                  {this.state.isLoading ? <div>Loading..</div> : null}
-                  {!this.state.isLoading && trips.length === 0 ? (
-                    <div>No ticket found</div>
-                  ) : null}
-                  {!this.state.isLoading &&
-                    trips != undefined &&
-                    trips.length > 0 &&
-                    trips
-                      .slice()
-                      .sort((a: any, b: any) => {
-                        if (this.state.isSorting == 1) {
-                          return a.destination.name.localeCompare(
-                            b.destination.name
-                          )
-                        }
-
-                        if (this.state.isSorting == 2) {
-                          let finalCostA = 0,
-                            finalCostB = 0
-
-                          if (a['destinationCharges']) {
-                            finalCostA =
-                              a['destinationCharges'].adultPrice * a['Adult'] +
-                              a['destinationCharges'].childPrice * a['Youth'] +
-                              (a.adultPrice * a['Adult'] +
-                                a.childPrice * a['Youth'])
-                          } else {
-                            finalCostA =
-                              2 *
-                              (a.adultPrice * a['Adult'] +
-                                a.childPrice * a['Youth'])
+                  <div className="select-cnt-inner-destination-list">
+                    {this.state.isLoading ? <div>Loading..</div> : null}
+                    {!this.state.isLoading && trips.length === 0 ? (
+                      <div>No ticket found</div>
+                    ) : null}
+                    {!this.state.isLoading &&
+                      trips != undefined &&
+                      trips.length > 0 &&
+                      trips
+                        .slice()
+                        .sort((a: any, b: any) => {
+                          if (this.state.isSorting == 1) {
+                            return a.destination.name.localeCompare(
+                              b.destination.name
+                            )
                           }
 
-                          a['finalCost'] = finalCostA
+                          if (this.state.isSorting == 2) {
+                            let finalCostA = 0,
+                              finalCostB = 0
 
-                          if (b['destinationCharges']) {
-                            finalCostB =
-                              b['destinationCharges'].adultPrice * b['Adult'] +
-                              b['destinationCharges'].childPrice * b['Youth'] +
-                              (b.adultPrice * b['Adult'] +
-                                b.childPrice * b['Youth'])
-                          } else {
-                            finalCostB =
-                              2 *
-                              (b.adultPrice * b['Adult'] +
-                                b.childPrice * b['Youth'])
-                          }
-
-                          b['finalCost'] = finalCostB
-
-                          return (
-                            parseFloat(a.finalCost) - parseFloat(b.finalCost)
-                          )
-                        }
-
-                        return a
-                      })
-                      .map((trip: ITrip, index) => {
-                        trip.type = 'trip'
-                        const filtered = this.props.selected.filter(
-                          (item: ISelectedData) => {
-                            if (item.tripId === trip._id) {
-                              ;(trip.dateStart = item.dateStart),
-                                (trip.dateEnd = item.dateEnd)
-
-                              return true
+                            if (a['destinationCharges']) {
+                              finalCostA =
+                                a['destinationCharges'].adultPrice *
+                                  a['Adult'] +
+                                a['destinationCharges'].childPrice *
+                                  a['Youth'] +
+                                (a.adultPrice * a['Adult'] +
+                                  a.childPrice * a['Youth'])
+                            } else {
+                              finalCostA =
+                                2 *
+                                (a.adultPrice * a['Adult'] +
+                                  a.childPrice * a['Youth'])
                             }
 
-                            return false
+                            a['finalCost'] = finalCostA
+
+                            if (b['destinationCharges']) {
+                              finalCostB =
+                                b['destinationCharges'].adultPrice *
+                                  b['Adult'] +
+                                b['destinationCharges'].childPrice *
+                                  b['Youth'] +
+                                (b.adultPrice * b['Adult'] +
+                                  b.childPrice * b['Youth'])
+                            } else {
+                              finalCostB =
+                                2 *
+                                (b.adultPrice * b['Adult'] +
+                                  b.childPrice * b['Youth'])
+                            }
+
+                            b['finalCost'] = finalCostB
+
+                            return (
+                              parseFloat(a.finalCost) - parseFloat(b.finalCost)
+                            )
                           }
-                        )
-                        const isSelected = filtered.length > 0
-                        return (
-                          <Destination
-                            key={index}
-                            index={trip._id}
-                            data={trip}
-                            quantity={quantity}
-                            selected={isSelected}
-                            onSelect={this.onSelect}
-                            onDeselect={this.onDeselect}
-                            isMax={isMax}
-                            onCalendarOpen={this.calendarOpened}
-                            onCalendarClose={this.calendarClosed}
-                            isCalendarOpen={false}
-                          />
-                        )
-                      })}
-                </div>
-              </section>
+
+                          return a
+                        })
+                        .map((trip: ITrip, index) => {
+                          trip.type = 'trip'
+                          const filtered = this.props.selected.filter(
+                            (item: ISelectedData) => {
+                              if (item.tripId === trip._id) {
+                                ;(trip.dateStart = item.dateStart),
+                                  (trip.dateEnd = item.dateEnd)
+
+                                return true
+                              }
+
+                              return false
+                            }
+                          )
+                          const isSelected = filtered.length > 0
+                          return (
+                            <Destination
+                              key={index}
+                              index={trip._id}
+                              data={trip}
+                              quantity={quantity}
+                              selected={isSelected}
+                              onSelect={this.onSelect}
+                              onDeselect={this.onDeselect}
+                              isMax={isMax}
+                              onCalendarOpen={this.calendarOpened}
+                              onCalendarClose={this.calendarClosed}
+                              isCalendarOpen={false}
+                            />
+                          )
+                        })}
+                  </div>
+                </section>
+              )}
             </section>
             <SelectPanel
               step={STEP_IDS.SELECT}
@@ -903,6 +918,8 @@ class SelectContainer extends Component<
               filters={filters}
               isMapViewOn={this.state.isMapViewOpen}
               openMapView={this.openMapView}
+              filterVisible={filterVisible}
+              hanleToggleFilterVisible={this.hanleToggleFilterVisible}
             />
             <Map
               google={this.props.google}

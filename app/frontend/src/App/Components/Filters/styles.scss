@@ -8,7 +8,25 @@
   padding: 2rem;
   background-color: $white;
   border: 1px solid $gray;
+  @media (max-width: 575.98px) {
+    display: none;
+  }
 
+  &-m {
+    display: none;
+    @media (max-width: 575.98px) {
+      display: block;
+    }
+    &--open {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: calc(100vh - 6.5rem);
+      background-color: $white;
+      z-index: 2;
+    }
+  }
   @include respond(tab) {
     width: 100%;
   }
@@ -22,6 +40,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    @media (max-width: 575.98px) {
+      height: 50px;
+      padding: 0 20px;
+      border-bottom: solid 1px #d8d8d8;
+    }
   }
 
   &-button {
@@ -143,6 +166,7 @@
 
 .map {
   z-index: 2;
+  margin: auto;
   margin-top: 30px;
   width: 90%;
   height: 80px;
@@ -151,9 +175,7 @@
   background-color: $white;
   border: 1px solid #dadce9;
   @media (max-width: 575.98px) {
-    flex-wrap: wrap;
-    height: fit-content;
-    padding: 25px 25px;
+    display: none;
   }
   &-filter {
     flex-direction: column;

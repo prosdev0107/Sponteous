@@ -7,7 +7,9 @@ export interface IProps {
   clearDates: () => void
   clearPrice: () => void
   openMapView: () => void
+  hanleToggleFilterVisible: () => void
   onChange: (filters: IFiltersChange, callback?: () => void) => void
+  filterVisible: boolean
 }
 export interface IState {
   calendarVisible: boolean

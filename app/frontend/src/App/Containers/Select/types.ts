@@ -32,6 +32,7 @@ export interface IState {
   activeMarker: any
   selectedPlace: any
   isSorting: number
+  filterVisible: boolean
 }
 
 export interface IProps {

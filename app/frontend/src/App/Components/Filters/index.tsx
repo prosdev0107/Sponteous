@@ -3,6 +3,7 @@ import { Slider } from 'antd'
 import arrow from '../../../Common/Utils/Media/arrow.svg'
 import money from '../../Utils/Media/money.svg'
 import calendar from '../../Utils/Media/calendar.svg'
+import filterClose from '../../Utils/Media/filterClose.png'
 import mapIcon from '../../Utils/Media/mapIcon.png'
 import mapClose from '../../Utils/Media/mapClose.png'
 import mapBackground from '../../Utils/Media/mapBackground.png'
@@ -55,7 +56,8 @@ export default class Filters extends React.Component<IProps, IState> {
   render() {
     const { calendarVisible, priceVisible, priceTouched } = this.state
     const {
-      filters: { min, max, start, end }
+      filters: { min, max, start, end },
+      filterVisible
     } = this.props
 
     const startText = start
@@ -71,10 +73,229 @@ export default class Filters extends React.Component<IProps, IState> {
     const priceText = priceTouched ? `${min} - ${max}` : 'Price'
     if (this.props.isMapViewOn) {
       return (
-        <div className="map">
-          <div className="map-filter">
+        <div style={{ zIndex: 2, width: '100%' }}>
+          <div className="map">
+            <div className="map-filter">
+              <button
+                className="map-filter-btn"
+                onClick={this.hanleToggleClendarVisible}>
+                <div className="filters-inner">
+                  <svg className="filters-filter-prefix">
+                    <use xlinkHref={`${calendar}#svg`} />
+                  </svg>
+                  <span className="filters-filter-value">
+                    {startText} - {endText}
+                  </span>
+                </div>
+                <img
+                  className={`filters-filter-suffix${
+                    calendarVisible ? ' open' : ''
+                  }`}
+                  src={arrow}
+                />
+              </button>
+              {calendarVisible && (
+                <div className="filters-calendar">
+                  <Calendar onChange={this.setDepartureValue} selectRange />
+                </div>
+              )}
+            </div>
+            <div className="map-filter">
+              <button
+                className="map-filter-btn"
+                onClick={this.handleTogglePriceVisible}>
+                <div className="filters-inner">
+                  <span className="filters-filter-prefix">
+                    <svg>
+                      <use xlinkHref={`${money}#money`} />
+                    </svg>
+                  </span>
+                  <span className="filters-filter-value">{priceText}</span>
+                </div>
+                <span
+                  className={`filters-filter-suffix${
+                    priceVisible ? ' open' : ''
+                  }`}>
+                  <img src={arrow} />
+                </span>
+              </button>
+              {priceVisible && (
+                <Slider
+                  className="filters-slider"
+                  range
+                  tipFormatter={null}
+                  min={0}
+                  max={300}
+                  value={[min, max]}
+                  onChange={(v: [number, number]) => this.setPriceValue(v)}
+                  onAfterChange={this.props.fetchTrips}
+                />
+              )}
+            </div>
+            <div className="map-filter">
+              <button
+                className="map-filter-btn"
+                style={{
+                  justifyContent: 'center'
+                }}
+                onClick={this.props.openMapView}>
+                <div className="filters-inner">
+                  <span className="filters-filter-prefix">
+                    <img src={mapClose} width="15px" alt="" srcSet="" />
+                  </span>
+                  <span className="filters-filter-value">
+                    <div style={{ fontWeight: 500 }}>
+                      {this.props.isMapViewOn ? 'CLOSE MAP VIEW' : 'MAP VIEW'}
+                    </div>
+                  </span>
+                </div>
+              </button>
+            </div>
+          </div>
+          {!filterVisible ? (
+            <div className="filters-m">
+              <div style={{ display: 'flex', padding: '0 10px' }}>
+                <button
+                  className="filters-filter"
+                  style={{ width: '180px', marginRight: '10px' }}
+                  onClick={this.props.hanleToggleFilterVisible}>
+                  <div className="filters-inner">
+                    <span className="filters-filter-value">Filters</span>
+                  </div>
+                  <img
+                    className={`filters-filter-suffix${
+                      calendarVisible ? ' open' : ''
+                    }`}
+                    src={arrow}
+                  />
+                </button>
+                <button
+                  className="filters-filter"
+                  style={{
+                    justifyContent: 'center'
+                  }}
+                  onClick={this.props.openMapView}>
+                  <div className="filters-inner">
+                    <span
+                      className="filters-filter-prefix"
+                      style={{ marginTop: '2px' }}>
+                      <img src={mapClose} width="15px" alt="" srcSet="" />
+                    </span>
+                    <span className="filters-filter-value">
+                      <div style={{ fontWeight: 500 }}>
+                        {this.props.isMapViewOn ? 'CLOSE MAP VIEW' : 'MAP VIEW'}
+                      </div>
+                    </span>
+                  </div>
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="filters-m--open">
+              <div className="filters-header">
+                <button
+                  onClick={this.props.hanleToggleFilterVisible}
+                  className="filters-button">
+                  <img src={filterClose} width="15px" alt="" srcSet="" />
+                </button>
+                <h5 className="filters-title">
+                  Filters ({+priceTouched + +!!start})
+                </h5>
+
+                <button
+                  onClick={this.handleClearFilters}
+                  className="filters-button">
+                  Clear
+                </button>
+              </div>
+              <div style={{ padding: '30px 20px' }}>
+                <button
+                  className="filters-filter"
+                  onClick={this.hanleToggleClendarVisible}>
+                  <div className="filters-inner">
+                    <svg className="filters-filter-prefix">
+                      <use xlinkHref={`${calendar}#svg`} />
+                    </svg>
+                    <span className="filters-filter-value">
+                      {startText} - {endText}
+                    </span>
+                  </div>
+                  <img
+                    className={`filters-filter-suffix${
+                      calendarVisible ? ' open' : ''
+                    }`}
+                    src={arrow}
+                  />
+                </button>
+                {calendarVisible && (
+                  <div className="filters-calendar">
+                    <Calendar onChange={this.setDepartureValue} selectRange />
+                  </div>
+                )}
+                <button
+                  className="filters-filter"
+                  onClick={this.handleTogglePriceVisible}>
+                  <div className="filters-inner">
+                    <span className="filters-filter-prefix">
+                      <svg>
+                        <use xlinkHref={`${money}#money`} />
+                      </svg>
+                    </span>
+                    <span className="filters-filter-value">{priceText}</span>
+                  </div>
+                  <span
+                    className={`filters-filter-suffix${
+                      priceVisible ? ' open' : ''
+                    }`}>
+                    <img src={arrow} />
+                  </span>
+                </button>
+                {priceVisible && (
+                  <Slider
+                    className="filters-slider"
+                    range
+                    tipFormatter={null}
+                    min={0}
+                    max={300}
+                    value={[min, max]}
+                    onChange={(v: [number, number]) => this.setPriceValue(v)}
+                    onAfterChange={this.props.fetchTrips}
+                  />
+                )}
+                <button
+                  className="filters-filter"
+                  style={{
+                    backgroundColor: '#5dc3fd',
+                    color: 'white',
+                    justifyContent: 'center'
+                  }}
+                  onClick={this.props.hanleToggleFilterVisible}>
+                  <div className="filters-inner">
+                    <div className="filters-filter-value">APPLY FILTERS</div>
+                  </div>
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )
+    } else {
+      return (
+        <div>
+          <div className="filters">
+            <div className="filters-header">
+              <h5 className="filters-title">
+                Filters ({+priceTouched + +!!start})
+              </h5>
+
+              <button
+                onClick={this.handleClearFilters}
+                className="filters-button">
+                Clear filters
+              </button>
+            </div>
             <button
-              className="map-filter-btn"
+              className="filters-filter"
               onClick={this.hanleToggleClendarVisible}>
               <div className="filters-inner">
                 <svg className="filters-filter-prefix">
@@ -96,10 +317,8 @@ export default class Filters extends React.Component<IProps, IState> {
                 <Calendar onChange={this.setDepartureValue} selectRange />
               </div>
             )}
-          </div>
-          <div className="map-filter">
             <button
-              className="map-filter-btn"
+              className="filters-filter"
               onClick={this.handleTogglePriceVisible}>
               <div className="filters-inner">
                 <span className="filters-filter-prefix">
@@ -128,111 +347,151 @@ export default class Filters extends React.Component<IProps, IState> {
                 onAfterChange={this.props.fetchTrips}
               />
             )}
-          </div>
-          <div className="map-filter">
             <button
-              className="map-filter-btn"
+              className="filters-filter"
               style={{
-                justifyContent: 'center'
+                backgroundImage: `url(${mapBackground})`,
+                justifyContent: 'center',
+                backgroundSize: 'cover'
               }}
               onClick={this.props.openMapView}>
               <div className="filters-inner">
                 <span className="filters-filter-prefix">
-                  <img src={mapClose} width="15px" alt="" srcSet="" />
+                  <img src={mapIcon} width="15px" alt="" srcSet="" />
                 </span>
                 <span className="filters-filter-value">
                   <div style={{ fontWeight: 500 }}>
-                    {this.props.isMapViewOn ? 'Close Map View' : 'Map View'}
+                    {this.props.isMapViewOn ? 'CLOSE MAP VIEW' : 'MAP VIEW'}
                   </div>
                 </span>
               </div>
             </button>
           </div>
-        </div>
-      )
-    } else {
-      return (
-        <div className="filters">
-          <div className="filters-header">
-            <h5 className="filters-title">
-              Filters ({+priceTouched + +!!start})
-            </h5>
+          {!filterVisible ? (
+            <div className="filters-m">
+              <div style={{ display: 'flex' }}>
+                <button
+                  className="filters-filter"
+                  style={{ width: '180px', marginRight: '10px' }}
+                  onClick={this.props.hanleToggleFilterVisible}>
+                  <div className="filters-inner">
+                    <span className="filters-filter-value">Filters</span>
+                  </div>
+                  <img
+                    className={`filters-filter-suffix${
+                      calendarVisible ? ' open' : ''
+                    }`}
+                    src={arrow}
+                  />
+                </button>
+                <button
+                  className="filters-filter"
+                  style={{
+                    backgroundImage: `url(${mapBackground})`,
+                    justifyContent: 'center',
+                    backgroundSize: 'cover'
+                  }}
+                  onClick={this.props.openMapView}>
+                  <div className="filters-inner">
+                    <span className="filters-filter-prefix">
+                      <img src={mapIcon} width="15px" alt="" srcSet="" />
+                    </span>
+                    <span className="filters-filter-value">
+                      <div style={{ fontWeight: 500 }}>
+                        {this.props.isMapViewOn ? 'CLOSE MAP VIEW' : 'MAP VIEW'}
+                      </div>
+                    </span>
+                  </div>
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="filters-m--open">
+              <div className="filters-header">
+                <button
+                  onClick={this.props.hanleToggleFilterVisible}
+                  className="filters-button">
+                  <img src={filterClose} width="15px" alt="" srcSet="" />
+                </button>
+                <h5 className="filters-title">
+                  Filters ({+priceTouched + +!!start})
+                </h5>
 
-            <button
-              onClick={this.handleClearFilters}
-              className="filters-button">
-              Clear filters
-            </button>
-          </div>
-          <button
-            className="filters-filter"
-            onClick={this.hanleToggleClendarVisible}>
-            <div className="filters-inner">
-              <svg className="filters-filter-prefix">
-                <use xlinkHref={`${calendar}#svg`} />
-              </svg>
-              <span className="filters-filter-value">
-                {startText} - {endText}
-              </span>
-            </div>
-            <img
-              className={`filters-filter-suffix${
-                calendarVisible ? ' open' : ''
-              }`}
-              src={arrow}
-            />
-          </button>
-          {calendarVisible && (
-            <div className="filters-calendar">
-              <Calendar onChange={this.setDepartureValue} selectRange />
+                <button
+                  onClick={this.handleClearFilters}
+                  className="filters-button">
+                  Clear
+                </button>
+              </div>
+              <div style={{ padding: '30px 20px' }}>
+                <button
+                  className="filters-filter"
+                  onClick={this.hanleToggleClendarVisible}>
+                  <div className="filters-inner">
+                    <svg className="filters-filter-prefix">
+                      <use xlinkHref={`${calendar}#svg`} />
+                    </svg>
+                    <span className="filters-filter-value">
+                      {startText} - {endText}
+                    </span>
+                  </div>
+                  <img
+                    className={`filters-filter-suffix${
+                      calendarVisible ? ' open' : ''
+                    }`}
+                    src={arrow}
+                  />
+                </button>
+                {calendarVisible && (
+                  <div className="filters-calendar">
+                    <Calendar onChange={this.setDepartureValue} selectRange />
+                  </div>
+                )}
+                <button
+                  className="filters-filter"
+                  onClick={this.handleTogglePriceVisible}>
+                  <div className="filters-inner">
+                    <span className="filters-filter-prefix">
+                      <svg>
+                        <use xlinkHref={`${money}#money`} />
+                      </svg>
+                    </span>
+                    <span className="filters-filter-value">{priceText}</span>
+                  </div>
+                  <span
+                    className={`filters-filter-suffix${
+                      priceVisible ? ' open' : ''
+                    }`}>
+                    <img src={arrow} />
+                  </span>
+                </button>
+                {priceVisible && (
+                  <Slider
+                    className="filters-slider"
+                    range
+                    tipFormatter={null}
+                    min={0}
+                    max={300}
+                    value={[min, max]}
+                    onChange={(v: [number, number]) => this.setPriceValue(v)}
+                    onAfterChange={this.props.fetchTrips}
+                  />
+                )}
+                <button
+                  className="filters-filter"
+                  style={{
+                    backgroundColor: '#5dc3fd',
+                    color: 'white',
+                    justifyContent: 'center'
+                  }}
+                  onClick={this.props.hanleToggleFilterVisible}>
+                  <div className="filters-inner">
+                    <div className="filters-filter-value">APPLY FILTERS</div>
+                  </div>
+                </button>
+              </div>
             </div>
           )}
-          <button
-            className="filters-filter"
-            onClick={this.handleTogglePriceVisible}>
-            <div className="filters-inner">
-              <span className="filters-filter-prefix">
-                <svg>
-                  <use xlinkHref={`${money}#money`} />
-                </svg>
-              </span>
-              <span className="filters-filter-value">{priceText}</span>
-            </div>
-            <span
-              className={`filters-filter-suffix${priceVisible ? ' open' : ''}`}>
-              <img src={arrow} />
-            </span>
-          </button>
-          {priceVisible && (
-            <Slider
-              className="filters-slider"
-              range
-              tipFormatter={null}
-              min={0}
-              max={300}
-              value={[min, max]}
-              onChange={(v: [number, number]) => this.setPriceValue(v)}
-              onAfterChange={this.props.fetchTrips}
-            />
-          )}
-          <button
-            className="filters-filter"
-            style={{
-              backgroundImage: `url(${mapBackground})`,
-              justifyContent: 'center'
-            }}
-            onClick={this.props.openMapView}>
-            <div className="filters-inner">
-              <span className="filters-filter-prefix">
-                <img src={mapIcon} width="15px" alt="" srcSet="" />
-              </span>
-              <span className="filters-filter-value">
-                <div style={{ fontWeight: 500 }}>
-                  {this.props.isMapViewOn ? 'Close Map View' : 'Map View'}
-                </div>
-              </span>
-            </div>
-          </button>
         </div>
       )
     }

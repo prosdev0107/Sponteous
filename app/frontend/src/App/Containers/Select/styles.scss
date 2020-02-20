@@ -110,10 +110,6 @@
   border-top: 10px solid #4142a6;
 }
 
-#iwc .destination {
-  margin: unset !important;
-}
-
 // Map Infowindow style
 .gm-style .gm-style-iw-c {
   padding: 0 !important;
@@ -130,8 +126,14 @@
 
 #iwc {
   width: 290px;
-  .destination-bottom {
-    border: none !important;
+  .destination {
+    margin: unset !important;
+    &-bottom {
+      border: none !important;
+    }
+    @media (min-width: 576px) and (max-width: 1198.98px) {
+      width: 100% !important;
+    }
   }
 }
 @media (max-width: 575.98px) {

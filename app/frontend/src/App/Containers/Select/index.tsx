@@ -776,10 +776,10 @@ class SelectContainer extends Component<
                     <div style={{ float: 'left' }}>
                       <Title
                         className="select-cnt-inner-title"
-                        text={`We found ${
+                        text={`Select 5 destinations from the ${
                           this.state.trips.length
-                        } destinations for you`}
-                        selected={[`${this.state.trips.length} destinations`]}
+                        } destinations bellow`}
+                        selected={[`${this.state.trips.length} destinations`,'5 destinations']}
                       />
                     </div>
                     <div style={{ float: 'right' }}>

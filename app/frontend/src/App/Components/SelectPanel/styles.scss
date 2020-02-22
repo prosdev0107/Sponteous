@@ -142,6 +142,9 @@
     letter-spacing: 1px;
     margin-left: 2rem;
     text-decoration: none;
+    @include respond(mobile) {
+      margin-left: 0rem;
+    }
   }
 
   #editselect:hover, #editselect:focus {

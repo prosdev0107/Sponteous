@@ -8,7 +8,7 @@
   padding: 5rem;
   background-color: $gray-light;
   @include respond(mobile) {
-    padding: 0 1rem;
+    padding: 4rem 1rem;
     width: 100%;
     flex-direction: column-reverse;
     // transform: translateY(-10rem);

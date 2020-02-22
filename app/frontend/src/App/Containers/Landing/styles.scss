@@ -3,7 +3,7 @@
 
 .landing-cnt {
   .mainblock {
-    height: 100vh;
+    height: 85vh;
 
     @media screen and (max-width: 767px) and (orientation: landscape) {
       height: auto;
@@ -13,7 +13,7 @@
 
   .title {
     @include respond(tab) {
-      font-size: 56px;
+      font-size: 20px;
       width: 90%;
     }
 

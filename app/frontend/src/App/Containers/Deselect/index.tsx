@@ -157,7 +157,7 @@ class DeselectContainer extends Component<
         </MainBlock>
         <div className="deselect-cnt-info">
           <p>
-            This is your <span>{`5 destinations`}</span>
+            Is <span>{`${selected.length} destinations`}</span> too much?<div className="deselect-cnt-info-normalBold">Narrow down your results and keep only you favorite ones. (Optional step)</div> 
           </p>
 
           {remainingTime ? (

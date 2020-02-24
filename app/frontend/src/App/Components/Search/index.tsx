@@ -3,10 +3,12 @@ import { IProps, IState } from './types'
 import people from '../../Utils/Media/people.svg'
 import arrow from '../../../Common/Utils/Media/arrow.svg'
 import arrowRight from '../../../Common/Utils/Media/arrowRight.svg'
+import plusCircle from '../../../App/Utils/Media/plusCircle.png'
+import minusCircle from '../../../App/Utils/Media/minusCircle.png'
 import './styles.scss'
-import { getTripsDepartureNames } from '../../../App/Utils/api';
+import { getTripsDepartureNames } from '../../../App/Utils/api'
 // import { getTripsDepartureNames } from 'src/';
-import { getToken } from '../../../Common/Utils/helpers';
+import { getToken } from '../../../Common/Utils/helpers'
 import classnames from 'classnames'
 
 export default class Search extends Component<IProps, IState> {
@@ -26,8 +28,7 @@ export default class Search extends Component<IProps, IState> {
     const { setDeparture } = this.props
     e.preventDefault()
     this.setState({ inputValue: e.target.value })
-    if (this.state.inputValue != '')
-      this.setState({ isListVisible: true })
+    if (this.state.inputValue != '') this.setState({ isListVisible: true })
     setDeparture!(e.target.value)
 
     this.handleSearch(e.target.value)
@@ -45,15 +46,16 @@ export default class Search extends Component<IProps, IState> {
     if (departure == '') {
       this.setState({ searchResults: [] })
       this.setState({ isListVisible: false })
-    }
-    else {
+    } else {
       const { departures } = this.state
-      const tableau = departures.filter((name: string) => name.toLowerCase().startsWith(departure.toLowerCase()))
-      tableau.length !== 0 ? this.setState({ searchResults: tableau }) : this.setState({ searchResults: ["No trips found"] })
+      const tableau = departures.filter((name: string) =>
+        name.toLowerCase().startsWith(departure.toLowerCase())
+      )
+      tableau.length !== 0
+        ? this.setState({ searchResults: tableau })
+        : this.setState({ searchResults: ['No trips found'] })
       this.setState({ isListVisible: true })
     }
-
-
   }
 
   toggleListVisibility = (): void => {
@@ -63,17 +65,15 @@ export default class Search extends Component<IProps, IState> {
   handleSelectOption = (el: string): void => {
     const { setDeparture } = this.props
     this.setState({ isListVisible: false })
-    if (el !== "No trips found" && el !== "No trips available") {
+    if (el !== 'No trips found' && el !== 'No trips available') {
       this.setState({ inputValue: el })
       setDeparture!(el)
-
     }
-
   }
 
   renderOptions = (optionsArr: string[]): JSX.Element[] => {
     if (optionsArr.length === 0) {
-      optionsArr.push("No trips available")
+      optionsArr.push('No trips available')
     }
     return optionsArr.map(
       (el: string): JSX.Element => {
@@ -81,12 +81,12 @@ export default class Search extends Component<IProps, IState> {
           <div
             key={el}
             onClick={() => {
-              if (el !== "No trips found" && el !== "No trips available") {
+              if (el !== 'No trips found' && el !== 'No trips available') {
                 this.handleSelectOption(el)
               }
             }}
             className="search__list-item">
-            <p >{el}</p>
+            <p>{el}</p>
           </div>
         )
       }
@@ -95,9 +95,8 @@ export default class Search extends Component<IProps, IState> {
   selectedLngth = (departure: string[], inputValue: string) => {
     let index = departure.indexOf(inputValue)
     if (index === -1) {
-      return true;
-    }
-    else {
+      return true
+    } else {
       return false
     }
   }
@@ -108,7 +107,9 @@ export default class Search extends Component<IProps, IState> {
     getTripsDepartureNames(token)
       .then(({ data }) => {
         // debugger
-        this.setState({ departures: data.sort((a: string, b: string) => a > b ? 1 : -1) })
+        this.setState({
+          departures: data.sort((a: string, b: string) => (a > b ? 1 : -1))
+        })
       })
       .catch(err => console.log(err.response))
   }
@@ -123,16 +124,30 @@ export default class Search extends Component<IProps, IState> {
 
   selectDecrement = (e: React.MouseEvent<HTMLButtonElement>, id: string) => {
     e.preventDefault()
-    if (this.props.quantity.Adult > 0 && id === 'Adult' && this.state.passengers.Adult > 0) {
-      this.props.setQuantity!({ Adult: this.props.quantity.Adult - 1, Youth: this.props.quantity.Youth })
+    if (
+      this.props.quantity.Adult > 0 &&
+      id === 'Adult' &&
+      this.state.passengers.Adult > 0
+    ) {
+      this.props.setQuantity!({
+        Adult: this.props.quantity.Adult - 1,
+        Youth: this.props.quantity.Youth
+      })
       this.setState({
         passengers: {
           Adult: --this.state.passengers.Adult,
           Youth: this.state.passengers.Youth
         }
       })
-    } else if (this.props.quantity.Youth > 0 && id === 'Youth' && this.state.passengers.Youth > 0) {
-      this.props.setQuantity!({ Adult: this.props.quantity.Adult, Youth: this.props.quantity.Youth - 1 })
+    } else if (
+      this.props.quantity.Youth > 0 &&
+      id === 'Youth' &&
+      this.state.passengers.Youth > 0
+    ) {
+      this.props.setQuantity!({
+        Adult: this.props.quantity.Adult,
+        Youth: this.props.quantity.Youth - 1
+      })
       this.setState({
         passengers: {
           Adult: this.state.passengers.Adult,
@@ -143,18 +158,29 @@ export default class Search extends Component<IProps, IState> {
   }
 
   selectIncrement = (e: React.MouseEvent<HTMLButtonElement>, id: string) => {
-
     e.preventDefault()
-    if (this.props.quantity.Youth + this.props.quantity.Adult < 6 && id === 'Adult') {
-      this.props.setQuantity!({ Adult: this.props.quantity.Adult + 1, Youth: this.props.quantity.Youth })
+    if (
+      this.props.quantity.Youth + this.props.quantity.Adult < 6 &&
+      id === 'Adult'
+    ) {
+      this.props.setQuantity!({
+        Adult: this.props.quantity.Adult + 1,
+        Youth: this.props.quantity.Youth
+      })
       this.setState({
         passengers: {
           Adult: ++this.state.passengers.Adult,
           Youth: this.state.passengers.Youth
         }
       })
-    } else if (this.props.quantity.Youth + this.props.quantity.Adult < 6 && id === 'Youth') {
-      this.props.setQuantity!({ Adult: this.props.quantity.Adult, Youth: this.props.quantity.Youth + 1 })
+    } else if (
+      this.props.quantity.Youth + this.props.quantity.Adult < 6 &&
+      id === 'Youth'
+    ) {
+      this.props.setQuantity!({
+        Adult: this.props.quantity.Adult,
+        Youth: this.props.quantity.Youth + 1
+      })
       this.setState({
         passengers: {
           Adult: this.state.passengers.Adult,
@@ -166,7 +192,7 @@ export default class Search extends Component<IProps, IState> {
 
   Input = () => {
     const { inputValue, isListVisible, passengers } = this.state
-    if (inputValue !== this.props.initialValue as string) {
+    if (inputValue !== (this.props.initialValue as string)) {
       this.setState({ inputValue: this.props.initialValue as string })
     }
 
@@ -179,10 +205,15 @@ export default class Search extends Component<IProps, IState> {
     return (
       <div className="search-dropdown">
         <div className="search-input">
-          <input type="text" value={inputValue} placeholder="What is your departure city?" onChange={this.changeInput} />
+          <input
+            type="text"
+            value={inputValue}
+            placeholder="What is your departure city?"
+            onChange={this.changeInput}
+          />
           <label className={inputValue.length > 0 ? 'dirty' : ''}>
             DEPARTURE CITY
-            </label>
+          </label>
         </div>
         <div className={dropdownElementClass}>
           <this.DropDown />
@@ -197,8 +228,10 @@ export default class Search extends Component<IProps, IState> {
       'search-dropdown__list--active': isListVisible
     })
     return (
-      <div className={dropdownList}>{!this.state.searchResults.length ?
-        this.renderOptions(searchResults) : this.renderOptions(searchResults)}
+      <div className={dropdownList}>
+        {!this.state.searchResults.length
+          ? this.renderOptions(searchResults)
+          : this.renderOptions(searchResults)}
       </div>
     )
   }
@@ -206,7 +239,10 @@ export default class Search extends Component<IProps, IState> {
   Button = () => {
     const { departures, inputValue } = this.state
     return (
-      <button className="search-button" onClick={this.props.onSubmit} disabled={this.selectedLngth(departures, inputValue)}>
+      <button
+        className="search-button"
+        onClick={this.props.onSubmit}
+        disabled={this.selectedLngth(departures, inputValue)}>
         <div>
           <img src={arrowRight} alt="arrow" className="button-arrow" />
         </div>
@@ -221,7 +257,9 @@ export default class Search extends Component<IProps, IState> {
     return (
       <div className={`search-select ${buttons ? 'buttons' : ''}`}>
         <img src={people} alt="people" />
-        <span>{`${quantity.Adult + quantity.Youth} passenger${quantity.Adult > 1 || quantity.Youth > 1 ? 's' : ''}`}</span>
+        <span>{`${quantity.Adult + quantity.Youth} passenger${
+          quantity.Adult > 1 || quantity.Youth > 1 ? 's' : ''
+        }`}</span>
         <button onClick={this.toggleButtons}>
           <img src={arrow} alt="change passanger quantity" />
         </button>
@@ -229,16 +267,24 @@ export default class Search extends Component<IProps, IState> {
           <div>
             <li>
               <label>{`Adult${passengers.Adult > 1 ? 's' : ''}`}</label>
-              <button onClick={(e) => this.selectDecrement(e, "Adult")}>-</button>
-              <>{passengers.Adult}</>
-              <button onClick={(e) => this.selectIncrement(e, "Adult")}>+</button>
+              <button onClick={e => this.selectDecrement(e, 'Adult')}>
+                <img src={minusCircle} alt="" srcSet="" />
+              </button>
+              <span>{passengers.Adult}</span>
+              <button onClick={e => this.selectIncrement(e, 'Adult')}>
+                <img src={plusCircle} alt="" srcSet="" />
+              </button>
             </li>
 
             <li>
               <label>{`Youth${passengers.Youth > 1 ? 's' : ''}`}</label>
-              <button onClick={(e) => this.selectDecrement(e, "Youth")}>-</button>
-              <>{passengers.Youth}</>
-              <button onClick={(e) => this.selectIncrement(e, "Youth")}>+</button>
+              <button onClick={e => this.selectDecrement(e, 'Youth')}>
+                <img src={minusCircle} alt="" srcSet="" />
+              </button>
+              <span>{passengers.Youth}</span>
+              <button onClick={e => this.selectIncrement(e, 'Youth')}>
+                <img src={plusCircle} alt="" srcSet="" />
+              </button>
             </li>
           </div>
         )}

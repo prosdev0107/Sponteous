@@ -60,10 +60,10 @@
       @include respond(tab) {
         font-size: 1.4rem;
       }
-      
+
       &::placeholder {
         text-transform: none;
-        color: 	#909090;
+        color: #909090;
       }
 
       &:focus ~ label {
@@ -126,30 +126,21 @@
       &:focus {
         outline: 0;
       }
-
-      &:last-of-type {
-        @include respond(mobile) {
-          margin-left: auto;
-        }
-      }
     }
 
     div {
-      height: 3rem;
-      width: 100%;
+      width: 326px;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       position: absolute;
-      bottom: -3.0rem;
-      @include respond(mobile) {
-        height: 4rem;
-        bottom: -4rem;
-        left: 0;
-      }
-      
+      left: 0;
+      margin-top: 100px;
+      padding: 15px;
+      background: white;
+      border-radius: 3px;
+      box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
+      z-index: 2;
       button {
-        width: 100%;
         background-color: $white;
         border-color: $border;
         outline: none;
@@ -165,34 +156,31 @@
           }
           &:last-of-type {
             border-bottom-right-radius: 3px;
-
           }
         }
       }
-      
+
       li {
         list-style-type: none;
         display: flex;
         justify-content: space-between;
+        align-items: center;
         background: $white;
 
-        &:last-of-type {
-          Button {
-            &:first-of-type {
-              padding-right: 10px;
-              width: 90%;
-            }
-          }
-        }
-        
         label {
+          width: 200px;
           padding-left: 10px;
+        }
+        img {
+          margin-top: 5px;
+        }
+        span {
+          width: unset;
         }
       }
     }
   }
 
- 
   &__list-item {
     padding: 0 rc(10);
     min-height: rc(40);
@@ -293,7 +281,7 @@
 
 .search-dropdown {
   &__element {
-    border:none;
+    border: none;
     &--active {
       position: relative;
       width: 100%;
@@ -314,7 +302,7 @@
     color: $label;
 
     &::after {
-      content: "*";
+      content: '*';
       color: red;
       position: absolute;
       left: auto;
@@ -412,12 +400,8 @@
     border: none;
     border-radius: 3px;
 
-    
     &:focus {
       outline: none;
     }
-
   }
 }
-
-

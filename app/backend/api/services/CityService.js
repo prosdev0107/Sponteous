@@ -301,11 +301,15 @@ module.exports = {
         await Trip.findByIdAndUpdate(trip.id, {
           $set: { active: data.isEnabled }
         });
-        let ticket = await Ticket.findById(ticketId);
-        if ((!ticket.soldTickets && !data.isEnabled) || data.isEnabled) {
-          await Ticket.findByIdAndUpdate(ticketId, {
-            $set: { active: data.isEnabled }
-          });
+        try {
+          let ticket = await Ticket.findById(ticketId);
+          if ((!ticket && !data.isEnabled) || data.isEnabled) {
+            await Ticket.findByIdAndUpdate(ticketId, {
+              $set: { active: data.isEnabled }
+            });
+          }
+        } catch (error) {
+          console.log(error);
         }
       });
     });
@@ -321,11 +325,15 @@ module.exports = {
         $set: { active: data.isEnabled }
       });
       trip.tickets.forEach(async ticketId => {
-        let ticket = await Ticket.findById(ticketId);
-        if ((!ticket.soldTickets && !data.isEnabled) || data.isEnabled) {
-          await Ticket.findByIdAndUpdate(ticketId, {
-            $set: { active: data.isEnabled }
-          });
+        try {
+          let ticket = await Ticket.findById(ticketId);
+          if ((!ticket && !data.isEnabled) || data.isEnabled) {
+            await Ticket.findByIdAndUpdate(ticketId, {
+              $set: { active: data.isEnabled }
+            });
+          }
+        } catch (error) {
+          console.log(error);
         }
       });
     });

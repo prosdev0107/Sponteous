@@ -9,11 +9,7 @@ import { debounce } from 'lodash'
 import { RouteComponentProps } from 'react-router-dom'
 import { MODAL_TYPE, ICity } from '../../Utils/adminTypes'
 import { getToken } from '../../../Common/Utils/helpers'
-import {
-  ERRORS,
-  SUCCESS,
-  DEFAULT_CITY_DATA
-} from '../../Utils/constants'
+import { ERRORS, SUCCESS, DEFAULT_CITY_DATA } from '../../Utils/constants'
 import {
   getCities,
   deleteCity,
@@ -25,23 +21,26 @@ import {
 } from '../../Utils/api'
 import { IState, IProps } from './types'
 import { columns } from './columns'
-import { ControlledStateOverrideProps, SortingRule } from 'react-table';
+import { ControlledStateOverrideProps, SortingRule } from 'react-table'
 
 class CityContainer extends React.Component<
   RouteComponentProps<{}> & IProps,
   IState
-  > {
+> {
   private modal = React.createRef<Modal>()
   readonly state: IState = {
-    cities: [{
-      _id: '0',
-      name: 'Paris',
-      country: 'France',
-      tags: ['Beach', 'Nigthlife'],
-      photo: "https://s3.eu-west-2.amazonaws.com/spon-staging/staging_5c91210fb4f0e3003452a581.png",
-      isManual: false,
-      isEnabled: false
-    }],
+    cities: [
+      {
+        _id: '0',
+        name: 'Paris',
+        country: 'France',
+        tags: ['Beach', 'Nigthlife'],
+        photo:
+          'https://s3.eu-west-2.amazonaws.com/spon-staging/staging_5c91210fb4f0e3003452a581.png',
+        isManual: false,
+        isEnabled: false
+      }
+    ],
     search: '',
     results: [],
     total: 0,
@@ -53,7 +52,8 @@ class CityContainer extends React.Component<
       id: '',
       type: null,
       heading: ''
-    }
+    },
+    toggleDisable: false
   }
 
   handleOpenModal = (type: MODAL_TYPE, heading: string, id: string = '') => {
@@ -102,17 +102,18 @@ class CityContainer extends React.Component<
             cities: res.data.results,
             total: res.data.status.total
           })
-
         })
         .catch(err => {
           this.props.showError(err, ERRORS.CITY_FETCH)
         })
 
-      getCities(0, 10000, token, sort).then(res => {
-        this.setState({ results: res.data.results })
-      }).catch(err => {
-        this.props.showError(err, ERRORS.CITY_FETCH)
-      })
+      getCities(0, 10000, token, sort)
+        .then(res => {
+          this.setState({ results: res.data.results })
+        })
+        .catch(err => {
+          this.props.showError(err, ERRORS.CITY_FETCH)
+        })
     }
   }
 
@@ -217,9 +218,15 @@ class CityContainer extends React.Component<
   }
 
   handleDepartureToggle = (id: string, value: boolean) => {
+    this.setState({
+      toggleDisable: true
+    })
     const token = getToken()
     editCityDeparture(id, value, token)
       .then(({ data }) => {
+        this.setState({
+          toggleDisable: false
+        })
         this.handleUpdate(data)
         this.props.showSuccess(SUCCESS.CITY_UPDATE)
       })
@@ -227,9 +234,15 @@ class CityContainer extends React.Component<
   }
 
   handleDestinationToggle = (id: string, value: boolean) => {
+    this.setState({
+      toggleDisable: true
+    })
     const token = getToken()
     editCityDestination(id, value, token)
       .then(({ data }) => {
+        this.setState({
+          toggleDisable: false
+        })
         this.handleUpdate(data)
         this.props.showSuccess(SUCCESS.CITY_UPDATE)
       })
@@ -248,7 +261,7 @@ class CityContainer extends React.Component<
   }
 
   render() {
-    let { cities, total } = this.state;
+    let { cities, total } = this.state
 
     const {
       search,
@@ -261,8 +274,10 @@ class CityContainer extends React.Component<
 
     if (search) {
       cities = results.filter(city => {
-        return city.name.toLowerCase().includes(search.toLowerCase())
-          || (city.country as string).toLowerCase().includes(search.toLowerCase())
+        return (
+          city.name.toLowerCase().includes(search.toLowerCase()) ||
+          (city.country as string).toLowerCase().includes(search.toLowerCase())
+        )
       })
       total = cities.length
     }
@@ -270,12 +285,12 @@ class CityContainer extends React.Component<
     return (
       <div className="spon-container">
         <Header
-          heading='Create city'
+          heading="Create city"
           modal={MODAL_TYPE.ADD_CITY}
           handleOpenModal={this.handleOpenModal}
-          title='Cities'
+          title="Cities"
           query={search}
-          handleSearch={(e) => this.setState({ search: e.target.value })}
+          handleSearch={e => this.setState({ search: e.target.value })}
         />
 
         <Table
@@ -285,7 +300,8 @@ class CityContainer extends React.Component<
             this.handleOpenDeleteModal,
             this.handleOpenEditModal,
             debounce(this.handleDepartureToggle, 300),
-            debounce(this.handleDestinationToggle, 300)
+            debounce(this.handleDestinationToggle, 300),
+            this.state.toggleDisable
           )}
           loading={isLoading}
           pages={Math.ceil(total / 10)}

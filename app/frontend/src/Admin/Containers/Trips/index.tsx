@@ -926,14 +926,6 @@ class TripsContainer extends React.Component<
     const usedDeparture: any[] = []
     const usedDestination: any[] = []
 
-    // for (let index: number = 0; index < results.length; index++) {
-    //   if (usedDeparture.includes(results[index].departure.name) == false) {
-    //     usedDeparture.push(results[index].departure.name)
-    //   }
-    //   if (usedDestination.includes(results[index].destination.name) == false) {
-    //     usedDestination.push(results[index].destination.name)
-    //   }
-    // }
     const departureCountries = results
       .map(result => result.departure.country)
       .reduce((unique: any, other: any) => {
@@ -944,12 +936,24 @@ class TripsContainer extends React.Component<
       }, [])
     departureCountries.map((country: any) => {
       usedDeparture.push({ country: 'country', label: country })
-      results.filter(result => result.departure.country === country).map(city =>
-        usedDeparture.push({
-          country,
-          label: city.departure.name
-        })
-      )
+      results
+        .filter(result => result.departure.country === country)
+        .reduce((unique: any, other: any) => {
+          if (
+            !unique.some(
+              (item: any) => item.departure.name === other.departure.name
+            )
+          ) {
+            unique.push(other)
+          }
+          return unique
+        }, [])
+        .map((city: any) =>
+          usedDeparture.push({
+            country,
+            label: city.departure.name
+          })
+        )
     })
 
     const destinationCountries = results
@@ -964,17 +968,29 @@ class TripsContainer extends React.Component<
       usedDestination.push({ country: 'country', label: country })
       results
         .filter(result => result.destination.country === country)
-        .map(city =>
+        .reduce((unique: any, other: any) => {
+          if (
+            !unique.some(
+              (item: any) => item.destination.name === other.destination.name
+            )
+          ) {
+            unique.push(other)
+          }
+          return unique
+        }, [])
+        .map((city: any) =>
           usedDestination.push({
             country,
             label: city.destination.name
           })
         )
     })
+
     if (filtersFrom.length || filtersTo.length) {
       trips = this.filterTrips(trips, results, filtersFrom, filtersTo)
       total = trips.length
     }
+
     return (
       <div className="spon-container">
         <TripHeader

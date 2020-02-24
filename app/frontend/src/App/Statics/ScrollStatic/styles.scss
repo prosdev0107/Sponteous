@@ -6,8 +6,12 @@
   flex-direction: column;
   cursor: pointer;
 
+  @include respond(tab) {
+    transform: translateY(4rem);
+  }
+
   @include respond(mobile) {
-    transform: translateY(5rem);
+    transform: translateY(-3rem);
   }
 
   span {
@@ -16,5 +20,9 @@
     font-size: 0.8rem;
     margin-bottom: 3rem;
     margin-top: 1rem;
+
+    @include respond(mobile) {
+      margin-bottom: 0rem;
+    }
   }
 }

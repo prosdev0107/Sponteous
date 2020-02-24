@@ -778,11 +778,11 @@ class SelectContainer extends Component<
                         className="select-cnt-inner-title"
                         text={`Select 5 destinations from the ${
                           this.state.trips.length
-                        } destinations bellow`}
+                        } destinations below`}
                         selected={[`${this.state.trips.length} destinations`,'5 destinations']}
                       />
                     </div>
-                    <div style={{ float: 'right' }}>
+                    <div style={{ float: 'right',paddingBottom: 20 }}>
                       <span className="filters-filter-value">Sort By: </span>
                       <select
                         name="drpFilterDestination"

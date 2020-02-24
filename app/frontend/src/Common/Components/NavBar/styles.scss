@@ -8,12 +8,12 @@
   display: flex;
   align-items: center;
 
-  @include respond(tab) {
+  @include respond(mobile) {
     justify-content: flex-end;
   }
 
   &--open {
-    @include respond(tab) {
+    @include respond(mobile) {
       position: fixed;
       top: 0;
       left: 0;
@@ -46,7 +46,7 @@
     transform: translate(-50%, -50%);
     z-index: 1;
 
-    @include respond(tab) {
+    @include respond(mobile) {
       position: relative;
       top: 0;
       left: 0;
@@ -64,15 +64,17 @@
     flex-direction: row;
     margin-left: 20%;
     justify-content: flex-end;
-
+    @include respond(tab) {
+      margin-left: 10%;
+    }
     &--close {
-      @include respond(tab) {
+      @include respond(mobile) {
         display: none;
       }
     }
 
     &--open {
-      @include respond(tab) {
+      @include respond(mobile) {
         height: calc(100% - 10rem);
         margin: 0;
         display: flex;
@@ -92,7 +94,7 @@
     z-index: 2;
 
     &--open {
-      @include respond(tab) {
+      @include respond(mobile) {
         font-size: 2rem;
         color: $input;
         margin: 3rem 0 !important;
@@ -122,7 +124,7 @@
     &.active {
       color: $white;
 
-      @include respond(tab) {
+      @include respond(mobile) {
         color: $violet;
       }
     }
@@ -133,7 +135,7 @@
     justify-content: center;
     align-items: center;
 
-    @include respond(tab) {
+    @include respond(mobile) {
       position: absolute;
       top: 50%;
       left: 50%;
@@ -159,7 +161,7 @@
   &__burger {
     display: none;
 
-    @include respond(tab) {
+    @include respond(mobile) {
       display: flex;
       margin-right: 10%;
       height: 2rem;

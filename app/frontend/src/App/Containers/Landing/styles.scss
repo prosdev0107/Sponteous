@@ -9,7 +9,7 @@
       height: 65vh;
     }
     @include respond(mobile) {
-      height: 78vh;
+      height: 80vh;
     }
 
     @media screen and (max-width: 767px) and (orientation: landscape) {
@@ -20,10 +20,11 @@
 
   .title {
     @include respond(tab) {
-      width: 90%;
+      width: 55%;
     }
 
     @include respond(mobile) {
+      width: 90%;
       font-size: 36px;
     }
   }

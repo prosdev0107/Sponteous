@@ -25,6 +25,7 @@
 
     @include respond(tab) {
       height: 6rem;
+      min-height: 6rem;
     }
 
     @include respond(mobile) {

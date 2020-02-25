@@ -7,7 +7,7 @@
   cursor: pointer;
 
   @include respond(tab) {
-    transform: translateY(4rem);
+    transform: translateY(2rem);
   }
 
   @include respond(mobile) {

@@ -10,8 +10,6 @@ import Steps from '../../Components/Steps'
 import Title from '../../Components/Title'
 import Loader from '../../../Common/Components/Loader'
 import Footer from '../../Components/Footer'
-
-import withCountdown from '../../HOC/withCountdown'
 import withToast from '../../../Common/HOC/withToast'
 import { IStore } from '../../../Common/Redux/types'
 import {
@@ -37,10 +35,8 @@ class PaymentContainer extends Component<
   RouteComponentProps<{}> & IProps,
   IState
 > {
-  private interval: any
   readonly state: IState = {
     step: 0,
-    remainingTime: '',
     isLoading: false
   }
 
@@ -50,18 +46,6 @@ class PaymentContainer extends Component<
     if (!owner || !owner.token) {
       this.props.history.push('/')
     }
-
-    const creatdeDate = moment.utc(owner.createdAt).format()
-
-    this.interval = setInterval(() => {
-      this.props.countdown(
-        creatdeDate,
-        this.props.showSuccess,
-        this.props.history.push,
-        this.setRemainingTime,
-        this.interval
-      )
-    }, 1000)
 
     window.scrollTo(0, 0)
   }
@@ -73,10 +57,6 @@ class PaymentContainer extends Component<
     }
 
     this.setState({ step })
-  }
-
-  setRemainingTime = (time: string) => {
-    this.setState({ remainingTime: time })
   }
 
   handleSubmit = ({ cardToken, passenger, payment }: ISuccessValues) => {
@@ -122,7 +102,7 @@ class PaymentContainer extends Component<
   }
 
   render() {
-    const { remainingTime, isLoading, step } = this.state
+    const { isLoading, step } = this.state
     const { quantity, deselectionPrice } = this.props
 
     return (
@@ -137,13 +117,6 @@ class PaymentContainer extends Component<
             <Steps />
           </MainBlock>
           <div className="payment_cnt-wrapper">
-            <div className="payment_cnt-info">
-              {remainingTime ? (
-                <p>
-                  Remainging time: <span>{remainingTime}</span>
-                </p>
-              ) : null}
-            </div>
             <div className="payment_cnt-billing">
               <Billing
                 step={step}
@@ -172,7 +145,6 @@ class PaymentContainer extends Component<
 
 const composeHOCs = compose(
   PaymentContainer,
-  withCountdown,
   withToast
 )
 

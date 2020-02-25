@@ -93,6 +93,11 @@
         "NOT": {
           "EXIST": "Your selected trips are expired"
         }
+      },
+      "TRIP": {
+        "NOT": {
+          "EXIST": "Your selected trips are no longer available"
+        }
       }
     },
     "TICKET": {

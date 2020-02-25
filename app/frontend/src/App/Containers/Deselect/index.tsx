@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import moment from 'moment'
 import { connect } from 'react-redux'
 
 import MainBlock from '../../Components/MainBlock'
@@ -9,7 +8,6 @@ import SelectPanel from '../../Components/SelectPanel'
 import Button from '../../../Common/Components/Button'
 
 import withToast from '../../../Common/HOC/withToast'
-import withCountdown from '../../../App/HOC/withCountdown'
 import { compose } from '../../../Common/HOC/compose'
 import { IStore } from '../../../Common/Redux/types'
 import {
@@ -39,10 +37,6 @@ class DeselectContainer extends Component<
   RouteComponentProps<{}> & IProps,
   IState
 > {
-  private interval: any
-  readonly state: IState = {
-    remainingTime: ''
-  }
 
   componentDidMount() {
     window.scrollTo(0, 0)
@@ -52,24 +46,10 @@ class DeselectContainer extends Component<
       this.props.history.push('/')
     }
 
-    const creatdeDate = moment.utc(owner.createdAt).format()
-    this.interval = setInterval(() => {
-      this.props.countdown(
-        creatdeDate,
-        this.props.showSuccess,
-        this.props.history.push,
-        this.setRemainingTime,
-        this.interval
-      )
-    }, 1000)
-
     saveToLS('ownerTemp', owner)
     removeFromLS('owner')
   }
 
-  setRemainingTime = (time: string) => {
-    this.setState({ remainingTime: time })
-  }
 
   onDeselect = (deselectedItem: ISelectedData) => {
     const owner = getFromLS('ownerTemp')
@@ -148,7 +128,6 @@ class DeselectContainer extends Component<
 
   render() {
     const { selected, deselected, isMax } = this.props
-    const { remainingTime } = this.state
 
     return (
       <section className="deselect-cnt">
@@ -159,12 +138,6 @@ class DeselectContainer extends Component<
           <p>
             Is <span>{`${selected.length} destinations`}</span> too much?<div className="deselect-cnt-info-normalBold">Narrow down your results and keep only you favorite ones. (Optional step)</div> 
           </p>
-
-          {remainingTime ? (
-            <p>
-              Remainging time: <span>{remainingTime}</span>
-            </p>
-          ) : null}
 
           {deselected.length > 0 && (
             <Button
@@ -217,7 +190,6 @@ const mapStateToProps = (state: IStore) => ({
 
 const composeHOCs = compose(
   DeselectContainer,
-  withCountdown,
   withToast
 )
 

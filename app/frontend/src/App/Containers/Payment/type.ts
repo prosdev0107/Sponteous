@@ -3,7 +3,6 @@ import { ISelectedData, IFinalSelected, IPassenger } from '../../Utils/appTypes'
 
 export interface IState {
   step: Steps
-  remainingTime: string
   isLoading: boolean
 }
 
@@ -25,7 +24,6 @@ export interface IProps {
     date: Date | string,
     showSuccess: (message: string) => void,
     pushHistory: (path: string) => void,
-    setRemainingTime: (time: string) => void,
     interval: any
   ) => void
 }

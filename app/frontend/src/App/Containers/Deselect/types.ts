@@ -2,7 +2,6 @@ import { ISelectedData } from '../../Utils/appTypes'
 import { IResponseError } from '../../../Common/Utils/globalTypes'
 
 export interface IState {
-  remainingTime: string
 }
 
 export interface IProps {
@@ -16,7 +15,6 @@ export interface IProps {
     date: Date | string,
     showSuccess: (message: string) => void,
     pushHistory: (path: string) => void,
-    setRemainingTime: (time: string) => void,
     interval: any
   ) => void
   addDeselected: (deselectedItem: ISelectedData) => void

@@ -106,9 +106,12 @@
       color: $input;
       width: 100%;
       text-align: center;
+      &:hover {
+        cursor: pointer;
+      }
 
       @include respond(tab) {
-        font-size: 1.4rem;
+        font-size: 1.6rem;
       }
 
       @include respond(mobile) {
@@ -170,6 +173,7 @@
         label {
           width: 200px;
           padding-left: 10px;
+          font-size: 14px;
         }
         img {
           margin-top: 5px;

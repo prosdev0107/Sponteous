@@ -4,4 +4,5 @@ export interface IProps {
   selected?: string[]
   left?: boolean
   right?: boolean
+  desc?: string
 }

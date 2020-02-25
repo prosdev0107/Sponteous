@@ -7,7 +7,8 @@ const Title: React.SFC<IProps> = ({
   selected,
   className = '',
   left = false,
-  right = false
+  right = false,
+  desc
 }) => {
   let content = text
   if (selected && selected.length > 0) {
@@ -18,12 +19,15 @@ const Title: React.SFC<IProps> = ({
     })
   }
   return (
-    <p
-      className={`title ${className} ${left ? 'left' : ''} ${
-        right ? 'right' : ''
-      }`}
-      dangerouslySetInnerHTML={{ __html: content }}
-    />
+    <>
+      <p
+        className={`title ${className} ${left ? 'left' : ''} ${
+          right ? 'right' : ''
+          }`}
+        dangerouslySetInnerHTML={{ __html: content }}
+      />
+      <span className={`desc ${!!desc? '': 'hide-desc'}`}>{desc}</span>
+    </>
   )
 }
 

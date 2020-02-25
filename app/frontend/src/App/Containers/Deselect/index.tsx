@@ -6,6 +6,7 @@ import Steps from '../../Components/Steps'
 import Destination from '../../Components/Destination'
 import SelectPanel from '../../Components/SelectPanel'
 import Button from '../../../Common/Components/Button'
+import Title from '../../Components/Title'
 
 import withToast from '../../../Common/HOC/withToast'
 import { compose } from '../../../Common/HOC/compose'
@@ -36,7 +37,7 @@ const MAX = 3
 class DeselectContainer extends Component<
   RouteComponentProps<{}> & IProps,
   IState
-> {
+  > {
 
   componentDidMount() {
     window.scrollTo(0, 0)
@@ -131,12 +132,20 @@ class DeselectContainer extends Component<
 
     return (
       <section className="deselect-cnt">
-        <MainBlock className="deselect-cnt-block">
+          <MainBlock className="deselect-cnt-block">
+          <div className="hideHeader">
+            <Title
+              text="Narrow down your selection"
+              selected={['deselect']}
+              className="deselect-title"
+              desc="This is an optional step"
+            />
+          </div>
           <Steps />
         </MainBlock>
         <div className="deselect-cnt-info">
-          <p>
-            Is <span>{`${selected.length} destinations`}</span> too much?<div className="deselect-cnt-info-normalBold">Narrow down your results and keep only you favorite ones. (Optional step)</div> 
+          <p className="deselect-cnt-info-margin">
+            <span>{`${selected.length} destinations`}</span> too much?<div className="deselect-cnt-info-normalBold">Narrow down your results and keep only you favorite ones.<div className="deselect-cnt-info-optional">(Optional step)</div></div>
           </p>
 
           {deselected.length > 0 && (

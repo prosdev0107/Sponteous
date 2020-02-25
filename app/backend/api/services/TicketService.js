@@ -403,11 +403,11 @@ module.exports = {
     const owner = crypto.randomBytes(40).toString('hex');
 
     for (let selectedTrip of trips) {
-    //   if (selectedTrip.arrivalTicket || selectedTrip.departureTicket) {
+      if (selectedTrip.arrivalTicket || selectedTrip.departureTicket) {
         await bookWithTime({ Adult, Youth, selectedTrip, owner });
-    //   } else {
-    // await bookWithOutTime({ Adult, Youth, selectedTrip, owner });
-    //   }
+      } else {
+        await bookWithOutTime({ Adult, Youth, selectedTrip, owner });
+      }
     }
 
     const ownerInfo = await TicketOwner.findOne({ owner });

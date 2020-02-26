@@ -48,7 +48,7 @@ import { DESTINATIONFILTERS } from 'src/Admin/Utils/constants'
 import marker from '../../Utils/Media/marker.png'
 import markerSelected from '../../Utils/Media/marker-selected.png'
 import arrow from '../../../Common/Utils/Media/arrow.svg'
-import capsule from '../../Utils/Media/capsule.svg'
+import capsule from '../../Utils/Media/capsule.png'
 const MAX = 5
 
 const mapStyle = [

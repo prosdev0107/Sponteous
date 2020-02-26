@@ -81,6 +81,10 @@
         background-color: #ffffff;
         border: 1px solid #dadce9;
         width: 18rem;
+        img {
+          width: 100%;
+          height: auto;
+        }
         @include respond(mobile) {
           display: none;
         }

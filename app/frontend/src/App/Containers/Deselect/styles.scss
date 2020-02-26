@@ -60,6 +60,7 @@
     &-normalBold {
       font-weight: normal;
       display: flex;
+      flex-wrap: wrap;
     }
     &-optional {
       @include respond(mobile) {

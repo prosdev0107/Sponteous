@@ -48,6 +48,7 @@ class LandingContainer extends Component<RouteComponentProps<{}> & IProps> {
       <section className="landing-cnt">
         <MainBlock>
           <Title
+            className="landing-title"
             text="Get your cheap tickets to the Unknown"
             selected={['Unknown']}
           />

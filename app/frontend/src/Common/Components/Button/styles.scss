@@ -236,7 +236,14 @@
     color: $dark-blue;
     background: transparent;
     border: 1px solid $dark-blue;
+  }
 
-
+  &.undo-deselection {
+    
+    @include respond(mobile) {
+      margin-right: 0;
+      width: 90%;
+      height: 50px;
+    }
   }
 }

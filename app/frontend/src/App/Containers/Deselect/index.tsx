@@ -145,15 +145,15 @@ class DeselectContainer extends Component<
         </MainBlock>
         <div className="deselect-cnt-info">
           <p className="deselect-cnt-info-margin">
-            <span>{`${selected.length} destinations`}</span> too much?<div className="deselect-cnt-info-normalBold">Narrow down your results and keep only you favorite ones.<div className="deselect-cnt-info-optional">(Optional step)</div></div>
+           Is <span>{`${selected.length} destinations`}</span> too much?<div className="deselect-cnt-info-normalBold">Narrow down your results and keep only your favorite ones.&thinsp;<div className="deselect-cnt-info-optional">(Optional step)</div></div>
           </p>
-
           {deselected.length > 0 && (
             <Button
               text="undo deselection"
               variant="gray"
               onClick={this.onClear}
               icon="undo"
+              className="undo-deselection"
             />
           )}
         </div>

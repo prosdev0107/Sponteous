@@ -12,17 +12,18 @@
     padding-bottom: 3rem;
   }
   &-wrapper {
-    width: 80%;
-    margin: 2rem auto 0 auto;
-    padding: 2rem;
+    margin: 4rem auto 0 auto;
+    padding-top: 2rem;
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
+    max-width: 74rem;
 
     @include respond(tab) {
       margin: 0;
       width: 100%;
       padding: 0;
+      max-width: none;
     }
   }
 
@@ -60,7 +61,7 @@
   &-status {
     width: 35%;
     flex-grow: 1;
-    margin-left: 5%;
+    margin-left: 3%;
   }
   @media screen and (max-width: 1024px) {
     &-status {

@@ -19,12 +19,9 @@
   }
 
   .title {
-    @include respond(tab) {
-      width: 55%;
-    }
 
     @include respond(mobile) {
-      width: 90%;
+      width: 30rem;
       font-size: 36px;
     }
   }

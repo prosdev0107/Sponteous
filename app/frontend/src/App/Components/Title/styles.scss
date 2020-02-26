@@ -48,3 +48,12 @@
   font-size: 2rem;
   padding-bottom: 4rem;
 }
+
+.landing-title{
+  @include respond(tab) {
+    width: 38rem;
+  }
+  @include respond(mobile) {
+    width: 90%;
+  }
+}

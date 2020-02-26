@@ -133,14 +133,12 @@ class DeselectContainer extends Component<
     return (
       <section className="deselect-cnt">
           <MainBlock className="deselect-cnt-block">
-          <div className="hideHeader">
             <Title
               text="Narrow down your selection"
               selected={['deselect']}
               className="deselect-title"
               desc="This is an optional step"
             />
-          </div>
           <Steps />
         </MainBlock>
         <div className="deselect-cnt-info">

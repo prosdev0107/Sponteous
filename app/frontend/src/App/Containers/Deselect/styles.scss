@@ -68,15 +68,6 @@
       }
     }
   }
-  .hideHeader {
-    display: none;
-    @include respond(mobile) {
-      display: flex;
-      justify-content: center;
-      flex-direction: column;
-      align-items: center;
-    }
-  }
   &-destinations {
     display: flex;
     width: 100%;

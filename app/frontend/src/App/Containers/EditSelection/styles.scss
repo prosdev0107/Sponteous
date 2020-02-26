@@ -32,6 +32,13 @@
     margin-top: -7px;
     margin-bottom: 13px;
     width: 17rem;
+    margin-right: 1rem;
+    @include respond(mobile){
+      margin: 0 auto 13px auto;
+      float: none;
+      width: 90%;
+      height: 50px;
+    }
   }
   &-block {
     padding-top: 10rem !important;

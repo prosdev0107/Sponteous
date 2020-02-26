@@ -167,8 +167,7 @@ class TripsContainer extends React.Component<
         .then(res => {
           this.setState({
             isLoading: false,
-            trips: res.data.results,
-            total: res.data.status.total
+            trips: res.data.results
           })
         })
         .catch(err => {
@@ -177,7 +176,10 @@ class TripsContainer extends React.Component<
 
       getTrips(0, 1000000, token, sort)
         .then(res => {
-          this.setState({ results: res.data.results })
+          this.setState({
+            results: res.data.results,
+            total: res.data.results.length
+          })
         })
         .catch(err => {
           this.props.showError(err, ERRORS.TRIP_FETCH)
@@ -985,7 +987,6 @@ class TripsContainer extends React.Component<
           })
         )
     })
-
     if (filtersFrom.length || filtersTo.length) {
       trips = this.filterTrips(trips, results, filtersFrom, filtersTo)
       total = trips.length
@@ -1002,12 +1003,7 @@ class TripsContainer extends React.Component<
           changeFilterTo={e => this.setState({ filtersTo: e })}
         />
         <ExpandableTable
-          data={trips.filter(trip => {
-            if (trip.destination.isEnabled) {
-              return trip
-            }
-            return
-          })}
+          data={trips}
           handleFetchData={this.handleFetchTableData}
           columns={columns(
             selectedCheckbox,

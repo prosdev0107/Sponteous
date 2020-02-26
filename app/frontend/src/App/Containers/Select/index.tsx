@@ -47,7 +47,7 @@ import { DESTINATIONFILTERS } from 'src/Admin/Utils/constants'
 
 import marker from '../../Utils/Media/marker.png'
 import markerSelected from '../../Utils/Media/marker-selected.png'
-
+import arrow from '../../../Common/Utils/Media/arrow.svg'
 const MAX = 5
 
 const mapStyle = [
@@ -772,23 +772,30 @@ class SelectContainer extends Component<
               </section>
               {!filterVisible && (
                 <section className="select-cnt-inner-destinations">
-                  <div>
-                    <div style={{ float: 'left' }}>
+                  <div className="select-cnt-inner-destinations-header">
+                    <div className="select-cnt-inner-destinations-header-text">
                       <Title
                         className="select-cnt-inner-title"
                         text={`Select 5 destinations from the ${
                           this.state.trips.length
                         } destinations below`}
-                        selected={[`${this.state.trips.length} destinations`,'5 destinations']}
+                        selected={[
+                          `${this.state.trips.length} destinations`,
+                          '5 destinations'
+                        ]}
                       />
                     </div>
-                    <div style={{ float: 'right',paddingBottom: 20 }}>
+                    <div className="sortbyCtrl">
                       <span className="filters-filter-value">Sort By: </span>
                       <select
                         name="drpFilterDestination"
                         id="drpFilterDestination"
                         placeholder="Recommended"
                         className="spon-trip-modal__dropdown"
+                        style={{
+                          WebkitAppearance: 'none',
+                          background: `url(${arrow}) no-repeat right`
+                        }}
                         onChange={(e: any) => this.handleChange(e)}
                         defaultValue={this.state.isSorting.toString()}>
                         {DESTINATIONFILTERS.map(x => (

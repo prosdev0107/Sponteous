@@ -75,6 +75,21 @@
       }
     }
     &-destinations {
+      @include respond(mobile) {
+        width: 90%;
+      }
+      &-header {
+        display: flex;
+        justify-content: space-between;
+        @include respond(mobile) {
+          justify-content: left;
+        }
+        &-text {
+          @include respond(mobile) {
+            display: none;
+          }
+        }
+      }
     }
 
     &-destination-list {
@@ -89,7 +104,7 @@
 
       @include respond(tab) {
         max-width: unset;
-        width: 90%;
+        width: 100%;
         justify-content: space-between;
       }
 
@@ -139,5 +154,26 @@
 @media (max-width: 575.98px) {
   .gm-bundled-control-on-bottom {
     visibility: hidden;
+  }
+}
+
+.sortbyCtrl {
+  @include respond(mobile) {
+    margin-bottom: 25px;
+  }
+  .filters-filter-value {
+    margin-left: 0;
+    margin-right: 5px;
+    color: #7b899f;
+    @include respond(mobile) {
+      font-size: 14px !important;
+    }
+  }
+  .spon-trip-modal__dropdown {
+    border: none;
+    background: none;
+    font-size: 14px;
+    text-align-last: center;
+    width: 150px;
   }
 }

@@ -288,55 +288,56 @@ module.exports = {
   },
 
   async updateOne(id, data) {
-    const destinationTrips = await Trip.find({
-      'destination._id': ObjectId(id)
-    });
-    await Trip.updateMany(
-      { 'destination._id': id },
-      { $set: { 'destination.isEnabled': data.isEnabled } },
-      { new: true }
-    );
-    destinationTrips.forEach(async trip => {
-      trip.tickets.forEach(async ticketId => {
-        await Trip.findByIdAndUpdate(trip.id, {
-          $set: { active: data.isEnabled }
+    const { isDeparture, isDestination } = data;
+    if (isDestination !== undefined) {
+      const destinationTrips = await Trip.find({
+        'destination._id': ObjectId(id)
+      });
+      await Trip.updateMany(
+        { 'destination._id': id },
+        { $set: { 'destination.isDestination': isDestination } },
+        { new: true }
+      );
+      destinationTrips.forEach(async trip => {
+        const isTripActive = trip.departure.isDeparture && isDestination;
+        console.log(trip.departure.isDeparture, isDestination, isTripActive);
+        trip.tickets.forEach(async ticketId => {
+          await Trip.findByIdAndUpdate(trip.id, {
+            $set: { active: isTripActive }
+          });
+          try {
+            await Ticket.findByIdAndUpdate(ticketId, {
+              $set: { active: isTripActive }
+            });
+          } catch (error) {
+            console.log(error);
+          }
         });
-        try {
-          let ticket = await Ticket.findById(ticketId);
-          if ((!ticket && !data.isEnabled) || data.isEnabled) {
+      });
+    }
+    if (isDeparture !== undefined) {
+      const departureTrips = await Trip.find({ 'departure._id': ObjectId(id) });
+      await Trip.updateMany(
+        { 'departure._id': id },
+        { $set: { 'departure.isDeparture': isDeparture } },
+        { new: true }
+      );
+      departureTrips.forEach(async trip => {
+        const isTripActive = isDeparture && trip.destination.isDestination;
+        await Trip.findByIdAndUpdate(trip.id, {
+          $set: { active: isTripActive }
+        });
+        trip.tickets.forEach(async ticketId => {
+          try {
             await Ticket.findByIdAndUpdate(ticketId, {
-              $set: { active: data.isEnabled }
+              $set: { active: isTripActive }
             });
+          } catch (error) {
+            console.log(error);
           }
-        } catch (error) {
-          console.log(error);
-        }
+        });
       });
-    });
-
-    const departureTrips = await Trip.find({ 'departure._id': ObjectId(id) });
-    await Trip.updateMany(
-      { 'departure._id': id },
-      { $set: { 'departure.isEnabled': data.isEnabled } },
-      { new: true }
-    );
-    departureTrips.forEach(async trip => {
-      await Trip.findByIdAndUpdate(trip.id, {
-        $set: { active: data.isEnabled }
-      });
-      trip.tickets.forEach(async ticketId => {
-        try {
-          let ticket = await Ticket.findById(ticketId);
-          if ((!ticket && !data.isEnabled) || data.isEnabled) {
-            await Ticket.findByIdAndUpdate(ticketId, {
-              $set: { active: data.isEnabled }
-            });
-          }
-        } catch (error) {
-          console.log(error);
-        }
-      });
-    });
+    }
 
     let city = await City.findByIdAndUpdate(id, data, { new: true });
     const value =

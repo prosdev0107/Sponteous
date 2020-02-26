@@ -85,7 +85,7 @@
           width: 100%;
           height: auto;
         }
-        @include respond(mobile) {
+        @include respond(tab) {
           display: none;
         }
         &-header {
@@ -103,7 +103,7 @@
       }
     }
     &-destinations {
-      @include respond(mobile) {
+      @include respond(tab) {
         width: 90%;
       }
       &-header {
@@ -122,7 +122,7 @@
       width: 57rem;
 
       @include respond(big) {
-        width: 57.5rem;
+        width: 58rem;
       }
 
       @include respond(tab) {

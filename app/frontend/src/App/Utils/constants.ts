@@ -88,8 +88,8 @@ export const HEADER_STEPS = [
   },
   {
     number: 2,
-    title: 'Deselect destinations *optional',
-    selected: ['*optional'],
+    title: 'Deselect destinations (optional)',
+    selected: ['(optional)'],
     image: require('./Media/stepHeader2.png'),
     link: '/destinations/deselect'
   },

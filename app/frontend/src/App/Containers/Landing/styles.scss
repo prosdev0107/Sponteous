@@ -4,12 +4,12 @@
 .landing-cnt {
   .mainblock {
     height: 85vh;
-    
+
     @include respond(tab) {
       height: 65vh;
     }
     @include respond(mobile) {
-      height: 80vh;
+      height: initial;
     }
 
     @media screen and (max-width: 767px) and (orientation: landscape) {
@@ -19,7 +19,6 @@
   }
 
   .title {
-
     @include respond(mobile) {
       width: 30rem;
       font-size: 36px;

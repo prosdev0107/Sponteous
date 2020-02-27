@@ -53,6 +53,14 @@
 
     div {
       margin-left: auto;
+      display: flex;
+      align-items: center;
+      justify-items: center;
+
+      img{
+        background-size: cover;
+        margin-left: 1px;
+      }
     }
 
     &:disabled {
@@ -91,6 +99,12 @@
 
     div {
       background-color: $green-dark;
+      img{
+        margin-left: 0.16rem;
+        @include respond(mobile){
+          margin-left: 0 !important;
+        }
+      }
     }
 
     &:disabled {

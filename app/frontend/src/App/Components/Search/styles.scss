@@ -86,6 +86,7 @@
 
     @include respond(tab) {
       height: 6rem;
+      min-height: 6rem;
       width: 20rem;
     }
 
@@ -261,6 +262,7 @@
     cursor: pointer;
     @include respond(tab) {
       height: 6rem;
+      min-height: 6rem;
       width: 5rem;
     }
     @include respond(mobile) {

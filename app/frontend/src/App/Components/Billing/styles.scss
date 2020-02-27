@@ -49,7 +49,6 @@
   &-step {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
     align-items: center;
     &:first-of-type {
       margin-right: 0.5rem;
@@ -176,7 +175,10 @@
       &-back {
         justify-content: center;
         button {
-          text-align: center;
+          display: flex;
+          font-size: 12px;
+          align-items: center;
+          justify-content: space-around;
         }
       }
     }
@@ -186,14 +188,14 @@
       }
     }
     &-step_icon {
-      width: 30px;
-      height: 30px;
+      width: 35px;
+      height: 35px;
+      margin: 0 0 5px 0;
     }
     &-step {
       flex-direction: column;
-    }
-    &-step_icon {
-      margin: 0;
+      height: 80px;
+      font-size: 12px;
     }
   }
 }

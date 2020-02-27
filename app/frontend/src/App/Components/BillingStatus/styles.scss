@@ -101,6 +101,23 @@
       display: flex;
     }
 
+    @include respond(mobile){
+      flex-direction: column !important;
+      align-items: center;
+    }
+
+    .billing-submit-back{
+      margin-top: 0;
+
+      @include respond(mobile){
+        margin-top: 2rem !important;
+      }
+
+      @include respond(tab){
+        margin-top: 0;
+      }
+    }
+
     .button {
       max-width: 100%;
     }

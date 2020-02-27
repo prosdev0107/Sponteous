@@ -135,7 +135,7 @@ class DeselectContainer extends Component<
           <MainBlock className="deselect-cnt-block">
             <Title
               text="Narrow down your selection"
-              selected={['deselect']}
+              selected={['Narrow down']}
               className="deselect-title"
               desc="This is an optional step"
             />

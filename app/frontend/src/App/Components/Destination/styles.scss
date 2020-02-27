@@ -47,7 +47,7 @@
 
   @include respond(mobile) {
     width: 100%;
-    height: 36rem;
+    height: 40rem;
     margin: 0 auto 4rem auto;
   }
   &.overlay {
@@ -82,7 +82,7 @@
         height: 7rem;
       }
     }
-    span {
+    div {
       position: absolute;
       color: $white;
       background-color: $red;
@@ -128,6 +128,7 @@
 
       @include respond(mobile) {
         height: 50px;
+        min-height: 50px;
         font-size: rc(12);
       }
 
@@ -156,7 +157,6 @@
       font-size: 0.75rem;
 
       font-weight: bold;
-      margin: 1rem 0;
 
       @include respond(tab) {
         font-size: 1.3rem;
@@ -252,7 +252,7 @@
     }
 
     @include respond(mobile) {
-      top: 118px;
+      top: 140px;
     }
 
     .calendar {
@@ -429,5 +429,5 @@
 }
 
 .destination-when-not-selected {
-  height: 33rem;
+  height: 34rem;
 }

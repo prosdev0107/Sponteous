@@ -441,7 +441,7 @@ export default class Destination extends Component<IProps, IState> {
           className={`destination-top ${
             selected || deselect ? 'short' : isMobile ? 'short' : ''
           }  ${calendar ? 'shortest' : ''}`}>
-          <span>{`SAVE ${discount}%`}</span>
+          <div>{`SAVE ${discount}%`}</div>
           <img
             src={destination.photo}
             alt="bg"
@@ -456,7 +456,7 @@ export default class Destination extends Component<IProps, IState> {
             {!deselect && (
               <div destination-bottom-types>
                 {
-                  <span
+                  <div
                     className={`destination-bottom-type ${
                       typeOfTransport === 'Train'
                         ? 'destination-bottom-type--left'
@@ -467,7 +467,7 @@ export default class Destination extends Component<IProps, IState> {
                       color: '#12b459'
                     }}>
                     {typeOfTransport}
-                  </span>
+                  </div>
                 }
               </div>
             )}

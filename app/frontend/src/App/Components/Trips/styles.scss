@@ -1,0 +1,30 @@
+.trips {
+    position: absolute;
+    z-index: 1;
+    margin-top: 10px;
+    width: 326px;
+    height: auto;
+    box-shadow: 0 9px 31px rgba(83, 83, 97, 0.08);
+    border-radius: 3px;
+    border: 1px solid #DADCE9;
+    background-color: #FFFFFF;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    &-foter {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      &-clear {
+        color: #F05971;
+        cursor: pointer;
+      }
+      &-aplly {
+        color: #4142A6;
+        cursor: pointer;
+      }
+    }
+  }

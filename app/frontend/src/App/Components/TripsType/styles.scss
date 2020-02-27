@@ -1,0 +1,33 @@
+.trip-type {
+    height: 48px;
+    margin-bottom: 10px;
+    &-select {
+      display: flex;
+      align-items: center;
+      &-checkBox {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        box-shadow: inset 0 0 3px #9EA1B9;
+        border-radius: 3px;
+        border: 1px solid #DADCE9;
+        background-color: #FFFFFF;
+        margin-right: 15px;
+      }
+      &-trip {
+        color: #2E333B;
+        font-family: Poppins;
+        font-size: 16px;
+        font-weight: 400;
+      }
+    }
+    &-desc {
+      color: #7B899F;
+      font-family: Poppins;
+      font-size: 14px;
+      font-weight: 400;
+      margin-left: 35px;
+    }
+  }

@@ -34,6 +34,15 @@
   margin-bottom: 2rem;
   border-radius: 0;
   font-size: 0.875rem;
+  height: 50px;
+
+  @include respond(mobile) {
+    font-size: 1.2rem;
+    
+    &-label {
+      font-size: 1.2rem !important;
+    }
+  }
   &:focus,
   &:active {
     outline: none;
@@ -78,6 +87,13 @@
       border: 1px solid $gray;
       font-size: rc(14);
       color: $input;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      .__PrivateStripeElement{
+        width: 100%;
+      }
     }
   }
   &-expiry,

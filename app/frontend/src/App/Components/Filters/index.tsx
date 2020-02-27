@@ -225,7 +225,7 @@ export default class Filters extends React.Component<IProps, IState> {
                   Clear
                 </button>
               </div>
-              <div style={{ padding: '30px 20px' }}>
+              <div style={{ padding: '30px 20px' }}> 
                 <button
                   className="filters-filter"
                   onClick={this.hanleToggleClendarVisible}>
@@ -249,6 +249,32 @@ export default class Filters extends React.Component<IProps, IState> {
                     <Calendar onChange={this.setDepartureValue} selectRange />
                   </div>
                 )}
+                <button
+              className="filters-filter"
+              onClick={this.hanleToggleTripsVisible}>
+              <div className="filters-inner">
+                <img src={trip}/>
+                <span className="filters-filter-value">
+                  Trip Type
+                </span>
+              </div>
+              <img
+                className={`filters-filter-suffix${
+                  tripsVisible ? ' open' : ''
+                }`}
+                src={arrow}
+              />
+            </button>
+            {tripsVisible && (
+              <div className="filters-trips">
+                <Trips
+                  tripsVisible={this.hanleToggleTripsVisible}
+                  tripTags={tripTags}
+                  applyTripTagFilter={(applay: boolean) => this.props.applyTripTagFilter(applay)}
+                  selectTripTag={(tripTag: ITripTags) => this.props.selectTripTag(tripTag)}
+                />
+              </div>
+            )}
                 <button
                   className="filters-filter"
                   onClick={this.handleTogglePriceVisible}>
@@ -353,6 +379,7 @@ export default class Filters extends React.Component<IProps, IState> {
             {tripsVisible && (
               <div className="filters-trips">
                 <Trips
+                  tripsVisible={this.hanleToggleTripsVisible}
                   tripTags={tripTags}
                   applyTripTagFilter={(applay: boolean) => this.props.applyTripTagFilter(applay)}
                   selectTripTag={(tripTag: ITripTags) => this.props.selectTripTag(tripTag)}
@@ -489,6 +516,32 @@ export default class Filters extends React.Component<IProps, IState> {
                     <Calendar onChange={this.setDepartureValue} selectRange />
                   </div>
                 )}
+                <button
+              className="filters-filter"
+              onClick={this.hanleToggleTripsVisible}>
+              <div className="filters-inner">
+                <img src={trip}/>
+                <span className="filters-filter-value">
+                  Trip Type
+                </span>
+              </div>
+              <img
+                className={`filters-filter-suffix${
+                  tripsVisible ? ' open' : ''
+                }`}
+                src={arrow}
+              />
+            </button>
+            {tripsVisible && (
+              <div className="filters-trips">
+                <Trips
+                  tripsVisible={this.hanleToggleTripsVisible}
+                  tripTags={tripTags}
+                  applyTripTagFilter={(applay: boolean) => this.props.applyTripTagFilter(applay)}
+                  selectTripTag={(tripTag: ITripTags) => this.props.selectTripTag(tripTag)}
+                />
+              </div>
+            )}
                 <button
                   className="filters-filter"
                   onClick={this.handleTogglePriceVisible}>

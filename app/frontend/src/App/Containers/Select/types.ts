@@ -17,6 +17,7 @@ export interface IFilters {
 }
 
 export interface IState {
+  tripsActive: boolean
   tripTags: ITripTags[]
   trips: ITrip[]
   tripsLocal: ITrip[]

@@ -20,7 +20,7 @@ export default class Filters extends React.Component<IProps, IState> {
     calendarVisible: false,
     priceVisible: false,
     priceTouched: false,
-    tripsVisible: false
+    tripsVisible: false,
   }
  
   setDepartureValue = ([start, end]: [Date, Date]) => {
@@ -61,6 +61,7 @@ export default class Filters extends React.Component<IProps, IState> {
   handleClearFilters = () => {
     this.props.clearDates()
     this.props.clearPrice()
+    this.props.clearTrips()
     this.setState({
       calendarVisible: false,
       priceVisible: false,
@@ -215,7 +216,7 @@ export default class Filters extends React.Component<IProps, IState> {
                   <img src={filterClose} width="15px" alt="" srcSet="" />
                 </button>
                 <h5 className="filters-title">
-                  Filters ({+priceTouched + +!!start})
+                  Filters ({+priceTouched + +!!start + + this.props.tripsActive})
                 </h5>
 
                 <button
@@ -301,7 +302,7 @@ export default class Filters extends React.Component<IProps, IState> {
           <div className="filters">
             <div className="filters-header">
               <h5 className="filters-title">
-                Filters ({+priceTouched + +!!start + +tripsVisible})
+                Filters ({+priceTouched + +!!start + + this.props.tripsActive})
               </h5>
 
               <button

@@ -243,6 +243,7 @@ class SelectContainer extends Component<
       min: 0,
       max: 2000
     },
+    tripsActive: false,
     tripTags: [],
     page: 0,
     isLoading: true,
@@ -335,28 +336,23 @@ class SelectContainer extends Component<
       return curTripTag
     }) 
 
-    this.setState({tripTags: newtripTags})
+    if(newtripTags.find((tag: any) => tag.active)){
+      this.setState({tripTags: newtripTags, tripsActive: true})
+    }else{
+      this.setState({tripTags: newtripTags, tripsActive: false})
+    }
   }
 
   applyTripTagFilter = (applay: boolean) =>{
-
-
     if(applay && this.state.tripTags.find((tag: ITripTags)=> tag.active === true)) this.filterTrip()
     else {
-      let newTripTag = this.state.tripTags.map((tag: ITripTags) => {
-        if(tag.active) tag.active = !tag.active
-        return tag
-      })
-      this.setState({tripTags: newTripTag, trips: this.state.tripsLocal})
+      this.clearTrips()
     }
   }
 
   filterTrip = () =>{
-    console.log()
     let {tripTags} = this.state
     let tagsTreepFilter: any = []
-
-  
     if(this.state.tripTags.find((tag: ITripTags)=> tag.active === true)){
       this.state.tripsLocal.forEach((trip : any) =>{
         trip.destination.tags.forEach((tag: string)=>{
@@ -372,7 +368,6 @@ class SelectContainer extends Component<
     }else{
       tagsTreepFilter = this.state.trips
     }
-
     this.setState({ trips: tagsTreepFilter})
   }
 
@@ -415,19 +410,11 @@ class SelectContainer extends Component<
     )
   }
   handleFetchInitialTripsWithFilter = () => {
-    
     this.state.trips = this.state.tripsLocal
     const {
-      
       trips,
-      tripsLocal,
       filters: { min, max, start, end }
     } = this.state
-
-    
-  
-    console.log('tripsLocal', tripsLocal)
-    console.log('trips', trips)
 
     let pricefilter = trips.filter((trip: any) =>
       this.isInPriceRange(trip, trip.Adult, trip.Youth, min, max)
@@ -440,34 +427,8 @@ class SelectContainer extends Component<
           if (item._id === ticket[0].trip) dateFilter.push(item)
       })
     })
-
-    // let resultTrips = dateFilter.map((trip: any)=>  trip)
-
-    // pricefilter.forEach((trip: any)=>{
-    //   for(let i = 0; i < resultTrips.length; i++){
-    //     if(resultTrips[i]._id === trip._id) return
-    //   }
-    //   resultTrips.push(trip)
-    // })
-    
-    // tagsTreepFilter.forEach((trip: any)=>{
-    //   for(let i = 0; i < resultTrips.length; i++){
-    //     if(tagsTreepFilter[i]._id === trip._id) return
-    //   }
-    //   resultTrips.push(trip)
-    // })
-
-    
-
     this.setState({ trips: pricefilter })
-
-  
-
-    
-
-
-  
-
+    this.setState({ trips: dateFilter })
     //   this.setState(
     //     {
     //       page: 0,
@@ -643,8 +604,6 @@ class SelectContainer extends Component<
 
     filters.start = start
     filters.end = end
-
-    console.log('Opa')
     this.setState(
       (state: IState) => ({
         filters: {
@@ -654,6 +613,12 @@ class SelectContainer extends Component<
       }),
       () => callback && callback()
     )
+  }
+
+  clearTrips = () =>{
+    this.setState({tripTags: this.state.tripTags.map((tag: ITripTags) => 
+      ({...tag, active : false})
+    ), trips: this.state.tripsLocal, tripsActive: false}) 
   }
 
   handleClearFilterDates = () => {
@@ -853,6 +818,8 @@ class SelectContainer extends Component<
               <section className="select-cnt-inner-filters">
                 <Filters
                   ref={this.filters}
+                  tripsActive={this.state.tripsActive}
+                  clearTrips={() => this.clearTrips()}
                   applyTripTagFilter={(applay: boolean) => this.applyTripTagFilter(applay)}
                   selectTripTag={(tripTag: ITripTags) => this.selectTripTag(tripTag)}
                   onChange={this.handleFilterChange}
@@ -1026,6 +993,8 @@ class SelectContainer extends Component<
             <Filters
               tripTags={tripTags}
               ref={this.filters}
+              tripsActive={this.state.tripsActive}
+              clearTrips={() => this.clearTrips()}
               applyTripTagFilter={(applay: boolean) => this.applyTripTagFilter(applay)}
               selectTripTag={(tripTag: ITripTags) => this.selectTripTag(tripTag)}
               onChange={this.handleFilterChange}

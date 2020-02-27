@@ -446,8 +446,8 @@ export default class Destination extends Component<IProps, IState> {
             src={destination.photo}
             alt="bg"
             style={{
-              minHeight: '12rem',
-              maxHeight: '12rem'
+              minHeight: '18rem',
+              maxHeight: '18rem'
             }}
           />
         </div>

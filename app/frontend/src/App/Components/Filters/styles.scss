@@ -8,13 +8,13 @@
   padding: 2rem;
   background-color: $white;
   border: 1px solid $gray;
-  @media (max-width: 575.98px) {
+  @include respond(tab) {
     display: none;
   }
 
   &-m {
     display: none;
-    @media (max-width: 575.98px) {
+    @include respond(tab) {
       display: block;
     }
     &--open {
@@ -40,7 +40,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    @media (max-width: 575.98px) {
+    @include respond(tab) {
       height: 50px;
       padding: 0 20px;
       border-bottom: solid 1px #d8d8d8;
@@ -174,7 +174,7 @@
   padding: 12px 25px;
   background-color: $white;
   border: 1px solid #dadce9;
-  @media (max-width: 575.98px) {
+  @include respond(tab) {
     display: none;
   }
   &-filter {
@@ -183,7 +183,7 @@
     height: fit-content;
     padding: 0 25px;
     background-color: $white;
-    @media (max-width: 575.98px) {
+    @include respond(tab) {
       padding: 5px 0px;
     }
 

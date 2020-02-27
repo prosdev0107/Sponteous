@@ -49,6 +49,8 @@ import marker from '../../Utils/Media/marker.png'
 import markerSelected from '../../Utils/Media/marker-selected.png'
 import arrow from '../../../Common/Utils/Media/arrow.svg'
 import { ITripTags } from 'src/App/Components/Trips/types'
+import capsule from '../../Utils/Media/capsule.png'
+
 const MAX = 5
 
 const mapStyle = [
@@ -864,6 +866,15 @@ class SelectContainer extends Component<
                   filterVisible={filterVisible}
                   hanleToggleFilterVisible={this.hanleToggleFilterVisible}
                 />
+                <div className="capsule">
+                  <div className="capsule-header">How it works</div>
+                  <div className="capsule-text">
+                    We reward flexible customers by offering them low prices.
+                    Preselect your favorite destinations and find out your final
+                    one right after the payment.
+                  </div>
+                  <img src={capsule} alt="" srcSet="" />
+                </div>
               </section>
               {!filterVisible && (
                 <section className="select-cnt-inner-destinations">

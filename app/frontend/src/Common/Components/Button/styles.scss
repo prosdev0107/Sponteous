@@ -52,14 +52,24 @@
     }
 
     div {
+      @include respond(mobile){
+        width: 23px !important;
+        height: 23px !important;
+      }
+      
       margin-left: auto;
-      display: flex;
-      align-items: center;
-      justify-items: center;
+      width: 25px;
+      height: 25px;
 
       img{
-        background-size: cover;
-        margin-left: 1px;
+        @include respond(mobile){
+          width: 13px;
+          height: 13px;
+        }
+        margin: auto;
+        padding-left: 1px;
+        width: 15px;
+        height: 15px;
       }
     }
 

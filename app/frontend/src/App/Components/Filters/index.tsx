@@ -7,7 +7,7 @@ import filterClose from '../../Utils/Media/filterClose.png'
 import mapIcon from '../../Utils/Media/mapIcon.png'
 import mapClose from '../../Utils/Media/mapClose.png'
 import Trips from '../../Components/Trips'
-import trip from '../../Utils/Media/palma.png'
+import trip from '../../Utils/Media/tripTypeImage.svg'
 import mapBackground from '../../Utils/Media/mapBackground.png'
 import Calendar from '../Calenadar'
 import { IProps, IState } from './types'
@@ -67,6 +67,31 @@ export default class Filters extends React.Component<IProps, IState> {
       priceVisible: false,
       priceTouched: false
     })
+  }
+
+  private createTripTitle = (tripTags: ITripTags[]): string =>{
+    let title: string = "";
+    let isFirst: boolean = true
+    if(tripTags.find((tag: ITripTags)=> tag.active)){
+      tripTags.forEach((tag: ITripTags)=>{
+        if(tag.active){
+          if(isFirst) {
+            title+= tag.tag
+            isFirst = false
+          }else{
+         
+            if(title.indexOf(', ...') === -1){
+              (title + ", "  +tag.tag).length > 17 
+                ? title+= ", ..."
+                : title+= ", " + tag.tag 
+            }        
+          } 
+        }
+      })
+    }else{
+      title = "Trip Type"
+    }
+    return title
   }
 
   render() {
@@ -147,6 +172,36 @@ export default class Filters extends React.Component<IProps, IState> {
                   onChange={(v: [number, number]) => this.setPriceValue(v)}
                   onAfterChange={this.props.fetchTrips}
                 />
+              )}
+            </div>
+            <div className="map-filter">
+              <button
+                className="map-filter-btn"
+                onClick={this.hanleToggleTripsVisible}>
+                <div className="filters-inner">
+                  <svg className="filters-filter-prefix">
+                    <use xlinkHref={`${trip}#svg`} />
+                  </svg>
+                  <span className="filters-filter-value">
+                    {this.createTripTitle(tripTags)}
+                  </span>
+                </div>
+                <img
+                  className={`filters-filter-suffix${
+                    tripsVisible ? ' open' : ''
+                  }`}
+                  src={arrow}
+                />
+              </button>
+              {tripsVisible && (
+                <div className="filters-trips">
+                  <Trips
+                    tripsVisible={this.hanleToggleTripsVisible}
+                    tripTags={tripTags}
+                    applyTripTagFilter={(applay: boolean) => this.props.applyTripTagFilter(applay)}
+                    selectTripTag={(tripTag: ITripTags) => this.props.selectTripTag(tripTag)}
+                  />
+                </div>
               )}
             </div>
             <div className="map-filter">
@@ -253,9 +308,11 @@ export default class Filters extends React.Component<IProps, IState> {
               className="filters-filter"
               onClick={this.hanleToggleTripsVisible}>
               <div className="filters-inner">
-                <img src={trip}/>
+                <svg className="filters-filter-prefix">
+                  <use xlinkHref={`${trip}#svg`} />
+                </svg>
                 <span className="filters-filter-value">
-                  Trip Type
+                  {this.createTripTitle(tripTags)}
                 </span>
               </div>
               <img
@@ -364,9 +421,11 @@ export default class Filters extends React.Component<IProps, IState> {
               className="filters-filter"
               onClick={this.hanleToggleTripsVisible}>
               <div className="filters-inner">
-                <img src={trip}/>
+                <svg className="filters-filter-prefix">
+                  <use xlinkHref={`${trip}#svg`} />
+                </svg>
                 <span className="filters-filter-value">
-                  Trip Type
+                  {this.createTripTitle(tripTags)}
                 </span>
               </div>
               <img
@@ -520,9 +579,11 @@ export default class Filters extends React.Component<IProps, IState> {
               className="filters-filter"
               onClick={this.hanleToggleTripsVisible}>
               <div className="filters-inner">
-                <img src={trip}/>
+                <svg className="filters-filter-prefix">
+                  <use xlinkHref={`${trip}#svg`} />
+                </svg>
                 <span className="filters-filter-value">
-                  Trip Type
+                  {this.createTripTitle(tripTags)}
                 </span>
               </div>
               <img

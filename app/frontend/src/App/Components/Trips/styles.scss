@@ -1,16 +1,13 @@
 @import '../../../Common/Utils/Styles/mixin.scss';
 
 .trips {
-    position: absolute;
     z-index: 1;
-    margin-top: 10px;
-    width: 326px;
-    height: auto;
-    box-shadow: 0 9px 31px rgba(83, 83, 97, 0.08);
-    border-radius: 3px;
-    border: 1px solid #DADCE9;
+    margin-top: 1rem;
+    border-top: 1px solid #DADCE9;
     background-color: #FFFFFF;
     padding: 20px;
+    padding-top: 1rem;
+    padding-bottom: 1.5rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;

@@ -1,5 +1,6 @@
 import { ITrip, ISelectedData, IPassenger } from '../../../App/Utils/appTypes'
 import { IResponseError } from '../../../Common/Utils/globalTypes'
+import { ITripTags } from 'src/App/Components/Trips/types'
 
 export interface IFiltersChange {
   min?: number
@@ -16,6 +17,8 @@ export interface IFilters {
 }
 
 export interface IState {
+  tripsActive: boolean
+  tripTags: ITripTags[]
   trips: ITrip[]
   tripsLocal: ITrip[]
   filters: {
@@ -38,6 +41,7 @@ export interface IState {
 export interface IProps {
   isMax: boolean
   quantity: IPassenger
+
   departure: string
   selected: ISelectedData[]
   showError: (err: IResponseError, defaultText?: string) => void

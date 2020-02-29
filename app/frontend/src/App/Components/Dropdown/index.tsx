@@ -63,7 +63,7 @@ class DropDown extends React.Component<IProps, IState> {
 
     return (
       <div className={dropdownClass}>
-        <p className="spon-dropdown__label">{label}</p>
+        <p className="spon-dropdown__label">{label}<span className="active">{label === 'Departure hours' ? '*' : ''}</span></p>
         <div
           className={dropdownElementClass}
           onClick={this.toggleListVisibility}>

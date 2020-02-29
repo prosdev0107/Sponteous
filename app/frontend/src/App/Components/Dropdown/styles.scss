@@ -28,6 +28,10 @@
     font-size: rc(12);
     color: $label;
 
+    .active{
+      color: red;
+    }
+
     @include respond(mobile) {
       font-size: rc(16);
     }

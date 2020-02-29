@@ -23,12 +23,6 @@
     font-size: rc(12);
     color: $label;
 
-    &::after {
-      content: "*";
-      color: red;
-      position: absolute;
-      left: auto;
-    }
   }
 
   &__placeholder {

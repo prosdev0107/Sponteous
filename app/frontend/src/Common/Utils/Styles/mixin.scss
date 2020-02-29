@@ -2,7 +2,7 @@
 
 @mixin respond($breakpoint) {
   @if $breakpoint == bigger {
-    @media (max-width: 75em) {
+    @media (max-width: 77em) {
       @content;
     }
   }

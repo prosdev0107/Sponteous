@@ -120,6 +120,7 @@
       flex-direction: row;
       flex-wrap: wrap;
       width: 57rem;
+      justify-content: space-between;
 
       @include respond(big) {
         width: 58rem;

@@ -277,6 +277,7 @@ async function bookWithTime({ Adult, Youth, selectedTrip, owner }) {
   }
 
   const trip = await Trip.findById(reservedDepartureTicket.trip);
+  const timePrices = calculateTimePrice({ ...selectedTrip });
 
   await TicketOwner.findOneAndUpdate({
     owner
@@ -287,7 +288,10 @@ async function bookWithTime({ Adult, Youth, selectedTrip, owner }) {
       trips: {
         trip: trip._id,
         arrivalTicket: reservedArrivalTicket._id,
-        departureTicket: reservedDepartureTicket._id
+        departureTicket: reservedDepartureTicket._id,
+        arrivalTimePrice: timePrices.arrival,
+        departureTimePrice: timePrices.departure,
+        cost: trip.adultPrice * Adult + trip.childPrice * Youth + global.config.custom.ticket.chooseTimePrice
       }
     }
   }, {
@@ -403,7 +407,7 @@ module.exports = {
       if (selectedTrip.arrivalTicket || selectedTrip.departureTicket) {
         await bookWithTime({ Adult, Youth, selectedTrip, owner });
       } else {
-    await bookWithOutTime({ Adult, Youth, selectedTrip, owner });
+        await bookWithOutTime({ Adult, Youth, selectedTrip, owner });
       }
     }
 

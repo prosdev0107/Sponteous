@@ -15,7 +15,7 @@
   }
   &-info {
     width: 100%;
-    max-width: 76rem;
+    max-width: 77rem;
     margin-top: 4rem;
     display: flex;
     align-items: center;
@@ -71,7 +71,7 @@
   &-destinations {
     display: flex;
     width: 100%;
-    max-width: 76rem;
+    max-width: 77rem;
     flex-wrap: wrap;
     padding-bottom: 5rem;
     @include respond(tab) {
@@ -81,6 +81,9 @@
     }
     .destination-when-not-selected {
       height: 40rem;
+    }
+    .destination:nth-of-type(3n) {
+      margin-right: 1rem !important;
     }
   }
 }

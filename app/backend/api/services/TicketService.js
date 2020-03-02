@@ -78,7 +78,6 @@ function onExpiredTicket(err, res) {
               await Ticket.updateOne({
                 _id: ticketId
               }, {
-                $inc: { reservedQuantity: -quantity },
                 $pull: { blockedQuantity: { owner } }
               });
           }
@@ -182,15 +181,15 @@ async function bookWithOutTime({ Adult, Youth, selectedTrip, owner }) {
   if (!departureTicket) throw { status: 404, message: 'TICKET.DEPARTURE.NOT.EXIST%', args: [new Date(selectedTrip.dateEnd).toDateString()] };
   let reservedArrivalTicket;
   if (quantity <= (arrivalTicket.quantity - (arrivalTicket.soldTickets + arrivalTicket.reservedQuantity))) {
-    reservedArrivalTicket = await Ticket.findOneAndUpdate({ _id: arrivalTicket._id, active: true, deleted: false, }, { new: true });
+    reservedArrivalTicket = await Ticket.findOne({ _id: arrivalTicket._id, active: true, deleted: false, quantity: { $gte: quantity } });
     if (!reservedArrivalTicket) throw { status: 404, message: 'TICKET.ARRIVAL.NOT.EXIST%', args: [new Date(selectedTrip.dateStart).toDateString()] };
   } else {
     throw { status: 404, message: 'TICKET.BOOK.NOT.ENOUGH', args: [new Date(selectedTrip.dateEnd).toDateString()] }
   }
   let reservedDepartureTicket;
   if (quantity <= (departureTicket.quantity - (departureTicket.soldTickets + departureTicket.reservedQuantity))) {
-    reservedDepartureTicket = await Ticket.findOneAndUpdate({ _id: departureTicket._id, active: true, deleted: false },{ new: true });
-    if (!reservedDepartureTicket) throw { status: 404, message: 'TICKET.ARRIVAL.NOT.EXIST%', args: [new Date(selectedTrip.dateStart).toDateString()] };
+    reservedDepartureTicket = await Ticket.findOne({ _id: departureTicket._id, active: true, deleted: false, quantity: { $gte: quantity } });
+        if (!reservedDepartureTicket) throw { status: 404, message: 'TICKET.ARRIVAL.NOT.EXIST%', args: [new Date(selectedTrip.dateStart).toDateString()] };
   } else {
     throw { status: 404, message: 'TICKET.BOOK.NOT.ENOUGH', args: [new Date(selectedTrip.dateEnd).toDateString()] }
   }
@@ -232,13 +231,11 @@ async function unbook({ owner, selectedTrip }) {
       if (tickets.length !== 2) throw { status: 404, message: 'TICKET.NOT.FOUND' };
 
       const unbookedArrivalTicket = await Ticket.findOneAndUpdate({ _id: reserved.arrivalTicket }, {
-        $inc: { reservedQuantity: -ownerInfo.quantity },
         $pull: { blockedQuantity: { owner } }
       }, { new: true });
       if (unbookedArrivalTicket.deleted) await this.destroy(unbookedArrivalTicket._id);
 
       const unbookedDepartureTicket = await Ticket.findOneAndUpdate({ _id: reserved.departureTicket }, {
-        $inc: { reservedQuantity: -ownerInfo.quantity },
         $pull: { blockedQuantity: { owner } }
       }, { new: true });
       if (unbookedArrivalTicket.deleted) await this.destroy(unbookedDepartureTicket._id);
@@ -262,7 +259,7 @@ async function bookWithTime({ Adult, Youth, selectedTrip, owner }) {
   if (+new Date(arrivalTicket.date.start) < custom.TodayWithTimezone + global.config.custom.time.day)
     throw { status: 400, message: 'TICKET.DATE.START.INVALID%', args: [new Date(Date.now() + global.config.custom.time.day).toDateString()] };
 
-  const departureTicket = await Ticket.findOne({ _id: selectedTrip.departureTicket, active: true, deleted: false });
+  const departureTicket = await Ticket.findOne({ _id: selectedTrip.departureTicket, active: true, deleted: false, quantity: { $gte: quantity }  });
   if (!departureTicket) throw { status: 404, message: 'TICKET.DEPARTURE.NOT.EXIST' };
 
   // Check if ticket are in future
@@ -271,9 +268,9 @@ async function bookWithTime({ Adult, Youth, selectedTrip, owner }) {
   let reservedArrivalTicket;
   let reservedDepartureTicket;
   if (quantity <= arrivalTicket.quantity - (arrivalTicket.soldTickets + arrivalTicket.reservedQuantity) && quantity <= departureTicket.quantity - (departureTicket.soldTickets + departureTicket.reservedQuantity)) {
-    reservedArrivalTicket = await Ticket.findOneAndUpdate({ _id: selectedTrip.arrivalTicket, active: true, deleted: false}, { new: true });
+    reservedArrivalTicket = await Ticket.findOne({ _id: selectedTrip.arrivalTicket, active: true, deleted: false, quantity: { $gte: quantity } });
 
-    reservedDepartureTicket = await Ticket.findOneAndUpdate({ _id: selectedTrip.departureTicket, active: true, deleted: false}, { new: true });
+    reservedDepartureTicket = await Ticket.findOne({ _id: selectedTrip.departureTicket, active: true, deleted: false, quantity: { $gte: quantity } });
   } else {
     // throw { status: 404, message: 'TICKET.BOOK.NOT.ENOUGH', args: [new Date(Date.now() + global.config.custom.time.day).toDateString()] };
     return;
@@ -406,7 +403,7 @@ module.exports = {
       if (selectedTrip.arrivalTicket || selectedTrip.departureTicket) {
         await bookWithTime({ Adult, Youth, selectedTrip, owner });
       } else {
-        await bookWithOutTime({ Adult, Youth, selectedTrip, owner });
+    await bookWithOutTime({ Adult, Youth, selectedTrip, owner });
       }
     }
 

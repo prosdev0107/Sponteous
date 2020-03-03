@@ -396,21 +396,18 @@ class SelectContainer extends Component<
     filteredTicket = tickets.filter((ticket: any) =>
       this.checkDateRange(ticket, dateStart, dateEnd)
     )
-    console.log('filteredTicket', filteredTicket)
     return filteredTicket
   }
   checkDateRange = (ticket: any, dateStart: any, dateEnd: any) => {
-    // console.log(+moment(dateStart).format('x'))
     let start = new Date(ticket.date.start).getTime()
     let end = new Date(ticket.date.end).getTime()
-    // console.log(start)
     return (
       +moment(dateStart).format('x') <= start &&
       +moment(dateEnd).format('x') >= end
     )
   }
   handleFetchInitialTripsWithFilter = () => {
-    this.state.trips = this.state.tripsLocal
+    this.setState({trips: this.state.tripsLocal})
     const {
       trips,
       filters: { min, max, start, end }
@@ -428,7 +425,8 @@ class SelectContainer extends Component<
       })
     })
     this.setState({ trips: pricefilter })
-    this.setState({ trips: dateFilter })
+    console.log('dateiFilter', dateFilter)
+    // this.setState({ trips: dateFilter })
     //   this.setState(
     //     {
     //       page: 0,
@@ -490,7 +488,6 @@ class SelectContainer extends Component<
 
     API.bookTrips(data)
       .then(res => {
-        console.log('resbjhs', res.data)
         const bookedTrips = res.data.trips
         const selectedTrips = this.props.selected.map((item: ISelectedData) => {
           const filteredTrip: IBookedType = bookedTrips.find(
@@ -525,7 +522,6 @@ class SelectContainer extends Component<
   }
 
   onSelect = (data: ISelectedData) => {
-    console.log(data)
     if (!this.props.isMax) {
       this.props.addSelected(data)
     }
@@ -590,6 +586,7 @@ class SelectContainer extends Component<
   }
 
   handleFilterChange = (filters: IFiltersChange, callback?: () => void) => {
+    console.log('filters', filters);
     const start = filters.start
       ? new Date(
           filters.start.getTime() - filters.start.getTimezoneOffset() * 60000
@@ -660,7 +657,6 @@ class SelectContainer extends Component<
   }
 
   calendarOpened = () => {
-    console.log('calendar opend')
     this.setState({ isCalendarOpen: true })
   }
 
@@ -738,7 +734,6 @@ class SelectContainer extends Component<
     })
   }
   mapClicked = () => {
-    console.log('mapclicked')
     this.setState({
       showingInfoWindow: false,
       isCalendarOpen: false
@@ -1046,11 +1041,7 @@ class SelectContainer extends Component<
                 marker={this.state.activeMarker}
                 visible={this.state.showingInfoWindow}
                 onOpen={() => {
-                  console.log('infoWindowOpen')
                   this.onInfoWindowOpen()
-                }}
-                onClose={() => {
-                  console.log('infoWindowClose')
                 }}>
                 <div id="iwc" />
               </InfoWindow>

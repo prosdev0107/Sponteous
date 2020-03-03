@@ -276,7 +276,7 @@ async function bookWithTime({ Adult, Youth, selectedTrip, owner }) {
     return;
   }
 
-  const trip = await Trip.findById(reservedDepartureTicket.trip);
+  const trip = await Trip.findById(reservedArrivalTicket.trip);
   const timePrices = calculateTimePrice({ ...selectedTrip });
 
   await TicketOwner.findOneAndUpdate({

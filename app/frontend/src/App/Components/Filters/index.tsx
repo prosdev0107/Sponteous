@@ -65,7 +65,8 @@ export default class Filters extends React.Component<IProps, IState> {
     this.setState({
       calendarVisible: false,
       priceVisible: false,
-      priceTouched: false
+      priceTouched: false,
+      tripsVisible: false
     })
   }
 

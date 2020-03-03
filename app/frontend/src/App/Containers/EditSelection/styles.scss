@@ -22,7 +22,7 @@
   }
   &-edit {
     width: 100%;
-    max-width: 76rem;
+    max-width: 77rem;
   }
   &-header {
     display: flow-root;
@@ -33,7 +33,7 @@
     margin-bottom: 13px;
     width: 17rem;
     margin-right: 1rem;
-    @include respond(mobile){
+    @include respond(mobile) {
       margin: 0 auto 13px auto;
       float: none;
       width: 90%;
@@ -99,10 +99,6 @@
       flex-wrap: wrap;
       // width: 57rem;
 
-      @include respond(big) {
-        width: 57.5rem;
-      }
-
       @include respond(tab) {
         max-width: unset;
         width: 90%;
@@ -111,6 +107,9 @@
 
       @include respond(mobile) {
         margin: 0 auto;
+      }
+      .destination:nth-of-type(3n) {
+        margin-right: 1rem !important;
       }
     }
   }

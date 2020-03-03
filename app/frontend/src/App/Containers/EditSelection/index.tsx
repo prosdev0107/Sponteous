@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import MainBlock from '../../Components/MainBlock'
 import Search from '../../Components/Search'
 import Steps from '../../Components/Steps'
-import Filters from '../../Components/Filters'
+// import Filters from '../../Components/Filters'
 import Destination from '../../Components/Destination'
 import SelectPanel from '../../Components/SelectPanel'
 import Button from '../../../Common/Components/Button'
@@ -60,7 +60,7 @@ class EditSelectContainer extends Component<
     isCalendarOpen: false
   }
 
-  private filters = React.createRef<Filters>()
+  // private filters = React.createRef<Filters>()
 
   componentDidMount() {
     window.scrollTo(0, 0)
@@ -462,29 +462,7 @@ class EditSelectContainer extends Component<
             setQuantity={this.props.setQuantity}
             quantity={quantity}
             onSubmit={() => {
-              this.setState({ isLoading: true })
-              this.setState({ tripsLocal: [] })
-              this.setState({ trips: [] })
-              this.filters.current!.handleClearFilters()
-              this.handleFetchTrips(
-                this.state.page,
-                10,
-                0,
-                0,
-                0,
-                0,
-                quantity.Adult,
-                quantity.Youth,
-                departure
-              ).then(() => {
-                this.setState({ isLoading: false })
-                if (
-                  this.state.trips.length >= 10 &&
-                  this.state.trips.length > 0
-                ) {
-                  this.attachScrollEvent()
-                }
-              })
+              this.props.history.push('/destinations/select')
             }}
             initialValue={departure}
           />

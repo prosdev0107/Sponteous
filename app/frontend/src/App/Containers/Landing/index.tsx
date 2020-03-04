@@ -14,7 +14,8 @@ import {
   setQuantity,
   selectQuantity,
   selectDeparture,
-  setDeparture
+  setDeparture,
+  clearSelected
 } from '../../../Common/Redux/Services/trips'
 import { IStore } from '../../../Common/Redux/types'
 import { RouteComponentProps } from 'react-router-dom'
@@ -29,8 +30,9 @@ class LandingContainer extends Component<RouteComponentProps<{}> & IProps> {
   }
 
   componentWillMount() {
-    this.props.setQuantity({Adult:1, Youth:0})
-    this.props.setDeparture("")
+    this.props.setQuantity({ Adult: 1, Youth: 0 })
+    this.props.setDeparture('')
+    this.props.clearSelected()
   }
 
   onSubmit = (e: React.FormEvent) => {
@@ -42,7 +44,6 @@ class LandingContainer extends Component<RouteComponentProps<{}> & IProps> {
     document.getElementById('slider')!.scrollIntoView({ behavior: 'smooth' })
   }
 
-  
   render() {
     return (
       <section className="landing-cnt">
@@ -78,5 +79,5 @@ const mapStateToProps = (state: IStore) => ({
 
 export default connect(
   mapStateToProps,
-  { setQuantity , setDeparture}
+  { setQuantity, setDeparture, clearSelected }
 )(LandingContainer)

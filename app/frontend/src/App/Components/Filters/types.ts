@@ -1,5 +1,5 @@
 import { IFilters, IFiltersChange } from '../../Containers/Select/types'
-import { ITripTags } from '../Trips/types';
+import { ITripTags } from '../Trips/types'
 
 export interface IProps {
   filters: IFilters
@@ -19,6 +19,7 @@ export interface IProps {
 }
 export interface IState {
   calendarVisible: boolean
+  calendarTouched: boolean
   priceVisible: boolean
   priceTouched: boolean
   tripsVisible: boolean

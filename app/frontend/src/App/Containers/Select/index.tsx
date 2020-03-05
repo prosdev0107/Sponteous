@@ -307,17 +307,15 @@ class SelectContainer extends Component<
     )
       .then(({ data }) => {
         let tripTags: ITripTags[] = []
-        data.forEach((trip : any) =>{
-          trip.destination.tags.forEach((tag: string)=>{
-            for(let i=0; i < tripTags.length; i++){
-              if(tripTags[i].tag === tag) return
+        data.forEach((trip: any) => {
+          trip.destination.tags.forEach((tag: string) => {
+            for (let i = 0; i < tripTags.length; i++) {
+              if (tripTags[i].tag === tag) return
             }
-            tripTags.push({tag: tag, active: false})
-           })
-         })
+            tripTags.push({ tag: tag, active: false })
+          })
+        })
 
-
-       
         this.setState((state: IState) => ({
           tripTags: tripTags || [],
           isLoading: false,
@@ -329,46 +327,55 @@ class SelectContainer extends Component<
       .catch(err => console.log(err.response))
   }
 
-  selectTripTag = (tripTag: ITripTags) =>{
-    let newtripTags: ITripTags[];
-    newtripTags = this.state.tripTags.map((curTripTag: ITripTags) =>{
-      if(tripTag.tag === curTripTag.tag) curTripTag.active = !curTripTag.active
+  selectTripTag = (tripTag: ITripTags) => {
+    let newtripTags: ITripTags[]
+    newtripTags = this.state.tripTags.map((curTripTag: ITripTags) => {
+      if (tripTag.tag === curTripTag.tag) curTripTag.active = !curTripTag.active
       return curTripTag
-    }) 
+    })
 
-    if(newtripTags.find((tag: any) => tag.active)){
-      this.setState({tripTags: newtripTags, tripsActive: true})
-    }else{
-      this.setState({tripTags: newtripTags, tripsActive: false})
+    if (newtripTags.find((tag: any) => tag.active)) {
+      this.setState({ tripTags: newtripTags, tripsActive: true })
+    } else {
+      this.setState({ tripTags: newtripTags, tripsActive: false })
     }
   }
 
-  applyTripTagFilter = (applay: boolean) =>{
-    if(applay && this.state.tripTags.find((tag: ITripTags)=> tag.active === true)) this.filterTrip()
+  applyTripTagFilter = (applay: boolean) => {
+    if (
+      applay &&
+      this.state.tripTags.find((tag: ITripTags) => tag.active === true)
+    )
+      this.filterTrip()
     else {
       this.clearTrips()
     }
   }
 
-  filterTrip = () =>{
-    let {tripTags} = this.state
+  filterTrip = () => {
+    let { tripTags } = this.state
     let tagsTreepFilter: any = []
-    if(this.state.tripTags.find((tag: ITripTags)=> tag.active === true)){
-      this.state.tripsLocal.forEach((trip : any) =>{
-        trip.destination.tags.forEach((tag: string)=>{
-          for(let i=0; i < tripTags.length; i++){
-            if(tripTags[i].tag === tag && tripTags[i].active === true){
-              if(tagsTreepFilter.find((searchTrip: any) => trip._id === searchTrip._id)) return
+    if (this.state.tripTags.find((tag: ITripTags) => tag.active === true)) {
+      this.state.tripsLocal.forEach((trip: any) => {
+        trip.destination.tags.forEach((tag: string) => {
+          for (let i = 0; i < tripTags.length; i++) {
+            if (tripTags[i].tag === tag && tripTags[i].active === true) {
+              if (
+                tagsTreepFilter.find(
+                  (searchTrip: any) => trip._id === searchTrip._id
+                )
+              )
+                return
               tagsTreepFilter.push(trip)
               return
-            } 
+            }
           }
         })
       })
-    }else{
+    } else {
       tagsTreepFilter = this.state.trips
     }
-    this.setState({ trips: tagsTreepFilter})
+    this.setState({ trips: tagsTreepFilter })
   }
 
   getTicketsType = (tickets: ITicket[]) => {
@@ -407,51 +414,28 @@ class SelectContainer extends Component<
     )
   }
   handleFetchInitialTripsWithFilter = () => {
-    this.setState({trips: this.state.tripsLocal})
     const {
-      trips,
+      tripsLocal,
       filters: { min, max, start, end }
     } = this.state
 
-    let pricefilter = trips.filter((trip: any) =>
+    let pricefilter: any = []
+    let dateFilter: any = []
+
+    pricefilter = tripsLocal.filter((trip: any) =>
       this.isInPriceRange(trip, trip.Adult, trip.Youth, min, max)
     )
-    let dateFilter: any = []
-    pricefilter.filter((trip: any) => {
-      let ticket = this.isInDateRange(trip.tickets, start, end)
-      pricefilter.forEach(item => {
-        if (ticket.length !== 0)
-          if (item._id === ticket[0].trip) dateFilter.push(item)
-      })
-    })
     this.setState({ trips: pricefilter })
-    console.log('dateiFilter', dateFilter)
-    // this.setState({ trips: dateFilter })
-    //   this.setState(
-    //     {
-    //       page: 0,
-    //       isLoading: true,
-    //       trips: []
-    //     },
-    //     () => {
-    //       const {
-    //         page,
-    //         filters: { min, max, start, end }
-    //       } = this.state
-    //       const { quantity,departure } = this.props
-    //       this.handleFetchTrips(
-    //         page,
-    //         1000,
-    //         min,
-    //         max,
-    //         start !== undefined ? +moment(start).format('x') : 0,
-    //         end !== undefined ? +moment(end).format('x') : 0,
-    //         quantity.Adult,
-    //         quantity.Youth,
-    //         departure
-    //       )
-    //     }
-    //   )
+    if (start && end) {
+      pricefilter.filter((trip: any) => {
+        let ticket = this.isInDateRange(trip.tickets, start, end)
+        pricefilter.forEach((item: any) => {
+          if (ticket.length !== 0)
+            if (item._id === ticket[0].trip) dateFilter.push(item)
+        })
+      })
+      this.setState({ trips: dateFilter })
+    }
   }
 
   handleBookTrips = () => {
@@ -586,21 +570,7 @@ class SelectContainer extends Component<
   }
 
   handleFilterChange = (filters: IFiltersChange, callback?: () => void) => {
-    console.log('filters', filters);
-    const start = filters.start
-      ? new Date(
-          filters.start.getTime() - filters.start.getTimezoneOffset() * 60000
-        )
-      : new Date()
-    const starto = moment(start.getTime()).endOf('month')
-    const end = filters.end
-      ? new Date(
-          filters.end.getTime() - filters.end.getTimezoneOffset() * 60000
-        )
-      : new Date(starto.toString())
-
-    filters.start = start
-    filters.end = end
+    console.log(filters)
     this.setState(
       (state: IState) => ({
         filters: {
@@ -612,10 +582,15 @@ class SelectContainer extends Component<
     )
   }
 
-  clearTrips = () =>{
-    this.setState({tripTags: this.state.tripTags.map((tag: ITripTags) => 
-      ({...tag, active : false})
-    ), trips: this.state.tripsLocal, tripsActive: false}) 
+  clearTrips = () => {
+    this.setState({
+      tripTags: this.state.tripTags.map((tag: ITripTags) => ({
+        ...tag,
+        active: false
+      })),
+      trips: this.state.tripsLocal,
+      tripsActive: false
+    })
   }
 
   handleClearFilterDates = () => {
@@ -747,7 +722,13 @@ class SelectContainer extends Component<
   }
 
   render() {
-    const { isCalendarOpen, filters, trips, filterVisible, tripTags } = this.state
+    const {
+      isCalendarOpen,
+      filters,
+      trips,
+      filterVisible,
+      tripTags
+    } = this.state
     const { isMax, quantity, selected, departure } = this.props
     const isMapViewOpen = this.state.isMapViewOpen
     let locations: any = []
@@ -815,8 +796,12 @@ class SelectContainer extends Component<
                   ref={this.filters}
                   tripsActive={this.state.tripsActive}
                   clearTrips={() => this.clearTrips()}
-                  applyTripTagFilter={(applay: boolean) => this.applyTripTagFilter(applay)}
-                  selectTripTag={(tripTag: ITripTags) => this.selectTripTag(tripTag)}
+                  applyTripTagFilter={(applay: boolean) =>
+                    this.applyTripTagFilter(applay)
+                  }
+                  selectTripTag={(tripTag: ITripTags) =>
+                    this.selectTripTag(tripTag)
+                  }
                   onChange={this.handleFilterChange}
                   fetchTrips={this.handleFetchInitialTripsWithFilter}
                   clearDates={this.handleClearFilterDates}
@@ -990,8 +975,12 @@ class SelectContainer extends Component<
               ref={this.filters}
               tripsActive={this.state.tripsActive}
               clearTrips={() => this.clearTrips()}
-              applyTripTagFilter={(applay: boolean) => this.applyTripTagFilter(applay)}
-              selectTripTag={(tripTag: ITripTags) => this.selectTripTag(tripTag)}
+              applyTripTagFilter={(applay: boolean) =>
+                this.applyTripTagFilter(applay)
+              }
+              selectTripTag={(tripTag: ITripTags) =>
+                this.selectTripTag(tripTag)
+              }
               onChange={this.handleFilterChange}
               fetchTrips={this.handleFetchInitialTripsWithFilter}
               clearDates={this.handleClearFilterDates}

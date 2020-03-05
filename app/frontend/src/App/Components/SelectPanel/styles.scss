@@ -13,6 +13,7 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  z-index: 2;
 
   @include respond(mobile) {
     padding: 0 0 0 1rem;
@@ -147,11 +148,12 @@
     }
   }
 
-  #editselect:hover, #editselect:focus {
+  #editselect:hover,
+  #editselect:focus {
     text-decoration: none;
   }
 }
-.mouse{
+.mouse {
   cursor: pointer;
 }
 

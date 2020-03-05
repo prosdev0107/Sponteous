@@ -18,12 +18,14 @@ import { ITripTags } from '../Trips/types'
 export default class Filters extends React.Component<IProps, IState> {
   readonly state: IState = {
     calendarVisible: false,
+    calendarTouched: false,
     priceVisible: false,
     priceTouched: false,
-    tripsVisible: false,
+    tripsVisible: false
   }
- 
+
   setDepartureValue = ([start, end]: [Date, Date]) => {
+    this.setState({ calendarTouched: true })
     this.props.onChange({ start, end }, () => {
       this.props.fetchTrips()
     })
@@ -34,8 +36,8 @@ export default class Filters extends React.Component<IProps, IState> {
     this.props.onChange({ min, max })
   }
 
-  setTripsValue = (tags:any) => {
-    console.log('tags:',tags)
+  setTripsValue = (tags: any) => {
+    console.log('tags:', tags)
     // this.props.onChange(tags)
   }
 
@@ -53,7 +55,6 @@ export default class Filters extends React.Component<IProps, IState> {
 
   handleTogglePriceVisible = () => {
     this.setState((state: IState) => ({
-      priceTouched: true,
       priceVisible: !state.priceVisible
     }))
   }
@@ -64,39 +65,44 @@ export default class Filters extends React.Component<IProps, IState> {
     this.props.clearTrips()
     this.setState({
       calendarVisible: false,
+      calendarTouched: false,
       priceVisible: false,
       priceTouched: false,
       tripsVisible: false
     })
   }
 
-  private createTripTitle = (tripTags: ITripTags[]): string =>{
-    let title: string = "";
+  private createTripTitle = (tripTags: ITripTags[]): string => {
+    let title: string = ''
     let isFirst: boolean = true
-    if(tripTags.find((tag: ITripTags)=> tag.active)){
-      tripTags.forEach((tag: ITripTags)=>{
-        if(tag.active){
-          if(isFirst) {
-            title+= tag.tag
+    if (tripTags.find((tag: ITripTags) => tag.active)) {
+      tripTags.forEach((tag: ITripTags) => {
+        if (tag.active) {
+          if (isFirst) {
+            title += tag.tag
             isFirst = false
-          }else{
-         
-            if(title.indexOf(', ...') === -1){
-              (title + ", "  +tag.tag).length > 17 
-                ? title+= ", ..."
-                : title+= ", " + tag.tag 
-            }        
-          } 
+          } else {
+            if (title.indexOf(', ...') === -1) {
+              ;(title + ', ' + tag.tag).length > 17
+                ? (title += ', ...')
+                : (title += ', ' + tag.tag)
+            }
+          }
         }
       })
-    }else{
-      title = "Trip Type"
+    } else {
+      title = 'Trip Type'
     }
     return title
   }
 
   render() {
-    const { calendarVisible, priceVisible, priceTouched, tripsVisible } = this.state
+    const {
+      calendarVisible,
+      priceVisible,
+      priceTouched,
+      tripsVisible
+    } = this.state
     const {
       filters: { min, max, start, end },
       filterVisible,
@@ -104,14 +110,10 @@ export default class Filters extends React.Component<IProps, IState> {
     } = this.props
 
     const startText = start
-      ? new Date(start!.getTime() + start!.getTimezoneOffset() * 60000)
-          .toDateString()
-          .replace(/(^\w+|\d+$)/g, '')
+      ? new Date(start!.getTime()).toDateString().replace(/(^\w+|\d+$)/g, '')
       : 'Departure'
     const endText = end
-      ? new Date(end!.getTime() + end!.getTimezoneOffset() * 60000)
-          .toDateString()
-          .replace(/(^\w+|\d+$)/g, '')
+      ? new Date(end!.getTime()).toDateString().replace(/(^\w+|\d+$)/g, '')
       : 'Return'
     const priceText = priceTouched ? `${min} - ${max}` : 'Price'
     if (this.props.isMapViewOn) {
@@ -139,7 +141,23 @@ export default class Filters extends React.Component<IProps, IState> {
               </button>
               {calendarVisible && (
                 <div className="filters-calendar">
-                  <Calendar onChange={this.setDepartureValue} selectRange />
+                  <Calendar
+                    onChange={this.setDepartureValue}
+                    selectRange
+                    value={[start as Date, end as Date]}
+                  />
+                  {this.state.calendarTouched && (
+                    <div
+                      className="filters-clearbtn"
+                      onClick={() => {
+                        this.props.clearDates()
+                        this.setState({
+                          calendarTouched: false
+                        })
+                      }}>
+                      CLEAR
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -163,16 +181,30 @@ export default class Filters extends React.Component<IProps, IState> {
                 </span>
               </button>
               {priceVisible && (
-                <Slider
-                  className="filters-slider"
-                  range
-                  tipFormatter={null}
-                  min={0}
-                  max={300}
-                  value={[min, max]}
-                  onChange={(v: [number, number]) => this.setPriceValue(v)}
-                  onAfterChange={this.props.fetchTrips}
-                />
+                <div style={{ marginBottom: '2rem' }}>
+                  <Slider
+                    className="filters-slider"
+                    range
+                    tipFormatter={null}
+                    min={0}
+                    max={300}
+                    value={[min, max]}
+                    onChange={(v: [number, number]) => this.setPriceValue(v)}
+                    onAfterChange={this.props.fetchTrips}
+                  />
+                  {this.state.priceTouched && (
+                    <div
+                      className="filters-clearbtn"
+                      onClick={() => {
+                        this.props.clearPrice()
+                        this.setState({
+                          priceTouched: false
+                        })
+                      }}>
+                      CLEAR
+                    </div>
+                  )}
+                </div>
               )}
             </div>
             <div className="map-filter">
@@ -199,8 +231,12 @@ export default class Filters extends React.Component<IProps, IState> {
                   <Trips
                     tripsVisible={this.hanleToggleTripsVisible}
                     tripTags={tripTags}
-                    applyTripTagFilter={(applay: boolean) => this.props.applyTripTagFilter(applay)}
-                    selectTripTag={(tripTag: ITripTags) => this.props.selectTripTag(tripTag)}
+                    applyTripTagFilter={(applay: boolean) =>
+                      this.props.applyTripTagFilter(applay)
+                    }
+                    selectTripTag={(tripTag: ITripTags) =>
+                      this.props.selectTripTag(tripTag)
+                    }
                   />
                 </div>
               )}
@@ -272,7 +308,7 @@ export default class Filters extends React.Component<IProps, IState> {
                   <img src={filterClose} width="15px" alt="" srcSet="" />
                 </button>
                 <h5 className="filters-title">
-                  Filters ({+priceTouched + +!!start + + this.props.tripsActive})
+                  Filters ({+priceTouched + +!!start + +this.props.tripsActive})
                 </h5>
 
                 <button
@@ -281,7 +317,7 @@ export default class Filters extends React.Component<IProps, IState> {
                   Clear
                 </button>
               </div>
-              <div style={{ padding: '30px 20px' }}> 
+              <div style={{ padding: '30px 20px' }}>
                 <button
                   className="filters-filter"
                   onClick={this.hanleToggleClendarVisible}>
@@ -302,37 +338,57 @@ export default class Filters extends React.Component<IProps, IState> {
                 </button>
                 {calendarVisible && (
                   <div className="filters-calendar">
-                    <Calendar onChange={this.setDepartureValue} selectRange />
+                    <Calendar
+                      onChange={this.setDepartureValue}
+                      selectRange
+                      value={[start as Date, end as Date]}
+                    />
+                    {this.state.calendarTouched && (
+                      <div
+                        className="filters-clearbtn"
+                        onClick={() => {
+                          this.props.clearDates()
+                          this.setState({
+                            calendarTouched: false
+                          })
+                        }}>
+                        CLEAR
+                      </div>
+                    )}
                   </div>
                 )}
                 <button
-              className="filters-filter"
-              onClick={this.hanleToggleTripsVisible}>
-              <div className="filters-inner">
-                <svg className="filters-filter-prefix">
-                  <use xlinkHref={`${trip}#svg`} />
-                </svg>
-                <span className="filters-filter-value">
-                  {this.createTripTitle(tripTags)}
-                </span>
-              </div>
-              <img
-                className={`filters-filter-suffix${
-                  tripsVisible ? ' open' : ''
-                }`}
-                src={arrow}
-              />
-            </button>
-            {tripsVisible && (
-              <div className="filters-trips">
-                <Trips
-                  tripsVisible={this.hanleToggleTripsVisible}
-                  tripTags={tripTags}
-                  applyTripTagFilter={(applay: boolean) => this.props.applyTripTagFilter(applay)}
-                  selectTripTag={(tripTag: ITripTags) => this.props.selectTripTag(tripTag)}
-                />
-              </div>
-            )}
+                  className="filters-filter"
+                  onClick={this.hanleToggleTripsVisible}>
+                  <div className="filters-inner">
+                    <svg className="filters-filter-prefix">
+                      <use xlinkHref={`${trip}#svg`} />
+                    </svg>
+                    <span className="filters-filter-value">
+                      {this.createTripTitle(tripTags)}
+                    </span>
+                  </div>
+                  <img
+                    className={`filters-filter-suffix${
+                      tripsVisible ? ' open' : ''
+                    }`}
+                    src={arrow}
+                  />
+                </button>
+                {tripsVisible && (
+                  <div className="filters-trips">
+                    <Trips
+                      tripsVisible={this.hanleToggleTripsVisible}
+                      tripTags={tripTags}
+                      applyTripTagFilter={(applay: boolean) =>
+                        this.props.applyTripTagFilter(applay)
+                      }
+                      selectTripTag={(tripTag: ITripTags) =>
+                        this.props.selectTripTag(tripTag)
+                      }
+                    />
+                  </div>
+                )}
                 <button
                   className="filters-filter"
                   onClick={this.handleTogglePriceVisible}>
@@ -352,16 +408,30 @@ export default class Filters extends React.Component<IProps, IState> {
                   </span>
                 </button>
                 {priceVisible && (
-                  <Slider
-                    className="filters-slider"
-                    range
-                    tipFormatter={null}
-                    min={0}
-                    max={300}
-                    value={[min, max]}
-                    onChange={(v: [number, number]) => this.setPriceValue(v)}
-                    onAfterChange={this.props.fetchTrips}
-                  />
+                  <div style={{ marginBottom: '2rem' }}>
+                    <Slider
+                      className="filters-slider"
+                      range
+                      tipFormatter={null}
+                      min={0}
+                      max={300}
+                      value={[min, max]}
+                      onChange={(v: [number, number]) => this.setPriceValue(v)}
+                      onAfterChange={this.props.fetchTrips}
+                    />
+                    {this.state.priceTouched && (
+                      <div
+                        className="filters-clearbtn"
+                        onClick={() => {
+                          this.props.clearPrice()
+                          this.setState({
+                            priceTouched: false
+                          })
+                        }}>
+                        CLEAR
+                      </div>
+                    )}
+                  </div>
                 )}
                 <button
                   className="filters-filter"
@@ -386,7 +456,7 @@ export default class Filters extends React.Component<IProps, IState> {
           <div className="filters">
             <div className="filters-header">
               <h5 className="filters-title">
-                Filters ({+priceTouched + +!!start + + this.props.tripsActive})
+                Filters ({+priceTouched + +!!start + +this.props.tripsActive})
               </h5>
 
               <button
@@ -415,7 +485,23 @@ export default class Filters extends React.Component<IProps, IState> {
             </button>
             {calendarVisible && (
               <div className="filters-calendar">
-                <Calendar onChange={this.setDepartureValue} selectRange />
+                <Calendar
+                  onChange={this.setDepartureValue}
+                  selectRange
+                  value={[start as Date, end as Date]}
+                />
+                {this.state.calendarTouched && (
+                  <div
+                    className="filters-clearbtn"
+                    onClick={() => {
+                      this.props.clearDates()
+                      this.setState({
+                        calendarTouched: false
+                      })
+                    }}>
+                    CLEAR
+                  </div>
+                )}
               </div>
             )}
             <button
@@ -441,15 +527,19 @@ export default class Filters extends React.Component<IProps, IState> {
                 <Trips
                   tripsVisible={this.hanleToggleTripsVisible}
                   tripTags={tripTags}
-                  applyTripTagFilter={(applay: boolean) => this.props.applyTripTagFilter(applay)}
-                  selectTripTag={(tripTag: ITripTags) => this.props.selectTripTag(tripTag)}
+                  applyTripTagFilter={(applay: boolean) =>
+                    this.props.applyTripTagFilter(applay)
+                  }
+                  selectTripTag={(tripTag: ITripTags) =>
+                    this.props.selectTripTag(tripTag)
+                  }
                 />
               </div>
             )}
             <button
               className="filters-filter"
               onClick={this.handleTogglePriceVisible}>
-              <div className="filters-inner">             
+              <div className="filters-inner">
                 <span className="filters-filter-prefix">
                   <svg>
                     <use xlinkHref={`${money}#money`} />
@@ -465,16 +555,30 @@ export default class Filters extends React.Component<IProps, IState> {
               </span>
             </button>
             {priceVisible && (
-              <Slider
-                className="filters-slider"
-                range
-                tipFormatter={null}
-                min={0}
-                max={300}
-                value={[min, max]}
-                onChange={(v: [number, number]) => this.setPriceValue(v)}
-                onAfterChange={this.props.fetchTrips}
-              />
+              <div style={{ marginBottom: '2rem' }}>
+                <Slider
+                  className="filters-slider"
+                  range
+                  tipFormatter={null}
+                  min={0}
+                  max={300}
+                  value={[min, max]}
+                  onChange={(v: [number, number]) => this.setPriceValue(v)}
+                  onAfterChange={this.props.fetchTrips}
+                />
+                {this.state.priceTouched && (
+                  <div
+                    className="filters-clearbtn"
+                    onClick={() => {
+                      this.props.clearPrice()
+                      this.setState({
+                        priceTouched: false
+                      })
+                    }}>
+                    CLEAR
+                  </div>
+                )}
+              </div>
             )}
             <button
               className="filters-filter"
@@ -573,37 +677,57 @@ export default class Filters extends React.Component<IProps, IState> {
                 </button>
                 {calendarVisible && (
                   <div className="filters-calendar">
-                    <Calendar onChange={this.setDepartureValue} selectRange />
+                    <Calendar
+                      onChange={this.setDepartureValue}
+                      selectRange
+                      value={[start as Date, end as Date]}
+                    />
+                    {this.state.calendarTouched && (
+                      <div
+                        className="filters-clearbtn"
+                        onClick={() => {
+                          this.props.clearDates()
+                          this.setState({
+                            calendarTouched: false
+                          })
+                        }}>
+                        CLEAR
+                      </div>
+                    )}
                   </div>
                 )}
                 <button
-              className="filters-filter"
-              onClick={this.hanleToggleTripsVisible}>
-              <div className="filters-inner">
-                <svg className="filters-filter-prefix">
-                  <use xlinkHref={`${trip}#svg`} />
-                </svg>
-                <span className="filters-filter-value">
-                  {this.createTripTitle(tripTags)}
-                </span>
-              </div>
-              <img
-                className={`filters-filter-suffix${
-                  tripsVisible ? ' open' : ''
-                }`}
-                src={arrow}
-              />
-            </button>
-            {tripsVisible && (
-              <div className="filters-trips">
-                <Trips
-                  tripsVisible={this.hanleToggleTripsVisible}
-                  tripTags={tripTags}
-                  applyTripTagFilter={(applay: boolean) => this.props.applyTripTagFilter(applay)}
-                  selectTripTag={(tripTag: ITripTags) => this.props.selectTripTag(tripTag)}
-                />
-              </div>
-            )}
+                  className="filters-filter"
+                  onClick={this.hanleToggleTripsVisible}>
+                  <div className="filters-inner">
+                    <svg className="filters-filter-prefix">
+                      <use xlinkHref={`${trip}#svg`} />
+                    </svg>
+                    <span className="filters-filter-value">
+                      {this.createTripTitle(tripTags)}
+                    </span>
+                  </div>
+                  <img
+                    className={`filters-filter-suffix${
+                      tripsVisible ? ' open' : ''
+                    }`}
+                    src={arrow}
+                  />
+                </button>
+                {tripsVisible && (
+                  <div className="filters-trips">
+                    <Trips
+                      tripsVisible={this.hanleToggleTripsVisible}
+                      tripTags={tripTags}
+                      applyTripTagFilter={(applay: boolean) =>
+                        this.props.applyTripTagFilter(applay)
+                      }
+                      selectTripTag={(tripTag: ITripTags) =>
+                        this.props.selectTripTag(tripTag)
+                      }
+                    />
+                  </div>
+                )}
                 <button
                   className="filters-filter"
                   onClick={this.handleTogglePriceVisible}>
@@ -623,23 +747,38 @@ export default class Filters extends React.Component<IProps, IState> {
                   </span>
                 </button>
                 {priceVisible && (
-                  <Slider
-                    className="filters-slider"
-                    range
-                    tipFormatter={null}
-                    min={0}
-                    max={300}
-                    value={[min, max]}
-                    onChange={(v: [number, number]) => this.setPriceValue(v)}
-                    onAfterChange={this.props.fetchTrips}
-                  />
+                  <div style={{ marginBottom: '2rem' }}>
+                    <Slider
+                      className="filters-slider"
+                      range
+                      tipFormatter={null}
+                      min={0}
+                      max={300}
+                      value={[min, max]}
+                      onChange={(v: [number, number]) => this.setPriceValue(v)}
+                      onAfterChange={this.props.fetchTrips}
+                    />
+                    {this.state.priceTouched && (
+                      <div
+                        className="filters-clearbtn"
+                        onClick={() => {
+                          this.props.clearPrice()
+                          this.setState({
+                            priceTouched: false
+                          })
+                        }}>
+                        CLEAR
+                      </div>
+                    )}
+                  </div>
                 )}
                 <button
                   className="filters-filter"
                   style={{
                     backgroundColor: '#5dc3fd',
                     color: 'white',
-                    justifyContent: 'center'
+                    justifyContent: 'center',
+                    marginBottom: '50px'
                   }}
                   onClick={this.props.hanleToggleFilterVisible}>
                   <div className="filters-inner">

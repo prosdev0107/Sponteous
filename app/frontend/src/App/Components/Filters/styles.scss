@@ -22,7 +22,7 @@
       top: 0;
       left: 0;
       width: 100vw;
-      height: calc(100vh - 6.5rem);
+      height: 100%;
       background-color: $white;
       z-index: 2;
     }
@@ -65,9 +65,20 @@
     }
   }
 
+  &-clearbtn {
+    color: #f05971;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-top: 15px;
+  }
+
   &-calendar {
     margin-top: 1rem;
     margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
 
     @include respond(tab) {
       display: flex;

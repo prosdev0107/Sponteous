@@ -184,14 +184,14 @@ async function bookWithOutTime({ Adult, Youth, selectedTrip, owner }) {
     reservedArrivalTicket = await Ticket.findOne({ _id: arrivalTicket._id, active: true, deleted: false, quantity: { $gte: quantity } });
     if (!reservedArrivalTicket) throw { status: 404, message: 'TICKET.ARRIVAL.NOT.EXIST%', args: [new Date(selectedTrip.dateStart).toDateString()] };
   } else {
-    throw { status: 404, message: 'TICKET.BOOK.NOT.ENOUGH', args: [new Date(selectedTrip.dateEnd).toDateString()] }
+    return
   }
   let reservedDepartureTicket;
   if (quantity <= (departureTicket.quantity - (departureTicket.soldTickets + departureTicket.reservedQuantity))) {
     reservedDepartureTicket = await Ticket.findOne({ _id: departureTicket._id, active: true, deleted: false, quantity: { $gte: quantity } });
         if (!reservedDepartureTicket) throw { status: 404, message: 'TICKET.ARRIVAL.NOT.EXIST%', args: [new Date(selectedTrip.dateStart).toDateString()] };
   } else {
-    throw { status: 404, message: 'TICKET.BOOK.NOT.ENOUGH', args: [new Date(selectedTrip.dateEnd).toDateString()] }
+    return
   }
 
   const updatedTicketOwner = await TicketOwner.findOneAndUpdate({
@@ -527,8 +527,14 @@ module.exports = {
     }
 
     function getMostExpensiveTrip({ quantity, trips }) {
-      
-      const selectedTrips = trips.filter(x => !x.deselected && !x.trip.fake);
+
+      const selectedTrips = trips.filter(x => {
+        if (x.arrivalTicket || x.departureTicket) {
+          return !x.deselected && !x.trip.fake && x.arrivalTicket.quantity - x.arrivalTicket.soldTickets >= quantity
+        } else {
+          return !x.deselected && !x.trip.fake && x.arrivalTicket.quantity - x.arrivalTicket.soldTickets >= quantity && x.departureTicket.quantity - x.departureTicket.soldTickets >= quantity
+        }
+      })
 
       let mostExpensiveTrip;
       let vendorProfit = 0;

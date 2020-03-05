@@ -116,6 +116,54 @@ export default class Filters extends React.Component<IProps, IState> {
       ? new Date(end!.getTime()).toDateString().replace(/(^\w+|\d+$)/g, '')
       : 'Return'
     const priceText = priceTouched ? `${min} - ${max}` : 'Price'
+
+    const tmpDate = new Date(new Date().setHours(0, 0, 0, 0))
+
+    var startDate = new Date(
+      tmpDate.getFullYear() +
+        '-' +
+        (tmpDate.getMonth() + 1).toString().padStart(2, '0') +
+        '-' +
+        tmpDate
+          .getDate()
+          .toString()
+          .padStart(2, '0')
+    )
+    var endDate = new Date(
+      tmpDate.getFullYear() +
+        1 +
+        '-' +
+        (tmpDate.getMonth() + 1).toString().padStart(2, '0') +
+        '-' +
+        tmpDate
+          .getDate()
+          .toString()
+          .padStart(2, '0')
+    )
+    var getDateArray = function(start: Date, end: Date) {
+      var arr = new Array()
+      var dt = new Date(start)
+      while (dt <= end) {
+        arr.push(new Date(dt))
+        dt.setDate(dt.getDate() + 1)
+      }
+      return arr
+    }
+    let dateArray = getDateArray(startDate, endDate)
+    let dates: string[] = []
+    dateArray.map(date => {
+      dates.push(
+        date.getFullYear() +
+          '-' +
+          (date.getMonth() + 1).toString().padStart(2, '0') +
+          '-' +
+          date
+            .getDate()
+            .toString()
+            .padStart(2, '0')
+      )
+    })
+
     if (this.props.isMapViewOn) {
       return (
         <div style={{ zIndex: 2, width: '100%' }}>
@@ -142,6 +190,8 @@ export default class Filters extends React.Component<IProps, IState> {
               {calendarVisible && (
                 <div className="filters-calendar">
                   <Calendar
+                    startDates={dates}
+                    endDates={dates}
                     onChange={this.setDepartureValue}
                     selectRange
                     value={[start as Date, end as Date]}
@@ -339,6 +389,8 @@ export default class Filters extends React.Component<IProps, IState> {
                 {calendarVisible && (
                   <div className="filters-calendar">
                     <Calendar
+                      startDates={dates}
+                      endDates={dates}
                       onChange={this.setDepartureValue}
                       selectRange
                       value={[start as Date, end as Date]}
@@ -486,6 +538,8 @@ export default class Filters extends React.Component<IProps, IState> {
             {calendarVisible && (
               <div className="filters-calendar">
                 <Calendar
+                  startDates={dates}
+                  endDates={dates}
                   onChange={this.setDepartureValue}
                   selectRange
                   value={[start as Date, end as Date]}
@@ -678,6 +732,8 @@ export default class Filters extends React.Component<IProps, IState> {
                 {calendarVisible && (
                   <div className="filters-calendar">
                     <Calendar
+                      startDates={dates}
+                      endDates={dates}
                       onChange={this.setDepartureValue}
                       selectRange
                       value={[start as Date, end as Date]}

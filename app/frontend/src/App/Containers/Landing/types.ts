@@ -6,4 +6,5 @@ export interface IProps {
   setQuantity: (quantity: IPassenger) => void
   setDeparture: (departure: string) => void
   clearSelected: () => void
+  clearDeselected: () => void
 }

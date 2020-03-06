@@ -15,7 +15,8 @@ import {
   selectQuantity,
   selectDeparture,
   setDeparture,
-  clearSelected
+  clearSelected,
+  clearDeselected
 } from '../../../Common/Redux/Services/trips'
 import { IStore } from '../../../Common/Redux/types'
 import { RouteComponentProps } from 'react-router-dom'
@@ -33,6 +34,7 @@ class LandingContainer extends Component<RouteComponentProps<{}> & IProps> {
     this.props.setQuantity({ Adult: 1, Youth: 0 })
     this.props.setDeparture('')
     this.props.clearSelected()
+    this.props.clearDeselected()
   }
 
   onSubmit = (e: React.FormEvent) => {
@@ -79,5 +81,5 @@ const mapStateToProps = (state: IStore) => ({
 
 export default connect(
   mapStateToProps,
-  { setQuantity, setDeparture, clearSelected }
+  { setQuantity, setDeparture, clearSelected, clearDeselected }
 )(LandingContainer)

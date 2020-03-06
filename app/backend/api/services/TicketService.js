@@ -682,6 +682,7 @@ module.exports = {
       $and: [
         { $eq: ['$$tickets.active', true] },
         { $eq: ['$$tickets.deleted', false] },
+        { $gt: ['$$tickets.quantity', '$$tickets.soldTickets'] }
       ]
     };
 

@@ -367,39 +367,6 @@ export default class Destination extends Component<IProps, IState> {
     id: string
     value: { id: string; name: string }
   }) => {
-    if (data.id == 'start') {
-      this.setState((state: IState) => ({
-        hours: {
-          ...state.hours,
-          end: { id: '', name: 'Select' }
-        }
-      }))
-
-      const { hoursToSelect } = this.state
-      const tmpHTS = hoursToSelect
-      const indx = tmpHTS.end.indexOf(
-        tmpHTS.end.filter(
-          x =>
-            parseInt(x.name.split(' - ')[0].split(':')[0]) >=
-            parseInt(data.value.name.split(' - ')[0].split(':')[0])
-        )[0]
-      )
-      for (var i = 0; i < indx; i++) {
-        hoursToSelect.end[i].isDisabled = true
-      }
-      for (var i = indx == -1 ? 0 : indx; i < hoursToSelect.end.length; i++) {
-        if (indx == -1) hoursToSelect.end[i].isDisabled = true
-        else hoursToSelect.end[i].isDisabled = false
-      }
-
-      this.setState({
-        hoursToSelect: {
-          start: hoursToSelect.start,
-          end: hoursToSelect.end
-        }
-      })
-    }
-
     this.setState((state: IState) => ({
       hours: {
         ...state.hours,

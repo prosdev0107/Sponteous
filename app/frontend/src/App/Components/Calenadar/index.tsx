@@ -53,9 +53,9 @@ export default class Calendar extends React.Component<IProps, IState> {
           next2Label={null}
           prev2Label={null}
           tileDisabled={this.handleDisableDays}
+          minDate={new Date()}
         />
       </div>
-      
     )
   }
 }

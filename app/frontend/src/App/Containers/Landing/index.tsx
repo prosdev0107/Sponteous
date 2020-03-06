@@ -9,6 +9,7 @@ import Footer from '../../Components/Footer'
 import ScrollStatic from '../../Statics/ScrollStatic'
 import WhySponteousStatic from '../../Statics/WhySponteous'
 import ReadFaqStatic from '../../Statics/ReadFaq'
+import { removeFromLS } from '../../../Common/Utils/helpers'
 
 import {
   setQuantity,
@@ -35,6 +36,8 @@ class LandingContainer extends Component<RouteComponentProps<{}> & IProps> {
     this.props.setDeparture('')
     this.props.clearSelected()
     this.props.clearDeselected()
+    removeFromLS('owner')
+    removeFromLS('ownerTemp')
   }
 
   onSubmit = (e: React.FormEvent) => {

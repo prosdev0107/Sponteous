@@ -592,7 +592,7 @@ module.exports = {
     departureTickets.forEach((departure) => {
       // trip.tickets = [];
       destinationTickets.forEach((destination) => {
-        if (departure.date.start.getTime() < destination.date.start.getTime()) {
+        if (departure.date.start.getTime() < destination.date.start.getTime() && destination.quantity > destination.soldTickets) {
           if (trip.tickets.indexOf(destination) < 0) trip.tickets.push(destination)
           destinationCharges = {adultPrice: destination.adultPrice, childPrice: destination.childPrice }
           bool = true;

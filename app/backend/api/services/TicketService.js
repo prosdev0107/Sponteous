@@ -433,12 +433,15 @@ module.exports = {
     if (!ownerInfo) throw { status: 404, message: 'BUY.OWNER.NOT.EXIST' };
 
     ownerInfo.trips = await populateTrips(ownerInfo.trips);
-
+    console.log(ownerInfo.trips);
     let finalCost = 0;
     const [admin] = await User.find({ role: global.config.custom.roles.ADMINISTRATOR }).sort('_id').limit(1);
 
     const selectedTrip = getMostExpensiveTrip(ownerInfo);
     if (!selectedTrip) throw { status: 404, message: 'BUY.TRIP.NOT.EXIST' };
+    selectedTrip.id
+    if (selectedTrip.tickets <= selectedTrip.soldTickets || ownerInfo.quantity > selectedTrip.quantity - selectedTrip.soldTickets)
+      throw { status: 404, message: 'TICKET.BOOK.NOT.ENOUGH', args: [new Date(Date.now() + global.config.custom.time.day).toDateString()] };
 
     // Add a trip price (time choose already added)
     finalCost += selectedTrip.cost;

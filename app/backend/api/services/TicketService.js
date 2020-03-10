@@ -310,7 +310,6 @@ async function bookWithTime({ Adult, Youth, selectedTrip, owner }) {
 
   const trip = await Trip.findById(reservedArrivalTicket.trip);
   const oppositeTrip = await hasOpposite(trip);
-  const timePrices = calculateTimePrice({ ...selectedTrip });
 
   await TicketOwner.findOneAndUpdate(
     {
@@ -324,14 +323,11 @@ async function bookWithTime({ Adult, Youth, selectedTrip, owner }) {
           trip: trip._id,
           arrivalTicket: reservedArrivalTicket._id,
           departureTicket: reservedDepartureTicket._id,
-          arrivalTimePrice: timePrices.arrival,
-          departureTimePrice: timePrices.departure,
           cost:
             trip.adultPrice * Adult +
             trip.childPrice * Youth +
             oppositeTrip[0].adultPrice * Adult +
-            oppositeTrip[0].childPrice * Youth +
-            global.config.custom.ticket.chooseTimePrice
+            oppositeTrip[0].childPrice * Youth
         }
       }
     },
@@ -343,17 +339,6 @@ async function bookWithTime({ Adult, Youth, selectedTrip, owner }) {
   );
 
   return;
-
-  function calculateTimePrice({ arrivalTicket, departureTicket }) {
-    const prices = {
-      arrival: arrivalTicket ? global.config.custom.ticket.chooseTimePrice : 0,
-      departure: departureTicket ? global.config.custom.ticket.chooseTimePrice : 0
-    };
-
-    prices.total = prices.arrival + prices.departure;
-
-    return prices;
-  }
 }
 
 /*
@@ -521,8 +506,6 @@ module.exports = {
       },
       quantity: ownerInfo.quantity,
       ticketPrice: selectedTrip.cost,
-      arrivalTimePrice: selectedTrip.arrivalTimePrice,
-      departureTimePrice: selectedTrip.departureTimePrice,
       deselectionPrice: deselectionPrice,
       totalPrice: finalCost,
     });
@@ -583,8 +566,6 @@ module.exports = {
       let vendorProfit = 0;
       for (let selectedTrip of selectedTrips) {
         let tripProfit = (selectedTrip.trip.adultPrice + selectedTrip.trip.childPrice) * quantity * 0.1;
-        tripProfit += selectedTrip.arrivalTimePrice + selectedTrip.departureTimePrice;
-
         if (tripProfit > vendorProfit) {
           mostExpensiveTrip = selectedTrip;
           vendorProfit = tripProfit;

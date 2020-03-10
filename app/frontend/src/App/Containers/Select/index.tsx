@@ -490,7 +490,7 @@ class SelectContainer extends Component<
           data: {
             departure,
             quantity,
-            selected: selectedTrips
+            selected: res.data.trips
           }
         })
 

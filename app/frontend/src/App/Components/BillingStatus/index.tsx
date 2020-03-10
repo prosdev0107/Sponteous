@@ -2,7 +2,6 @@ import React from 'react'
 import Title from '../Title'
 import BlueButton from '../BlueButton'
 import { IProps } from './types'
-import { ISelectedData } from '../../Utils/appTypes'
 import arrow from '../../../Common/Utils/Media/arrow.svg'
 import { Steps } from '../../Containers/Payment/type'
 import './styles.scss'
@@ -17,11 +16,22 @@ const Bilingstatus: React.SFC<IProps> = ({
 }) => {
   const isPayment = Boolean(step)
   const approxPriceMin = Math.min(
-    ...tours.map((item: ISelectedData) => item.adultPrice * quantity.Adult + item.childPrice * quantity.Youth)
+    // ...tours.map((item: ISelectedData) => item.adultPrice * quantity.Adult + item.childPrice * quantity.Youth)
+    ...tours.map(
+      ({ childPrice, adultPrice, destinationCharges }) =>
+        destinationCharges.adultPrice * quantity.Adult +
+        destinationCharges.childPrice * quantity.Youth +
+        (adultPrice * quantity.Adult + childPrice * quantity.Youth)
+    )
   )
 
   const approxPriceMax = Math.max(
-    ...tours.map((item: ISelectedData) => item.adultPrice * quantity.Adult + item.childPrice * quantity.Youth)
+    ...tours.map(
+      ({ childPrice, adultPrice, destinationCharges }) =>
+        destinationCharges.adultPrice * quantity.Adult +
+        destinationCharges.childPrice * quantity.Youth +
+        (adultPrice * quantity.Adult + childPrice * quantity.Youth)
+    )
   )
 
   return (
@@ -33,17 +43,29 @@ const Bilingstatus: React.SFC<IProps> = ({
           selected={['randomly:']}
         />
         <div className="billing_status-tours">
-          {tours.map(({ destination, childPrice,adultPrice, destinationCharges }, i) => {
-            return (
-            <p className="billing_status-tour" key={i}>
-              <span>{destination.name}</span>
-              <span>
-                {`£ ${(destinationCharges.adultPrice * quantity.Adult + destinationCharges.childPrice * quantity.Youth) + (adultPrice * quantity.Adult + childPrice * quantity.Youth)} for ${quantity.Adult + quantity.Youth} ${
-                  quantity.Adult + quantity.Youth > 1 ? ' passengers' : ' passenger'
-                }`}
-              </span>
-            </p>
-          )})}
+          {tours.map(
+            (
+              { destination, childPrice, adultPrice, destinationCharges },
+              i
+            ) => {
+              return (
+                <p className="billing_status-tour" key={i}>
+                  <span>{destination.name}</span>
+                  <span>
+                    {`£ ${destinationCharges.adultPrice * quantity.Adult +
+                      destinationCharges.childPrice * quantity.Youth +
+                      (adultPrice * quantity.Adult +
+                        childPrice * quantity.Youth)} for ${quantity.Adult +
+                      quantity.Youth} ${
+                      quantity.Adult + quantity.Youth > 1
+                        ? ' passengers'
+                        : ' passenger'
+                    }`}
+                  </span>
+                </p>
+              )
+            }
+          )}
           <div className="billing_status-deselected">
             <span>Deselection</span>
             <span>+ £ {deselectionPrice}</span>

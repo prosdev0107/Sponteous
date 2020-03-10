@@ -150,7 +150,29 @@ async function createManyTickets(data) {
 
   //return updateMessages.length ? { updated: true, dates: updateMessages } : {};
 }
+async function hasOpposite(trip) {
+  // const oppositeTrip = await Trip.findOne({destination: trip.departure, departure: trip.destination, 
+  //                   carrier: trip.carrier, type: trip.type}).sort({destination : 1})
+  
+  const oppositeTrip = await Trip.aggregate([{
+    "$match": {
+      destination: trip.departure, departure: trip.destination,
+      carrier: trip.carrier, type: trip.type
+    }
+  },
+  {
+    $lookup: {
+      from: 'tickets',
+      localField: 'tickets',
+      foreignField: '_id',
+      as: 'tickets_data'
+    }
+  } 
+  ])
+  if (oppositeTrip != undefined) return oppositeTrip;
 
+  return null
+}
 async function bookWithOutTime({ Adult, Youth, selectedTrip, owner }) {
   const quantity = Adult + Youth
   // if (new Date(selectedTrip.dateStart) < custom.TodayWithTimezone + global.config.custom.time.day)
@@ -194,25 +216,35 @@ async function bookWithOutTime({ Adult, Youth, selectedTrip, owner }) {
     return
   }
 
-  const updatedTicketOwner = await TicketOwner.findOneAndUpdate({
-    owner
-  }, {
-    owner,
-    quantity: quantity,
-    $inc: { billing: trip.adultPrice * quantity },
-    $addToSet: {
-      trips: {
-        trip: trip._id,
-        arrivalTicket: reservedArrivalTicket._id,
-        departureTicket: reservedDepartureTicket._id,
-        cost: trip.adultPrice * Adult + trip.childPrice * Youth,
+  const oppositeTrip = await hasOpposite(trip);
+
+  const updatedTicketOwner = await TicketOwner.findOneAndUpdate(
+    {
+      owner
+    },
+    {
+      owner,
+      quantity: quantity,
+      $inc: { billing: trip.adultPrice * quantity },
+      $addToSet: {
+        trips: {
+          trip: trip._id,
+          arrivalTicket: reservedArrivalTicket._id,
+          departureTicket: reservedDepartureTicket._id,
+          cost:
+            trip.adultPrice * Adult +
+            trip.childPrice * Youth +
+            oppositeTrip[0].adultPrice * Adult +
+            oppositeTrip[0].childPrice * Youth
+        }
       }
+    },
+    {
+      upsert: true,
+      new: true,
+      setDefaultsOnInsert: true
     }
-  }, {
-    upsert: true,
-    new: true,
-    setDefaultsOnInsert: true
-  });
+  );
 
   return;
 }
@@ -277,28 +309,38 @@ async function bookWithTime({ Adult, Youth, selectedTrip, owner }) {
   }
 
   const trip = await Trip.findById(reservedArrivalTicket.trip);
+  const oppositeTrip = await hasOpposite(trip);
   const timePrices = calculateTimePrice({ ...selectedTrip });
 
-  await TicketOwner.findOneAndUpdate({
-    owner
-  }, {
-    owner,
-    quantity: quantity,
-    $addToSet: {
-      trips: {
-        trip: trip._id,
-        arrivalTicket: reservedArrivalTicket._id,
-        departureTicket: reservedDepartureTicket._id,
-        arrivalTimePrice: timePrices.arrival,
-        departureTimePrice: timePrices.departure,
-        cost: trip.adultPrice * Adult + trip.childPrice * Youth + global.config.custom.ticket.chooseTimePrice
+  await TicketOwner.findOneAndUpdate(
+    {
+      owner
+    },
+    {
+      owner,
+      quantity: quantity,
+      $addToSet: {
+        trips: {
+          trip: trip._id,
+          arrivalTicket: reservedArrivalTicket._id,
+          departureTicket: reservedDepartureTicket._id,
+          arrivalTimePrice: timePrices.arrival,
+          departureTimePrice: timePrices.departure,
+          cost:
+            trip.adultPrice * Adult +
+            trip.childPrice * Youth +
+            oppositeTrip[0].adultPrice * Adult +
+            oppositeTrip[0].childPrice * Youth +
+            global.config.custom.ticket.chooseTimePrice
+        }
       }
+    },
+    {
+      upsert: true,
+      new: true,
+      setDefaultsOnInsert: true
     }
-  }, {
-    upsert: true,
-    new: true,
-    setDefaultsOnInsert: true
-  });
+  );
 
   return;
 
@@ -433,7 +475,6 @@ module.exports = {
     if (!ownerInfo) throw { status: 404, message: 'BUY.OWNER.NOT.EXIST' };
 
     ownerInfo.trips = await populateTrips(ownerInfo.trips);
-    console.log(ownerInfo.trips);
     let finalCost = 0;
     const [admin] = await User.find({ role: global.config.custom.roles.ADMINISTRATOR }).sort('_id').limit(1);
 
@@ -442,7 +483,6 @@ module.exports = {
     selectedTrip.id
     if (selectedTrip.tickets <= selectedTrip.soldTickets || ownerInfo.quantity > selectedTrip.quantity - selectedTrip.soldTickets)
       throw { status: 404, message: 'TICKET.BOOK.NOT.ENOUGH', args: [new Date(Date.now() + global.config.custom.time.day).toDateString()] };
-
     // Add a trip price (time choose already added)
     finalCost += selectedTrip.cost;
 

@@ -183,37 +183,73 @@ async function bookWithOutTime({ Adult, Youth, selectedTrip, owner }) {
     throw { status: 400, message: 'TICKET.DATE.END.INVALID%', args: [new Date(Date.now() + global.config.custom.time.day).toDateString()] };
   const trip = await Trip.findOne({ _id: ObjectId(selectedTrip.id), deleted: false, active: true });
   if (!trip) throw { status: 404, message: 'TRIP.NOT.EXIST' };
-  const [arrivalTicket] = await Ticket.find({
-    //trip: trip._id,
-    active: true,
-    deleted: false,
-    departure: trip.departure.name,
-    destination: trip.destination.name,
-    'date.start': { $gte: new Date(selectedTrip.dateStart).setHours(0, 0, 0, 0), $lte: new Date(selectedTrip.dateStart).setHours(23, 59, 59, 999) }
-  }).limit(1);
+  const [arrivalTicket] = await Ticket
+    .aggregate([
+      {
+        $project: {
+          quantity: { $gte: ['$quantity', { '$add' : [ '$soldTickets', quantity ] }] },
+          date: { $gte: ['$date.start', new Date(selectedTrip.dateStart).setHours(0, 0, 0, 0)] },
+          active: 1,
+          deleted: 1,
+          departure: 1,
+          destination: 1,
+          obj: '$$ROOT'
+        }
+      },
+      {
+        $match: {
+          quantity: true,
+          date: true,
+          active: true,
+          deleted: false,
+          departure: trip.departure.name,
+          destination: trip.destination.name,
+        }
+      },
+      { $replaceRoot: { newRoot: '$obj' } },
+      { $limit: 1 }
+    ])
+    ;
   if (!arrivalTicket) throw { status: 404, message: 'TICKET.ARRIVAL.NOT.EXIST%', args: [new Date(selectedTrip.dateStart).toDateString()] };
-  const [departureTicket] = await Ticket.find({
-    //trip: trip._id,
-    active: true,
-    deleted: false,
-    departure: trip.destination.name,
-    destination: trip.departure.name,
-    'date.start': { $gte: new Date(selectedTrip.dateEnd).setHours(0, 0, 0, 0), $lte: new Date(selectedTrip.dateEnd).setHours(23, 59, 59, 999) }
-  }).limit(1);
+  const [departureTicket] = await Ticket.aggregate([
+    {
+      $project: {
+        quantity: { $gte: ['$quantity', { '$add' : [ '$soldTickets', quantity ] }] },
+        date: { $gte: ['$date', new Date(selectedTrip.dateStart).setHours(0, 0, 0, 0)] },
+        active: 1,
+        deleted: 1,
+        departure: 1,
+        destination: 1,
+        obj: '$$ROOT'
+      }
+    },
+    {
+      $match: {
+        quantity: true,
+        date: true,
+        active: true,
+        deleted: false,
+        departure: trip.destination.name,
+        destination: trip.departure.name,
+      }
+    },
+    { $replaceRoot: { newRoot: '$obj' } },
+    { $limit: 1 }
+  ]);
   if (!departureTicket) throw { status: 404, message: 'TICKET.DEPARTURE.NOT.EXIST%', args: [new Date(selectedTrip.dateEnd).toDateString()] };
   let reservedArrivalTicket;
-  if (quantity <= (arrivalTicket.quantity - (arrivalTicket.soldTickets + arrivalTicket.reservedQuantity))) {
+  if (quantity <= (arrivalTicket.quantity - arrivalTicket.soldTickets)) {
     reservedArrivalTicket = await Ticket.findOne({ _id: arrivalTicket._id, active: true, deleted: false, quantity: { $gte: quantity } });
     if (!reservedArrivalTicket) throw { status: 404, message: 'TICKET.ARRIVAL.NOT.EXIST%', args: [new Date(selectedTrip.dateStart).toDateString()] };
   } else {
-    return
+    return;
   }
   let reservedDepartureTicket;
-  if (quantity <= (departureTicket.quantity - (departureTicket.soldTickets + departureTicket.reservedQuantity))) {
+  if (quantity <= (departureTicket.quantity - departureTicket.soldTickets )) {
     reservedDepartureTicket = await Ticket.findOne({ _id: departureTicket._id, active: true, deleted: false, quantity: { $gte: quantity } });
-        if (!reservedDepartureTicket) throw { status: 404, message: 'TICKET.ARRIVAL.NOT.EXIST%', args: [new Date(selectedTrip.dateStart).toDateString()] };
+    if (!reservedDepartureTicket) throw { status: 404, message: 'TICKET.ARRIVAL.NOT.EXIST%', args: [new Date(selectedTrip.dateStart).toDateString()] };
   } else {
-    return
+    return;
   }
 
   const oppositeTrip = await hasOpposite(trip);
@@ -299,7 +335,7 @@ async function bookWithTime({ Adult, Youth, selectedTrip, owner }) {
     throw { status: 400, message: 'TICKET.DATE.END.INVALID%', args: [new Date(Date.now() + global.config.custom.time.day).toDateString()] };
   let reservedArrivalTicket;
   let reservedDepartureTicket;
-  if (quantity <= arrivalTicket.quantity - (arrivalTicket.soldTickets + arrivalTicket.reservedQuantity) && quantity <= departureTicket.quantity - (departureTicket.soldTickets + departureTicket.reservedQuantity)) {
+  if (quantity <= arrivalTicket.quantity - arrivalTicket.soldTickets  && quantity <= departureTicket.quantity - departureTicket.soldTickets ) {
     reservedArrivalTicket = await Ticket.findOne({ _id: selectedTrip.arrivalTicket, active: true, deleted: false, quantity: { $gte: quantity } });
 
     reservedDepartureTicket = await Ticket.findOne({ _id: selectedTrip.departureTicket, active: true, deleted: false, quantity: { $gte: quantity } });
@@ -609,14 +645,14 @@ module.exports = {
     return ticket;
   },
 
-  departureBeforeDestination(departureTickets, destinationTickets, trip) {
+  departureBeforeDestination(departureTickets, destinationTickets, trip, quantity) {
     let bool = false;
     let destinationCharges = 0;
     
     departureTickets.forEach((departure) => {
       // trip.tickets = [];
       destinationTickets.forEach((destination) => {
-        if (departure.date.start.getTime() < destination.date.start.getTime() && destination.quantity > destination.soldTickets) {
+        if (departure.date.start.getTime() < destination.date.start.getTime() && destination.quantity >= destination.soldTickets + quantity) {
           if (trip.tickets.indexOf(destination) < 0) trip.tickets.push(destination)
           destinationCharges = {adultPrice: destination.adultPrice, childPrice: destination.childPrice }
           bool = true;
@@ -651,7 +687,7 @@ module.exports = {
   },
 
 
-  async hasEnoughTickets(trip) {
+  async hasEnoughTickets(trip, quantity) {
     const oppositeTrip = await this.hasOpposite(trip)
     let oppositeTickets = []
     let tripTickets = []
@@ -671,7 +707,7 @@ module.exports = {
         return {isValid: false};
       } else {
         
-        const {isValid, destinationCharges} = this.departureBeforeDestination(tripTickets, oppositeTickets, trip)
+        const {isValid, destinationCharges} = this.departureBeforeDestination(tripTickets, oppositeTickets, trip, quantity)
 
         return {isValid: isValid, destinationCharges: destinationCharges};
       }
@@ -706,7 +742,7 @@ module.exports = {
       $and: [
         { $eq: ['$$tickets.active', true] },
         { $eq: ['$$tickets.deleted', false] },
-        { $gt: ['$$tickets.quantity', '$$tickets.soldTickets'] }
+        { $gte: ['$$tickets.quantity', { $add: ['$$tickets.soldTickets', quantity] }] }
       ]
     };
 
@@ -762,7 +798,7 @@ module.exports = {
     ]);
     let res = []
     for (const trip of data) {
-      const {isValid, destinationCharges} = await this.hasEnoughTickets(trip);
+      const {isValid, destinationCharges} = await this.hasEnoughTickets(trip, quantity);
       if (isValid) {
         trip["Adult"] = adult
         trip["Youth"] = youth

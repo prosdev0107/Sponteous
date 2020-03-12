@@ -22,17 +22,25 @@
   }
   &-edit {
     width: 100%;
-    max-width: 77rem;
+    max-width: 76rem;
+    display: flex;
+    flex-direction: column;
+    @include respond(tab) {
+      align-items: center;
+    }
   }
   &-header {
-    display: flow-root;
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    @include respond(tab) {
+      width: 90%;
+    }
   }
   &-back-btn {
     float: right;
     margin-top: -7px;
-    margin-bottom: 13px;
     width: 17rem;
-    margin-right: 1rem;
     @include respond(mobile) {
       margin: 0 auto 13px auto;
       float: none;
@@ -103,13 +111,16 @@
         max-width: unset;
         width: 90%;
         justify-content: space-between;
+        .destination:nth-of-type(4n) {
+          margin-right: 0 !important;
+        }
       }
 
       @include respond(mobile) {
         margin: 0 auto;
       }
-      .destination:nth-of-type(3n) {
-        margin-right: 1rem !important;
+      .destination:nth-of-type(4n) {
+        margin-right: auto;
       }
     }
   }

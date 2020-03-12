@@ -120,7 +120,6 @@
       flex-direction: row;
       flex-wrap: wrap;
       width: 57rem;
-      justify-content: space-between;
 
       @include respond(big) {
         width: 58rem;
@@ -130,10 +129,17 @@
         max-width: unset;
         width: 100%;
         justify-content: space-between;
+        .destination:nth-of-type(3n) {
+          margin-right: 0 !important;
+        }
       }
 
       @include respond(mobile) {
         margin: 0 auto;
+      }
+
+      .destination:nth-of-type(3n) {
+        margin-right: auto;
       }
     }
   }

@@ -15,7 +15,7 @@
   }
   &-info {
     width: 100%;
-    max-width: 77rem;
+    max-width: 76rem;
     margin-top: 4rem;
     display: flex;
     align-items: center;
@@ -25,6 +25,7 @@
       margin-top: 0;
       justify-content: center;
       flex-direction: column;
+      width: 90%;
     }
     p {
       font-size: 1.3rem;
@@ -71,20 +72,23 @@
   &-destinations {
     display: flex;
     width: 100%;
-    max-width: 77rem;
+    max-width: 76rem;
     flex-wrap: wrap;
     padding-bottom: 5rem;
-    justify-content: space-between;
+
     @include respond(tab) {
       width: 90%;
       max-width: unset;
       justify-content: space-between;
+      .destination:nth-of-type(4n) {
+        margin-right: 0 !important;
+      }
     }
     .destination-when-not-selected {
       height: 40rem;
     }
-    .destination:nth-of-type(3n) {
-      margin-right: 1rem !important;
+    .destination:nth-of-type(4n) {
+      margin-right: auto;
     }
   }
 }

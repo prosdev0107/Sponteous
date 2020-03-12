@@ -47,8 +47,8 @@ class DeselectContainer extends Component<
       this.props.history.push('/')
     }
 
-    saveToLS('ownerTemp', owner)
     removeFromLS('owner')
+    saveToLS('ownerTemp', owner)
   }
 
 
@@ -157,6 +157,7 @@ class DeselectContainer extends Component<
         </div>
         <section className="deselect-cnt-destinations">
           {selected.map((item: ISelectedData) => {
+            item.type = 'selectedTrid'
             const isSome = deselected.some(
               (deselected: ISelectedData) => deselected.tripId === item.tripId
             )

@@ -23,12 +23,7 @@ import {
   setDeparture
 } from '../../../Common/Redux/Services/trips'
 import withToast from '../../../Common/HOC/withToast'
-import {
-  saveToLS,
-  getFromLS,
-  getOwnerToken,
-  removeFromLS
-} from '../../../Common/Utils/helpers'
+import { saveToLS, getOwnerToken } from '../../../Common/Utils/helpers'
 import * as API from '../../Utils/api'
 import { IBookedData } from '../../Utils/apiTypes'
 import { IStore } from '../../../Common/Redux/types'
@@ -65,16 +60,10 @@ class EditSelectContainer extends Component<
   componentDidMount() {
     window.scrollTo(0, 0)
 
-    const selectedTrips = getFromLS('editSelection')
-    if (!selectedTrips || !this.props.selected) {
-      removeFromLS('editSelection')
-      return this.props.history.push('/')
-    }
     this.setState({
       isLoading: false,
-      trips: [...selectedTrips]
+      trips: [...(this.props.selected as any)]
     })
-    removeFromLS('editSelection')
   }
 
   componentWillUnmount() {
@@ -154,7 +143,9 @@ class EditSelectContainer extends Component<
     )
   }
   handleFetchInitialTripsWithFilter = () => {
-    this.state.trips = this.state.tripsLocal
+    this.setState({
+      trips: this.state.tripsLocal
+    })
     const {
       trips,
       tripsLocal,
@@ -214,7 +205,6 @@ class EditSelectContainer extends Component<
 
     API.bookTrips(data)
       .then(res => {
-        console.log('resbjhs', res.data)
         const bookedTrips = res.data.trips
         const selectedTrips = this.props.selected.map((item: ISelectedData) => {
           const filteredTrip: IBookedType = bookedTrips.find(
@@ -233,13 +223,14 @@ class EditSelectContainer extends Component<
           data: {
             departure,
             quantity,
-            selected: selectedTrips
+            selected: res.data.trips
           }
         })
 
         selectedTrips.forEach(trip => {
           trip['Adult'] = data.Adult
           trip['Youth'] = data.Youth
+          trip['type'] = 'selectedTrid'
         })
 
         this.props.updateSelected(selectedTrips)
@@ -435,7 +426,7 @@ class EditSelectContainer extends Component<
           data: {
             departure,
             quantity,
-            selected: selectedTrips
+            selected: res.data.trips
           }
         })
 

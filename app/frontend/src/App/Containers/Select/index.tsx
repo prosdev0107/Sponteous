@@ -690,16 +690,6 @@ class SelectContainer extends Component<
   }
 
   editTrips = () => {
-    const { selected, quantity } = this.props
-
-    for (var i = 0; i < selected.length; i++) {
-      selected[i]['Adult'] = quantity.Adult
-      selected[i]['Youth'] = quantity.Youth
-    }
-
-    saveToLS('editSelection', selected)
-
-    // this.props.updateSelected(bookedTrips)
     this.props.history.push('/destinations/editSelection')
   }
 

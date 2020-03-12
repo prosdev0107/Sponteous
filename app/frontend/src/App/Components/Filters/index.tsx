@@ -43,19 +43,25 @@ export default class Filters extends React.Component<IProps, IState> {
 
   hanleToggleClendarVisible = () => {
     this.setState((state: IState) => ({
-      calendarVisible: !state.calendarVisible
+      calendarVisible: !state.calendarVisible,
+      tripsVisible: false,
+      priceVisible: false
     }))
   }
 
   hanleToggleTripsVisible = () => {
     this.setState((state: IState) => ({
-      tripsVisible: !state.tripsVisible
+      tripsVisible: !state.tripsVisible,
+      calendarVisible: false,
+      priceVisible: false
     }))
   }
 
   handleTogglePriceVisible = () => {
     this.setState((state: IState) => ({
-      priceVisible: !state.priceVisible
+      priceVisible: !state.priceVisible,
+      calendarVisible: false,
+      tripsVisible: false
     }))
   }
 

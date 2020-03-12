@@ -15,7 +15,7 @@
 
 .destination {
   width: 18.2rem;
-  height: 25rem;
+  height: 26rem;
   border-radius: 3px;
   display: flex;
   flex-direction: column;
@@ -103,7 +103,7 @@
   }
   &-bottom {
     width: 100%;
-    height: 25rem;
+    min-height: 15rem;
     display: flex;
     flex-direction: column;
     border-bottom: 1px solid;

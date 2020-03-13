@@ -74,15 +74,15 @@ class PaymentContainer extends Component<
       owner,
       creditCardToken: cardToken,
       buyerInfo: {
-        email: passenger.email!,
-        firstName: passenger.firstName!,
-        middleName: passenger.middleName!,
-        lastName: passenger.lastName!,
+        email: passenger.email!.trim(),
+        firstName: passenger.firstName!.trim(),
+        middleName: passenger.middleName!.trim(),
+        lastName: passenger.lastName!.trim(),
         birthDate,
-        phone: `${passenger.countryCode!.id}${passenger.phone!}`,
-        address: payment.address!,
-        city: payment.city!,
-        zipCode: payment.zipCode
+        phone: `${passenger.countryCode!.id}${passenger.phone!.trim()}`,
+        address: payment.address!.trim(),
+        city: payment.city!.trim(),
+        zipCode: payment.zipCode.trim()
       },
     }
     this.setState({ isLoading: true })

@@ -428,5 +428,11 @@
 }
 
 .destination-when-not-selected {
-  height: 34rem;
+  height: 22rem;
+  @include respond(tab) {
+    height: unset !important;
+  }
+  @include respond(mobile) {
+    height: 34rem !important;
+  }
 }

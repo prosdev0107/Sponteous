@@ -188,7 +188,8 @@ async function bookWithOutTime({ Adult, Youth, selectedTrip, owner }) {
       {
         $project: {
           quantity: { $gte: ['$quantity', { '$add' : [ '$soldTickets', quantity ] }] },
-          date: { $gte: ['$date.start', new Date(selectedTrip.dateStart).setHours(0, 0, 0, 0)] },
+          isgte: { $gte: ['$date.start', new Date(new Date(selectedTrip.dateStart).setHours(0, 0, 0, 0)) ] },
+          islte: { $lte: ['$date.start', new Date(new Date(selectedTrip.dateStart).setHours(23, 59, 59, 999)) ] },
           active: 1,
           deleted: 1,
           departure: 1,
@@ -198,8 +199,9 @@ async function bookWithOutTime({ Adult, Youth, selectedTrip, owner }) {
       },
       {
         $match: {
+          isgte: true,
+          islte: true,
           quantity: true,
-          date: true,
           active: true,
           deleted: false,
           departure: trip.departure.name,
@@ -208,14 +210,14 @@ async function bookWithOutTime({ Adult, Youth, selectedTrip, owner }) {
       },
       { $replaceRoot: { newRoot: '$obj' } },
       { $limit: 1 }
-    ])
-    ;
+    ]);
   if (!arrivalTicket) throw { status: 404, message: 'TICKET.ARRIVAL.NOT.EXIST%', args: [new Date(selectedTrip.dateStart).toDateString()] };
   const [departureTicket] = await Ticket.aggregate([
     {
       $project: {
         quantity: { $gte: ['$quantity', { '$add' : [ '$soldTickets', quantity ] }] },
-        date: { $gte: ['$date', new Date(selectedTrip.dateStart).setHours(0, 0, 0, 0)] },
+        isgte: { $gte: ['$date.start', new Date(new Date(selectedTrip.dateEnd).setHours(0, 0, 0, 0)) ] },
+        islte: { $lte: ['$date.start', new Date(new Date(selectedTrip.dateEnd).setHours(23, 59, 59, 999)) ] },
         active: 1,
         deleted: 1,
         departure: 1,
@@ -226,7 +228,8 @@ async function bookWithOutTime({ Adult, Youth, selectedTrip, owner }) {
     {
       $match: {
         quantity: true,
-        date: true,
+        isgte: true,
+        islte: true,
         active: true,
         deleted: false,
         departure: trip.destination.name,

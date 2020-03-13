@@ -529,9 +529,9 @@ module.exports = {
         zipCode: buyerInfo.zipCode,
       },
       stripeChargeId: charge.id,
-      selected: ownerInfo.trips.filter(x => !x.deselected).map(x => x.trip.destination.name).join(', '),
+      selected: ownerInfo.trips.map(x => x.trip.destination.name).join(', '),
       deselected: ownerInfo.trips.filter(x => x.deselected).map(x => x.trip.destination.name).join(', '),
-      finalSelection: selectedTrip.trip.destination.name,
+      finalSelection: ownerInfo.trips.filter(x => !x.deselected).map(x => x.trip.destination.name).join(', '),
       finalDestination: selectedTrip.trip.destination.name,
       date: {
         arrival: {

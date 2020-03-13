@@ -70,20 +70,45 @@ class PaymentContainer extends Component<
       )}-${padStart(`${passenger.birthdate}`, 2, '0')}`
     ).format('x')
 
+    let email: string = passenger.email!
+    if (email !== undefined) email = email.trim()
+
+    let firstName: string = passenger.firstName!
+    if (firstName !== undefined) firstName = firstName.trim()
+
+    let middleName: string = passenger.middleName!
+    if (middleName !== undefined) middleName = middleName.trim()
+
+    let lastName: string = passenger.lastName!
+    if (lastName !== undefined) lastName = lastName.trim()
+
+    let phone: string = passenger.phone!
+    if (phone !== undefined) phone = phone.trim()
+    
+    let address: string = payment.address!
+    if (address !== undefined) address = address.trim()
+
+    let city: string = payment.city!
+    if (city !== undefined) city = city.trim()
+    
+    let zipCode: string = payment.zipCode!
+    if (zipCode !== undefined) zipCode = zipCode.trim()
+    
+
     const dataToSubmit: IBuyData = {
       owner,
       creditCardToken: cardToken,
       buyerInfo: {
-        email: passenger.email!.trim(),
-        firstName: passenger.firstName!.trim(),
-        middleName: passenger.middleName!.trim(),
-        lastName: passenger.lastName!.trim(),
+        email,
+        firstName,
+        middleName,
+        lastName,
         birthDate,
-        phone: `${passenger.countryCode!.id}${passenger.phone!.trim()}`,
-        address: payment.address!.trim(),
-        city: payment.city!.trim(),
-        zipCode: payment.zipCode.trim()
-      },
+        phone: `${passenger.countryCode!.id}${phone}`,
+        address,
+        city,
+        zipCode
+      }
     }
     this.setState({ isLoading: true })
     buyTickets(dataToSubmit)

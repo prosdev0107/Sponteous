@@ -55,6 +55,10 @@ class TicketModal extends React.Component<IProps, IState> {
         'spon-ticket-modal__label--open': this.state.isRecurring
       }
     )
+    let soldTickets: number = 0;
+    if ( editDate !== undefined ) {
+      soldTickets = editDate.soldTickets;
+    }
 
     return (
       <div className="spon-ticket-modal">
@@ -104,7 +108,7 @@ class TicketModal extends React.Component<IProps, IState> {
             }),
             type: Yup.string().required('Trip type is required'),
             quantity: Yup.number()
-              .min(1)
+              .min(soldTickets)
               .max(1000),
             soldTickets: Yup.number()
               .min(0)

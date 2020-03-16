@@ -504,7 +504,7 @@ module.exports = {
 
     const selectedTrip = getMostExpensiveTrip(ownerInfo);
     if (!selectedTrip) throw { status: 404, message: 'BUY.TRIP.NOT.EXIST' };
-    selectedTrip.id
+
     if (selectedTrip.tickets <= selectedTrip.soldTickets || ownerInfo.quantity > selectedTrip.quantity - selectedTrip.soldTickets)
       throw { status: 404, message: 'TICKET.BOOK.NOT.ENOUGH', args: [new Date(Date.now() + global.config.custom.time.day).toDateString()] };
     // Add a trip price (time choose already added)
@@ -529,7 +529,20 @@ module.exports = {
         zipCode: buyerInfo.zipCode,
       },
       stripeChargeId: charge.id,
-      selected: ownerInfo.trips.map(x => x.trip.destination.name).join(', '),
+      selected: ownerInfo.trips.map(x => ({
+        name: x.trip.destination.name,
+        price: x.cost,
+        date: {
+          arrival: {
+            start: x.arrivalTicket.date.start,
+            end: x.arrivalTicket.date.end
+          },
+          departure: {
+            start: x.departureTicket.date.start,
+            end: x.departureTicket.date.end
+          }
+        }
+      })),
       deselected: ownerInfo.trips.filter(x => x.deselected).map(x => x.trip.destination.name).join(', '),
       finalSelection: ownerInfo.trips.filter(x => !x.deselected).map(x => x.trip.destination.name).join(', '),
       finalDestination: selectedTrip.trip.destination.name,

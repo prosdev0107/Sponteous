@@ -14,7 +14,20 @@ const orderSchema = new Schema({
     zipCode: String,
   },
   stripeChargeId: String,
-  selected: String,
+  selected: [{
+    name: String,
+    price: Number,
+    date: {
+      arrival: {
+        start: Date,
+        end: Date
+      },
+      departure: {
+        start: Date,
+        end: Date
+      },
+    }
+  }],
   deselected: String,
   finalSelection: String,
   finalDestination: String,

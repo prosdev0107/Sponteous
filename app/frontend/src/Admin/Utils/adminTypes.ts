@@ -100,7 +100,20 @@ export interface IOrder {
     address: string
     city: string
   }
-  selected: string
+  selected: {
+    name: string,
+    price: number,
+    date: {
+      arrival: {
+        start: string
+        end: string
+      }
+      departure: {
+        start: string
+        end: string
+      }
+    }
+  }
   deselected: string
   finalSelection: string
   finalDestination: string

@@ -46,7 +46,8 @@ export const columns = (
   {
     Header: 'Selected',
     accessor: 'selected',
-    minWidth: 150
+    minWidth: 150,
+    Cell: (props: RowRenderProps) => (Array.isArray(props.value)) ? props.value.map((x: any) => x.name).join(', ') : props.value
   },
   {
     Header: 'Deselected',

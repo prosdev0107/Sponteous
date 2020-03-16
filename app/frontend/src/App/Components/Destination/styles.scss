@@ -429,6 +429,7 @@
 
 .destination-when-not-selected {
   height: 22rem;
+  min-height: 22rem;
   @include respond(tab) {
     height: unset !important;
   }

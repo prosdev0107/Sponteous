@@ -357,6 +357,7 @@ async function bookWithTime({ Adult, Youth, selectedTrip, owner }) {
     {
       owner,
       quantity: quantity,
+      timeSelected: true,
       $addToSet: {
         trips: {
           trip: trip._id,
@@ -529,20 +530,27 @@ module.exports = {
         zipCode: buyerInfo.zipCode,
       },
       stripeChargeId: charge.id,
-      selected: ownerInfo.trips.map(x => ({
-        name: x.trip.destination.name,
-        price: x.cost,
-        date: {
-          arrival: {
-            start: x.arrivalTicket.date.start,
-            end: x.arrivalTicket.date.end
-          },
-          departure: {
-            start: x.departureTicket.date.start,
-            end: x.departureTicket.date.end
+      selected: ownerInfo.timeSelected? (
+        ownerInfo.trips.map(x => ({
+          name: x.trip.destination.name,
+          price: x.cost,
+          date: {
+            arrival: {
+              start: x.arrivalTicket.date.start,
+              end: x.arrivalTicket.date.end
+            },
+            departure: {
+              start: x.departureTicket.date.start,
+              end: x.departureTicket.date.end
+            }
           }
-        }
-      })),
+        }))
+      ): (
+        ownerInfo.trips.map(x => ({
+          name: x.trip.destination.name,
+          price: x.cost
+        }))
+      ),
       deselected: ownerInfo.trips.filter(x => x.deselected).map(x => x.trip.destination.name).join(', '),
       finalSelection: ownerInfo.trips.filter(x => !x.deselected).map(x => x.trip.destination.name).join(', '),
       finalDestination: selectedTrip.trip.destination.name,

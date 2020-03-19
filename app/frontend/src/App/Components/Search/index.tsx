@@ -107,9 +107,18 @@ export default class Search extends Component<IProps, IState> {
     getTripsDepartureNames(token)
       .then(({ data }) => {
         // debugger
+        let sortedData = data.sort((a: string, b: string) => (a > b ? 1 : -1))
         this.setState({
-          departures: data.sort((a: string, b: string) => (a > b ? 1 : -1))
+          departures: sortedData
         })
+        if (this.state.inputValue !== '') {
+          const tableau = sortedData.filter((name: string) =>
+            name.toLowerCase().startsWith(this.state.inputValue.toLowerCase())
+          )
+          tableau.length !== 0
+            ? this.setState({ searchResults: tableau })
+            : this.setState({ searchResults: ['No trips found'] })
+        }
       })
       .catch(err => console.log(err.response))
   }

@@ -1134,6 +1134,9 @@ module.exports = {
       return [];
     }
 
+    let log_str = "";
+    let time = new Data();
+
     page = +page;
     limit = 1000;
     adult = +adult;
@@ -1227,8 +1230,11 @@ module.exports = {
       },
     ]);
 
+    log_str += "get trips: " + (new Date() - time) + "\n";
+
     const oppositeTrips = await this.getAllOppositeTrips(data);
     // const oppositeTrips = [];
+    log_str += "get opposite trips: " + (new Date() - time) + "\n";
 
     let res = [];
     for (const trip of data) {
@@ -1245,6 +1251,7 @@ module.exports = {
         res.push(trip);
       }
     }
+    log_str += "get valid trips: " + (new Date() - time) + "\n";
 
     if (priceEnd > 0) {
       const finalRes = res.filter((trip) =>
@@ -1284,6 +1291,8 @@ module.exports = {
         }
       }
     });
+    log_str += "final: " + (new Date() - time) + "\n";
+    res.push(log_str);
 
     return res;
   },

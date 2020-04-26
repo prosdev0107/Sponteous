@@ -1266,22 +1266,25 @@ module.exports = {
 
     res.forEach((trip) => {
       if (trip.destination.photo) {
-        try {
-          const value =
-            photoPrefix +
-            fs.readFileSync(trip.destination.photo, PHOTO_ENCODING);
-          console.log(trip.destination.photo);
-          trip.destination.photo = value;
-          fs.existsSync(trip.destination.photo);
-          // const value = photoPrefix + fs.readFileSync('./city_photos/ina.jpg', PHOTO_ENCODING);
-          // trip.destination.photo = value;
-        } catch (ex) {
-          console.log("No photo found. Using default one.");
-          const value =
-            photoPrefix +
-            fs.readFileSync("./city_photos/ina.jpg", PHOTO_ENCODING);
-          trip.destination.photo = value;
-        }
+        trip.destination.photo =
+          "http://35.202.14.48/api/destinations/" +
+          trip.destination.photo.replace("./", "");
+        //   try {
+        //     const value =
+        //       photoPrefix +
+        //       fs.readFileSync(trip.destination.photo, PHOTO_ENCODING);
+        //     console.log(trip.destination.photo);
+        //     trip.destination.photo = value;
+        //     fs.existsSync(trip.destination.photo);
+        //     // const value = photoPrefix + fs.readFileSync('./city_photos/ina.jpg', PHOTO_ENCODING);
+        //     // trip.destination.photo = value;
+        //   } catch (ex) {
+        //     console.log("No photo found. Using default one.");
+        //     const value =
+        //       photoPrefix +
+        //       fs.readFileSync("./city_photos/ina.jpg", PHOTO_ENCODING);
+        //     trip.destination.photo = value;
+        // }
       }
     });
 

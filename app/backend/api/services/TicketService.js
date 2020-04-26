@@ -1266,6 +1266,7 @@ module.exports = {
 
     res.forEach((trip) => {
       if (trip.destination.photo) {
+        trip.destination.photo1 = trip.destination.photo;
         try {
           const value =
             photoPrefix +

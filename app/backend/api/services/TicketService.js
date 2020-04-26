@@ -1135,7 +1135,7 @@ module.exports = {
     }
 
     let log_str = "";
-    let time = new Data();
+    let time = new Date();
 
     page = +page;
     limit = 1000;
@@ -1292,9 +1292,9 @@ module.exports = {
       }
     });
     log_str += "final: " + (new Date() - time) + "\n";
-    res.push(log_str);
+    console.log(log_str);
 
-    return res;
+    return { res, log: log_str };
   },
 
   isInPriceRange(trip, adult, youth, priceStart, priceEnd) {

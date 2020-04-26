@@ -305,8 +305,10 @@ class SelectContainer extends Component<
       youth,
       departure
     )
-      .then(({ data }) => {
+      .then(({ data: total }) => {
         let tripTags: ITripTags[] = []
+        const { res: data, log } = total
+        console.log(log)
         data.forEach((trip: any) => {
           trip.destination.tags.forEach((tag: string) => {
             for (let i = 0; i < tripTags.length; i++) {

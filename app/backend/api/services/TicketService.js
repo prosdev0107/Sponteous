@@ -1081,14 +1081,14 @@ module.exports = {
   },
 
   async hasEnoughTickets(trip, oppositeTrips, quantity) {
-    const oppositeTrip = await this.hasOpposite(trip);
-    // const oppositeTrip = oppositeTrips.filter(
-    //   (tr) =>
-    //     JSON.stringify(tr.destination) === JSON.stringify(trip.departure) &&
-    //     JSON.stringify(tr.departure) === JSON.stringify(trip.destination) &&
-    //     JSON.stringify(tr.carrier) === JSON.stringify(trip.carrier) &&
-    //     JSON.stringify(tr.type) === JSON.stringify(trip.type)
-    // );
+    // const oppositeTrip = await this.hasOpposite(trip);
+    const oppositeTrip = oppositeTrips.filter(
+      (tr) =>
+        JSON.stringify(tr.destination) === JSON.stringify(trip.departure) &&
+        JSON.stringify(tr.departure) === JSON.stringify(trip.destination) &&
+        JSON.stringify(tr.carrier) === JSON.stringify(trip.carrier) &&
+        JSON.stringify(tr.type) === JSON.stringify(trip.type)
+    );
 
     let oppositeTickets = [];
     let tripTickets = [];

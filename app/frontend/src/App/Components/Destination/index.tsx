@@ -66,8 +66,8 @@ export default class Destination extends Component<IProps, IState> {
         ? data.tickets
             .filter(
               (item: ITicket) =>
-                item.departure === data.departure.name &&
-                item.destination === data.destination.name &&
+                // item.departure === data.departure.name &&
+                // item.destination === data.destination.name &&
                 moment
                   .utc(item.date.start)
                   .set({ hour: 0, minutes: 0, seconds: 0, milliseconds: 0 })
@@ -94,8 +94,8 @@ export default class Destination extends Component<IProps, IState> {
         ? data.tickets
             .filter(
               (item: ITicket) =>
-                item.departure === data.destination.name &&
-                item.destination === data.departure.name &&
+                // item.departure === data.destination.name &&
+                // item.destination === data.departure.name &&
                 moment
                   .utc(item.date.start)
                   .set({ hour: 0, minutes: 0, seconds: 0, milliseconds: 0 })
@@ -465,7 +465,7 @@ export default class Destination extends Component<IProps, IState> {
             this.props.data.destination.name
           }`}</p>
           <p className="destination-bottom-luggage">Luggage included</p>
-          <p className="destination-bottom-price">{`£ ${finalCost}${' '} 
+          <p className="destination-bottom-price">{`£ ${finalCost}${' '}
                                                             /${' '}${
             this.props.data['Adult'] + this.props.data['Youth'] > 1
               ? `${this.props.data['Adult'] +

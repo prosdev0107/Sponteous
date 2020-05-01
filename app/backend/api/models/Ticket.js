@@ -31,16 +31,15 @@ const ticketSchema = new Schema({
 
 });
 
-ticketSchema.post('updateOne', async function (result) {
-  let ticketId = this.getQuery()._id;
-  let ticket = await Ticket.findOne({_id: mongoose.Types.ObjectId(ticketId)});
+ticketSchema.statics.refreshTripMeta = async function (ticket) {
   // this is fired after a document was saved
   let [totalTrip] = await Ticket.aggregate([
     {
       $match: {
         active: true,
         deleted: false,
-        trip: mongoose.Types.ObjectId(ticket.trip)
+        trip: mongoose.Types.ObjectId(ticket.trip),
+        'date.start': {$gte: new Date(new Date().setHours(0, 0, 0, 0))}
       }
     },
     {
@@ -48,18 +47,38 @@ ticketSchema.post('updateOne', async function (result) {
         _id: "$trip",
         totalQuantity: { $sum: "$quantity"},
         soldTickets: { $sum: "$soldTickets"},
-        reservedQuantity: { $sum: "$reservedQuantity"}
+        reservedQuantity: { $sum: "$reservedQuantity"},
+        availableTickets: {$push: {date: {start: "$date.start", end: "$date.end"}, type: "$type"}}
       }
     },
     { $limit: 1 }
   ]);
+  //console.log('>>>>>>>>>>>>> available tickets', totalTrip)
   let trip = await Trip.updateOne({_id: mongoose.Types.ObjectId(ticket.trip)}, {
     meta: {
-      totalQuantity: totalTrip.totalQuantity,
-      availableQuantity: totalTrip.totalQuantity - (totalTrip.soldTickets + totalTrip.reservedQuantity)
+      totalQuantity: totalTrip ? totalTrip.totalQuantity : 0,
+      availableQuantity: totalTrip ? totalTrip.totalQuantity - (totalTrip.soldTickets + totalTrip.reservedQuantity) : 0,
+      availableTickets: totalTrip ? totalTrip.availableTickets : []
     }
   });
+}
+
+ticketSchema.post('save', function() {
+  Ticket.refreshTripMeta(this);
 });
+
+ticketSchema.post('updateOne', async function (result) {
+  let ticketId = this.getQuery()._id;
+  let ticket = await Ticket.findOne({_id: mongoose.Types.ObjectId(ticketId)});
+  await Ticket.refreshTripMeta(ticket);
+});
+
+ticketSchema.post('deleteOne', async function (result) {
+  let ticketId = this.getQuery()._id;
+  let ticket = await Ticket.findOne({_id: mongoose.Types.ObjectId(ticketId)});
+  await Ticket.refreshTripMeta(ticket);
+});
+
 
 const Ticket = mongoose.model('Ticket', ticketSchema);
 

@@ -35,7 +35,8 @@ const tripSchema = new Schema({
   isFromAPI: { type: Boolean, default: true },
   meta: {
     totalQuantity: Number,
-    availableQuantity: Number
+    availableQuantity: Number,
+    availableTickets: Array
   }
 });
 

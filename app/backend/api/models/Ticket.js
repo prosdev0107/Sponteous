@@ -3,6 +3,9 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+const Trip = require("./Trip");
+
+
 const ticketSchema = new Schema({
   trip: { type: Schema.Types.ObjectId, ref: 'Trip' },
   quantity: Number,
@@ -28,4 +31,36 @@ const ticketSchema = new Schema({
 
 });
 
-module.exports = mongoose.model('Ticket', ticketSchema);
+ticketSchema.post('updateOne', async function (result) {
+  let ticketId = this.getQuery()._id;
+  let ticket = await Ticket.findOne({_id: mongoose.Types.ObjectId(ticketId)});
+  // this is fired after a document was saved
+  let [totalTrip] = await Ticket.aggregate([
+    {
+      $match: {
+        active: true,
+        deleted: false,
+        trip: mongoose.Types.ObjectId(ticket.trip)
+      }
+    },
+    {
+      $group: {
+        _id: "$trip",
+        totalQuantity: { $sum: "$quantity"},
+        soldTickets: { $sum: "$soldTickets"},
+        reservedQuantity: { $sum: "$reservedQuantity"}
+      }
+    },
+    { $limit: 1 }
+  ]);
+  let trip = await Trip.updateOne({_id: mongoose.Types.ObjectId(ticket.trip)}, {
+    meta: {
+      totalQuantity: totalTrip.totalQuantity,
+      availableQuantity: totalTrip.totalQuantity - (totalTrip.soldTickets + totalTrip.reservedQuantity)
+    }
+  });
+});
+
+const Ticket = mongoose.model('Ticket', ticketSchema);
+
+module.exports = Ticket;

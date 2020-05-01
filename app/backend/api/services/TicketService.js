@@ -1149,6 +1149,94 @@ module.exports = {
 
     const quantity = adult + youth;
 
+    // Search trips & opposite trips in parallel
+    console.time("tripsQuery");
+    let trips = await Trip.find(
+      {
+        active: true,
+        "tickets.0": { $exists: true },
+        "departure.name": departure,
+        "meta.availableQuantity": {$gte: quantity}
+      },
+      {
+        _id: 1,
+        name: 1,
+        photo: 1,
+        adultPrice: 1,
+        childPrice: 1,
+        discount: 1,
+        duration: 1,
+        carrier: 1,
+        type: 1,
+        deselectionPrice: 1,
+        departure: 1,
+        destination: 1,
+      }
+    ).limit(limit).lean();
+    console.timeEnd("tripsQuery");
+
+    // Filter trips with enough tickets
+    trips = trips.map((trip) => {
+      return {
+        ...trip,
+        Adult: adult,
+        Youth: youth,
+        typeOfTransport: trip.type,
+        destinationCharges: 0,
+        tickets: [],
+      };
+    });
+
+    // Filter in price range
+    if (priceEnd > 0) {
+      trips = trips.filter((trip) =>
+        this.isInPriceRange(trip, adult, youth, priceStart, priceEnd)
+      );
+    }
+
+    // Alter destination photo
+    trips = trips.map((trip) => {
+      if (trip.destination && trip.destination.photo) {
+        trip.destination.photo =
+          "http://35.202.14.48/api/destinations/" +
+          trip.destination.photo.replace("./", "");
+      }
+      return trip;
+    });
+
+    return trips;
+  },
+  async findDashboard_deprecated({
+    page,
+    limit,
+    adult,
+    youth,
+    priceStart,
+    priceEnd,
+    dateStart,
+    dateEnd,
+    departure,
+    timezone,
+  }) {
+    if (departure === "No_departure_found") {
+      return [];
+    }
+
+    page = +page;
+    limit = 1000;
+    adult = +adult;
+    youth = +youth;
+    priceStart = +priceStart;
+    priceEnd = +priceEnd;
+    dateStart = +dateStart;
+    dateEnd = +dateEnd;
+    timezone = +timezone;
+
+    Trip.ensureIndexes({ destination: 1 });
+    Ticket.ensureIndexes({ _id: 1 });
+
+    const quantity = adult + youth;
+
     const tripMatch = {
       active: true,
       "departure.name": { $regex: departure, $options: "i" },

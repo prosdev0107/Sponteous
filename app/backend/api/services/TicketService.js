@@ -1144,64 +1144,44 @@ module.exports = {
     dateEnd = +dateEnd;
     timezone = +timezone;
 
-    Trip.ensureIndexes({ destination: 1 });
-    Ticket.ensureIndexes({ _id: 1 });
-
     const quantity = adult + youth;
 
-    const tripMatch = {
-      active: true,
-      "departure.name": { $regex: departure, $options: "i" },
-    };
-
-    const ticketMatch = {
-      $and: [
-        { $eq: ["$$tickets.active", true] },
-        { $eq: ["$$tickets.deleted", false] },
-        {
-          $gte: [
-            "$$tickets.quantity",
-            {
-              $sum: [
-                "$$tickets.soldTickets",
-                "$$tickets.reservedQuantity",
-                quantity,
-              ],
-            },
-          ],
-        },
-      ],
-    };
-
-    // custom.TodayWithTimezone = Date.now() - timezone;  // changed 11
-    custom.TodayWithTimezone = new Date(new Date().setHours(0, 0, 0, 0));
-
-    if (dateStart > 0 && dateEnd > 0) {
-      ticketMatch.$and.push({
-        $gte: ["$$tickets.date.start", new Date(dateStart)],
-      });
-      ticketMatch.$and.push({
-        $lte: ["$$tickets.date.start", new Date(dateEnd)],
-      });
-      ticketMatch.$and.push({
-        $gte: [
-          "$$tickets.date.start",
-          new Date(custom.TodayWithTimezone + global.config.custom.time.day),
-        ],
-      });
-    } else {
-      ticketMatch.$and.push({
-        $gte: ["$$tickets.date.start", new Date(custom.TodayWithTimezone)],
-      });
-      // { $gte: ['$$tickets.date.start', new Date(custom.TodayWithTimezone + global.config.custom.time.day)] });  // changed 11
-    }
-
-    let data = await Trip.aggregate([
+    // Search trips & opposite trips in parallel
+    let trips = await Trip.aggregate([
       {
-        $match: tripMatch,
+        $match: {
+          active: true,
+          "departure.name": departure,
+          "meta.availableQuantity": { $gte: quantity },
+          "meta.availableTickets.0": { $exists: true },
+        },
       },
-      { $sort: { _id: -1 } },
-      Aggregate.populateOne("tickets", "tickets", "_id"),
+      {
+        $lookup: {
+          from: "trips",
+          let: { departure: "$departure", destination: "$destination" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$active", true] },
+                    { $gte: ["$meta.availableQuantity", quantity]},
+                    { $eq: ["$departure", "$$destination"] },
+                    { $eq: ["$destination", "$$departure"] },
+                  ],
+                },
+              },
+            },
+            {
+              $match: {"meta.availableTickets.0": { $exists: true },}
+            },
+            { $project: { _id: 1 } },
+            { $limit: 1 },
+          ],
+          as: "opposite",
+        },
+      },
       {
         $project: {
           _id: 1,
@@ -1216,79 +1196,49 @@ module.exports = {
           deselectionPrice: 1,
           departure: 1,
           destination: 1,
-          tickets: {
-            $filter: {
-              input: "$tickets",
-              as: "tickets",
-              cond: ticketMatch,
-            },
-          },
+          meta: 1,
+          opposite: 1
         },
       },
+      {
+        $match: {"opposite.0": { $exists: true },}
+      },
+      {
+        $limit: limit
+      }
     ]);
 
-    const oppositeTrips = await this.getAllOppositeTrips(data);
-    // const oppositeTrips = [];
-
-    let res = [];
-    for (const trip of data) {
-      const { isValid, destinationCharges } = await this.hasEnoughTickets(
-        trip,
-        oppositeTrips,
-        quantity
-      );
-      if (isValid) {
-        trip["Adult"] = adult;
-        trip["Youth"] = youth;
-        trip["typeOfTransport"] = trip.type;
-        trip["destinationCharges"] = destinationCharges;
-        res.push(trip);
-      }
-    }
-
-    if (priceEnd > 0) {
-      const finalRes = res.filter((trip) =>
-        this.isInPriceRange(trip, adult, youth, priceStart, priceEnd)
-      );
-      res = [];
-      res = [...finalRes];
-    }
-    const size = (page + 1) * limit;
-
-    let preRes = [];
-    res.forEach((trip, i) => {
-      if (i < size) {
-        preRes.push(trip);
-      }
+    // Filter trips with enough tickets
+    trips = trips.map((obj) => {
+      const { meta, ...trip } = obj;
+      return {
+        ...trip,
+        Adult: adult,
+        Youth: youth,
+        typeOfTransport: trip.type,
+        destinationCharges: 0,
+        tickets: meta.availableTickets,
+      };
     });
 
-    res = preRes;
+    // Filter in price range
+    if (priceEnd > 0) {
+      trips = trips.filter((trip) =>
+        this.isInPriceRange(trip, adult, youth, priceStart, priceEnd)
+      );
+    }
 
-    res.forEach((trip) => {
-      if (trip.destination.photo) {
+    // Alter destination photo
+    trips = trips.map((trip) => {
+      if (trip.destination && trip.destination.photo) {
         trip.destination.photo =
           "http://35.202.14.48/api/destinations/" +
           trip.destination.photo.replace("./", "");
-        //   try {
-        //     const value =
-        //       photoPrefix +
-        //       fs.readFileSync(trip.destination.photo, PHOTO_ENCODING);
-        //     console.log(trip.destination.photo);
-        //     trip.destination.photo = value;
-        //     fs.existsSync(trip.destination.photo);
-        //     // const value = photoPrefix + fs.readFileSync('./city_photos/ina.jpg', PHOTO_ENCODING);
-        //     // trip.destination.photo = value;
-        //   } catch (ex) {
-        //     console.log("No photo found. Using default one.");
-        //     const value =
-        //       photoPrefix +
-        //       fs.readFileSync("./city_photos/ina.jpg", PHOTO_ENCODING);
-        //     trip.destination.photo = value;
-        // }
       }
+      return trip;
     });
 
-    return res;
+    return trips;
   },
 
   isInPriceRange(trip, adult, youth, priceStart, priceEnd) {

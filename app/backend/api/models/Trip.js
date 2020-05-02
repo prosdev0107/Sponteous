@@ -13,7 +13,7 @@ const tripSchema = new Schema({
   discount: Number,
   duration: Number,
   deselectionPrice: Number,
-  timeSelection: { 
+  timeSelection: {
     defaultPrice: Number,
     _0to6AM: Number,
     _6to8AM: Number,
@@ -32,7 +32,12 @@ const tripSchema = new Schema({
   deleted: { type: Boolean, default: false },
   tickets: { type: [Schema.Types.ObjectId], ref: 'Ticket' },
   createdAt: { type: Date, default: Date.now },
-  isFromAPI: { type: Boolean, default: true }
+  isFromAPI: { type: Boolean, default: true },
+  meta: {
+    totalQuantity: Number,
+    availableQuantity: Number,
+    availableTickets: Array,
+  }
 });
 
 module.exports = mongoose.model('Trip', tripSchema);

@@ -20,7 +20,7 @@ export interface ITrip {
     departureTicketsQty: number
   }
   typeOfTransport: string
-  
+
 }
 
 export interface ISelectedData {

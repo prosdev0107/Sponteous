@@ -269,7 +269,8 @@ export default class Destination extends Component<IProps, IState> {
   }
 
   handleSelectDates = (dates: [Date, Date]) => {
-    const { tickets, departure, destination } = this.props.data as ITripSelect
+    // const { tickets, departure, destination } = this.props.data as ITripSelect
+    const { tickets} = this.props.data as ITripSelect
     const offset = moment(dates[0]).utcOffset()
 
     const hours = tickets.reduce(
@@ -293,9 +294,9 @@ export default class Destination extends Component<IProps, IState> {
         )
 
         if (
-          isStartSameFirst &&
-          ticket.departure === departure.name &&
-          ticket.destination === destination.name
+          // ticket.departure === departure.name &&
+          // ticket.destination === destination.name &&
+          isStartSameFirst
         ) {
           total.start.push({
             id: ticket._id,
@@ -306,9 +307,9 @@ export default class Destination extends Component<IProps, IState> {
               .format('HH:mm')}`
           })
         } else if (
-          isStartSameSecond &&
-          ticket.departure === destination.name &&
-          ticket.destination === departure.name
+          // ticket.departure === destination.name &&
+          // ticket.destination === departure.name &&
+          isStartSameSecond
         ) {
           total.end.push({
             id: ticket._id,

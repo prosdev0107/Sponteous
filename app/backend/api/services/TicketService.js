@@ -1144,39 +1144,73 @@ module.exports = {
     dateEnd = +dateEnd;
     timezone = +timezone;
 
-    Trip.ensureIndexes({ destination: 1 });
-    Ticket.ensureIndexes({ _id: 1 });
-
     const quantity = adult + youth;
 
     // Search trips & opposite trips in parallel
-    let trips = await Trip.find(
+    let trips = await Trip.aggregate([
       {
-        active: true,
-        "tickets.0": { $exists: true },
-        "departure.name": departure,
-        "meta.availableQuantity": {$gte: quantity}
+        $match: {
+          active: true,
+          "departure.name": departure,
+          "meta.availableQuantity": { $gte: quantity },
+          "meta.availableTickets.0": { $exists: true },
+        },
       },
       {
-        _id: 1,
-        name: 1,
-        photo: 1,
-        adultPrice: 1,
-        childPrice: 1,
-        discount: 1,
-        duration: 1,
-        carrier: 1,
-        type: 1,
-        deselectionPrice: 1,
-        departure: 1,
-        destination: 1,
-        meta: 1
+        $lookup: {
+          from: "trips",
+          let: { departure: "$departure", destination: "$destination" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$active", true] },
+                    { $gte: ["$meta.availableQuantity", quantity]},
+                    { $eq: ["$departure", "$$destination"] },
+                    { $eq: ["$destination", "$$departure"] },
+                  ],
+                },
+              },
+            },
+            {
+              $match: {"meta.availableTickets.0": { $exists: true },}
+            },
+            { $project: { _id: 1 } },
+            { $limit: 1 },
+          ],
+          as: "opposite",
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          photo: 1,
+          adultPrice: 1,
+          childPrice: 1,
+          discount: 1,
+          duration: 1,
+          carrier: 1,
+          type: 1,
+          deselectionPrice: 1,
+          departure: 1,
+          destination: 1,
+          meta: 1,
+          opposite: 1
+        },
+      },
+      {
+        $match: {"opposite.0": { $exists: true },}
+      },
+      {
+        $limit: limit
       }
-    ).limit(limit).lean();
+    ]);
 
     // Filter trips with enough tickets
     trips = trips.map((obj) => {
-      const {meta, ...trip} = obj
+      const { meta, ...trip } = obj;
       return {
         ...trip,
         Adult: adult,

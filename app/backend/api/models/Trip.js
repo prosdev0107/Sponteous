@@ -36,7 +36,7 @@ const tripSchema = new Schema({
   meta: {
     totalQuantity: Number,
     availableQuantity: Number,
-    availableTickets: Array
+    availableTickets: Array,
   }
 });
 

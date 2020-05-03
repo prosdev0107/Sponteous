@@ -66,8 +66,8 @@ export default class Destination extends Component<IProps, IState> {
         ? data.tickets
             .filter(
               (item: ITicket) =>
-                // item.departure === data.departure.name &&
-                // item.destination === data.destination.name &&
+                item.departure === data.departure.name &&
+                item.destination === data.destination.name &&
                 moment
                   .utc(item.date.start)
                   .set({ hour: 0, minutes: 0, seconds: 0, milliseconds: 0 })
@@ -94,8 +94,8 @@ export default class Destination extends Component<IProps, IState> {
         ? data.tickets
             .filter(
               (item: ITicket) =>
-                // item.departure === data.destination.name &&
-                // item.destination === data.departure.name &&
+                item.departure === data.destination.name &&
+                item.destination === data.departure.name &&
                 moment
                   .utc(item.date.start)
                   .set({ hour: 0, minutes: 0, seconds: 0, milliseconds: 0 })
@@ -269,8 +269,7 @@ export default class Destination extends Component<IProps, IState> {
   }
 
   handleSelectDates = (dates: [Date, Date]) => {
-    // const { tickets, departure, destination } = this.props.data as ITripSelect
-    const { tickets} = this.props.data as ITripSelect
+    const { tickets, departure, destination } = this.props.data as ITripSelect
     const offset = moment(dates[0]).utcOffset()
 
     const hours = tickets.reduce(
@@ -294,8 +293,8 @@ export default class Destination extends Component<IProps, IState> {
         )
 
         if (
-          // ticket.departure === departure.name &&
-          // ticket.destination === destination.name &&
+          ticket.departure === departure.name &&
+          ticket.destination === destination.name &&
           isStartSameFirst
         ) {
           total.start.push({
@@ -307,8 +306,8 @@ export default class Destination extends Component<IProps, IState> {
               .format('HH:mm')}`
           })
         } else if (
-          // ticket.departure === destination.name &&
-          // ticket.destination === departure.name &&
+          ticket.departure === destination.name &&
+          ticket.destination === departure.name &&
           isStartSameSecond
         ) {
           total.end.push({

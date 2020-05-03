@@ -1159,24 +1159,31 @@ module.exports = {
       {
         $lookup: {
           from: "trips",
-          let: { departure: "$departure", destination: "$destination" },
+          let: {
+            type: "$type",
+            carrier: "$carrier",
+            departure: "$departure",
+            destination: "$destination",
+          },
           pipeline: [
             {
               $match: {
                 $expr: {
                   $and: [
                     { $eq: ["$active", true] },
-                    { $gte: ["$meta.availableQuantity", quantity]},
+                    { $gte: ["$meta.availableQuantity", quantity] },
                     { $eq: ["$departure", "$$destination"] },
                     { $eq: ["$destination", "$$departure"] },
+                    { $eq: ["$carrier", "$$carrier"] },
+                    { $eq: ["$type", "$$type"] },
                   ],
                 },
               },
             },
             {
-              $match: {"meta.availableTickets.0": { $exists: true },}
+              $match: { "meta.availableTickets.0": { $exists: true } },
             },
-            { $project: { _id: 1 } },
+            { $project: { _id: 1, meta: 1 } },
             { $limit: 1 },
           ],
           as: "opposite",
@@ -1197,29 +1204,72 @@ module.exports = {
           departure: 1,
           destination: 1,
           meta: 1,
-          opposite: 1
+          opposite: 1,
         },
       },
       {
-        $match: {"opposite.0": { $exists: true },}
+        $match: { "opposite.0": { $exists: true } },
       },
       {
-        $limit: limit
-      }
+        $limit: limit,
+      },
     ]);
 
     // Filter trips with enough tickets
     trips = trips.map((obj) => {
-      const { meta, ...trip } = obj;
+      const { meta, opposite, ...trip } = obj;
+
+      let oppositeTickets = [];
+      let departureTickets = meta.availableTickets;
+      let destinationTickets = opposite[0].meta.availableTickets;
+      let destinationCharges = {
+        adultPrice: 0,
+        childPrice: 0,
+      };
+      // Add opposite trip tickets dated after any trip ticket
+      departureTickets.forEach((departure) => {
+        destinationTickets.forEach((destination) => {
+          if (
+            departure.date.start.getTime() < destination.date.start.getTime()
+          ) {
+            if (oppositeTickets.indexOf(destination) < 0) {
+              oppositeTickets.push(destination);
+            }
+            destinationCharges = {
+              adultPrice: destination.adultPrice,
+              childPrice: destination.childPrice,
+            };
+          }
+        });
+      });
+
+      if (oppositeTickets.length === 0){
+        // No returning tickets available
+        return false;
+      }
+      // Compute tickets array and append departure/destination
+      // to distinguich between tickets and returning tickets
+      let tickets = meta.availableTickets.map(t => ({
+        ...t,
+        departure: trip.departure.name,
+        destination: trip.destination.name
+      }));
+      tickets = tickets.concat(oppositeTickets.map(t => ({
+        ...t,
+        departure: trip.destination.name,
+        destination: trip.departure.name
+      })))
+
+      // Return trip search result
       return {
         ...trip,
         Adult: adult,
         Youth: youth,
         typeOfTransport: trip.type,
-        destinationCharges: 0,
-        tickets: meta.availableTickets,
+        destinationCharges,
+        tickets
       };
-    });
+    }).filter((trip) => trip);
 
     // Filter in price range
     if (priceEnd > 0) {

@@ -263,29 +263,19 @@ module.exports = {
 
   async updateOne(id, data) {
     const { isDeparture, isDestination } = data;
+    let city = await City.findByIdAndUpdate(id, data, { new: true });
+
     if (isDestination !== undefined) {
       // Toggle active for all trips
-      await Trip.updateMany(
+      let [res1, res2] = [await Trip.updateMany(
         { 'destination._id': id },
-        [{
-          $set: {
-            'destination.isDestination': isDestination
-          }
-        }, {
-          $set: {
-            active: {
-              $switch: {
-                branches: [
-                  { case: { $eq: [ "$departure.isDeparture", true ] }, then: isDestination },
-                  { case: { $eq: [ "$departure.isDeparture", false ] }, then: false }
-                ],
-                default: false
-              }
-            }
-          }
-        }],
-        { new: true }
-      );
+        { $set: { 'destination.isDestination': isDestination } }
+      ), await Trip.updateMany(
+        { 'destination._id': id, 'departure.isDeparture': true },
+        { $set: { active: isDestination } }
+      )];
+
+      // console.log(">>>>>>>>>>>", res1, res1)
 
       // Toggle active for all ticket trips
       const destinationTrips = await Trip.find({
@@ -303,27 +293,15 @@ module.exports = {
 
     if (isDeparture !== undefined) {
       // Toggle active for all trips
-      await Trip.updateMany(
+      let [res1, res2] = [await Trip.updateMany(
         { 'departure._id': id },
-        [{
-          $set: {
-            'departure.isDeparture': isDestination
-          }
-        }, {
-          $set: {
-            active: {
-              $switch: {
-                branches: [
-                  { case: { $eq: [ "$destination.isDestination", true ] }, then: isDeparture },
-                  { case: { $eq: [ "$destination.isDestination", false ] }, then: false }
-                ],
-                default: false
-              }
-            }
-          }
-        }],
-        { new: true }
-      );
+        { $set: { 'departure.isDeparture': isDeparture } }
+      ), await Trip.updateMany(
+        { 'departure._id': id, 'destination.isDestination': true },
+        { $set: { active: isDeparture } }
+      )];
+
+      // console.log(">>>>>>>>>>>", res1, res1)
 
       const departureTrips = await Trip.find({ 'departure._id': ObjectId(id) });
       departureTrips.forEach(async trip => {
@@ -335,7 +313,6 @@ module.exports = {
       });
     }
 
-    let city = await City.findByIdAndUpdate(id, data, { new: true });
     const value =
       photoPrefix + fs.readFileSync(city.photo, BASE_64_PHOTO_ENCODING);
     city.photo = value;

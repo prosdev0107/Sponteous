@@ -269,16 +269,15 @@ module.exports = {
         { 'destination._id': id },
         [{
           $set: {
-            'destination.isDestination': isDestination,
-
+            'destination.isDestination': isDestination
           }
         }, {
           $set: {
             active: {
               $switch: {
                 branches: [
-                  { case: { $eql: [ "$departure.isDeparture", true ] }, then: isDestination },
-                  { case: { $eql: [ "$departure.isDeparture", false ] }, then: false }
+                  { case: { $eq: [ "$departure.isDeparture", true ] }, then: isDestination },
+                  { case: { $eq: [ "$departure.isDeparture", false ] }, then: false }
                 ],
                 default: false
               }
@@ -315,8 +314,8 @@ module.exports = {
             active: {
               $switch: {
                 branches: [
-                  { case: { $eql: [ "$destination.isDestination", true ] }, then: isDeparture },
-                  { case: { $eql: [ "$destination.isDestination", false ] }, then: false }
+                  { case: { $eq: [ "$destination.isDestination", true ] }, then: isDeparture },
+                  { case: { $eq: [ "$destination.isDestination", false ] }, then: false }
                 ],
                 default: false
               }

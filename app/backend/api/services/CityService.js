@@ -87,55 +87,29 @@ module.exports = {
       sortField: sortField
     };
 
-    if (sortField === undefined) {
-      let cities = await City.aggregate([
-        {
-          $facet: {
-            results: [
-              { $sort: { country: 1, name: 1 } },
-              ...Aggregate.skipAndLimit(query.page, query.limit)
-            ],
-            status: Aggregate.getStatusWithSimpleMatch(
-              {},
-              query.page,
-              query.limit
-            )
-          }
+    let cities = await City.aggregate([
+      {
+        $facet: {
+          results: [
+            { $sort: (sortField) ? { [query.sortField]: query.sortOrder } : { country: 1, name: 1 } },
+            ...Aggregate.skipAndLimit(query.page, query.limit)
+          ],
+          status: Aggregate.getStatusWithSimpleMatch(
+            {},
+            query.page,
+            query.limit
+          )
         }
-      ]).then(Aggregate.parseResults);
+      }
+    ]).then(Aggregate.parseResults);
 
-      cities.results = cities.results.map(city => {
-        if (city.photo) {
-          city.photo = this.readCityPhoto(city);
-        }
-        return city;
-      });
-      return cities;
-    } else {
-      let cities = await City.aggregate([
-        {
-          $facet: {
-            results: [
-              { $sort: { [query.sortField]: query.sortOrder } },
-              ...Aggregate.skipAndLimit(query.page, query.limit)
-            ],
-            status: Aggregate.getStatusWithSimpleMatch(
-              {},
-              query.page,
-              query.limit
-            )
-          }
-        }
-      ]).then(Aggregate.parseResults);
-
-      cities.results = cities.results.map(city => {
-        if (city.photo) {
-          city.photo = this.readCityPhoto(city);
-        }
-        return city;
-      });
-      return cities;
-    }
+    cities.results = cities.results.map(city => {
+      if (city.photo) {
+        city.photo = this.readCityPhoto(city);
+      }
+      return city;
+    });
+    return cities;
   },
 
   async findOne(id) {
@@ -290,51 +264,74 @@ module.exports = {
   async updateOne(id, data) {
     const { isDeparture, isDestination } = data;
     if (isDestination !== undefined) {
+      // Toggle active for all trips
+      await Trip.updateMany(
+        { 'destination._id': id },
+        [{
+          $set: {
+            'destination.isDestination': isDestination,
+
+          }
+        }, {
+          $set: {
+            active: {
+              $switch: {
+                branches: [
+                  { case: { $eql: [ "$departure.isDeparture", true ] }, then: isDestination },
+                  { case: { $eql: [ "$departure.isDeparture", false ] }, then: false }
+                ],
+                default: false
+              }
+            }
+          }
+        }],
+        { new: true }
+      );
+
+      // Toggle active for all ticket trips
       const destinationTrips = await Trip.find({
         'destination._id': ObjectId(id)
       });
-      await Trip.updateMany(
-        { 'destination._id': id },
-        { $set: { 'destination.isDestination': isDestination } },
-        { new: true }
-      );
+
       destinationTrips.forEach(async trip => {
-        const isTripActive = trip.departure.isDeparture && isDestination;
-        console.log(trip.departure.isDeparture, isDestination, isTripActive);
-        trip.tickets.forEach(async ticketId => {
-          await Trip.findByIdAndUpdate(trip.id, {
-            $set: { active: isTripActive }
-          });
-          try {
-            await Ticket.findByIdAndUpdate(ticketId, {
-              $set: { active: isTripActive }
-            });
-          } catch (error) {
-            console.log(error);
-          }
+        await Ticket.updateMany({
+          trip: ObjectId(ticket.trip)
+        }, {
+          $set: { active: trip.active }
         });
       });
     }
+
     if (isDeparture !== undefined) {
-      const departureTrips = await Trip.find({ 'departure._id': ObjectId(id) });
+      // Toggle active for all trips
       await Trip.updateMany(
         { 'departure._id': id },
-        { $set: { 'departure.isDeparture': isDeparture } },
+        [{
+          $set: {
+            'departure.isDeparture': isDestination
+          }
+        }, {
+          $set: {
+            active: {
+              $switch: {
+                branches: [
+                  { case: { $eql: [ "$destination.isDestination", true ] }, then: isDeparture },
+                  { case: { $eql: [ "$destination.isDestination", false ] }, then: false }
+                ],
+                default: false
+              }
+            }
+          }
+        }],
         { new: true }
       );
+
+      const departureTrips = await Trip.find({ 'departure._id': ObjectId(id) });
       departureTrips.forEach(async trip => {
-        const isTripActive = isDeparture && trip.destination.isDestination;
-        await Trip.findByIdAndUpdate(trip.id, {
-          $set: { active: isTripActive }
-        });
-        trip.tickets.forEach(async ticketId => {
-          try {
-            await Ticket.findByIdAndUpdate(ticketId, {
-              $set: { active: isTripActive }
-            });
-          } catch (error) {
-            console.log(error);
-          }
+        await Ticket.updateMany({
+          trip: ObjectId(ticket.trip)
+        }, {
+          $set: { active: trip.active }
         });
       });
     }

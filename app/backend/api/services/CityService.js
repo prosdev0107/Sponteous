@@ -295,7 +295,7 @@ module.exports = {
 
       destinationTrips.forEach(async trip => {
         await Ticket.updateMany({
-          trip: ObjectId(ticket.trip)
+          trip: ObjectId(trip._id)
         }, {
           $set: { active: trip.active }
         });
@@ -329,7 +329,7 @@ module.exports = {
       const departureTrips = await Trip.find({ 'departure._id': ObjectId(id) });
       departureTrips.forEach(async trip => {
         await Ticket.updateMany({
-          trip: ObjectId(ticket.trip)
+          trip: ObjectId(trip._id)
         }, {
           $set: { active: trip.active }
         });

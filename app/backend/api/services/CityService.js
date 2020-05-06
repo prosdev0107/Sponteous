@@ -268,14 +268,14 @@ module.exports = {
     if (isDestination !== undefined) {
       // Toggle active for all trips
       let [res1, res2] = [await Trip.updateMany(
-        { 'destination._id': id },
+        { 'destination._id': ObjectId(id) },
         { $set: { 'destination.isDestination': isDestination } }
       ), await Trip.updateMany(
-        { 'destination._id': id, 'departure.isDeparture': true },
+        { 'destination._id': ObjectId(id), 'departure.isDeparture': true },
         { $set: { active: isDestination } }
       )];
 
-      // console.log(">>>>>>>>>>>", res1, res1)
+      // console.log(">>>>>>>>>>> trips", res1 , '>> ', res2)
 
       // Toggle active for all ticket trips
       const destinationTrips = await Trip.find({
@@ -283,33 +283,35 @@ module.exports = {
       });
 
       destinationTrips.forEach(async trip => {
-        await Ticket.updateMany({
+        let res3 = await Ticket.updateMany({
           trip: ObjectId(trip._id)
         }, {
           $set: { active: trip.active }
         });
+        // console.log(">>>>>>>>>>> tickets ", res3)
       });
     }
 
     if (isDeparture !== undefined) {
       // Toggle active for all trips
       let [res1, res2] = [await Trip.updateMany(
-        { 'departure._id': id },
+        { 'departure._id': ObjectId(id) },
         { $set: { 'departure.isDeparture': isDeparture } }
       ), await Trip.updateMany(
-        { 'departure._id': id, 'destination.isDestination': true },
+        { 'departure._id': ObjectId(id), 'destination.isDestination': true },
         { $set: { active: isDeparture } }
       )];
 
-      // console.log(">>>>>>>>>>>", res1, res1)
+      // console.log(">>>>>>>>>>>", res1, res2)
 
       const departureTrips = await Trip.find({ 'departure._id': ObjectId(id) });
       departureTrips.forEach(async trip => {
-        await Ticket.updateMany({
+        let res3 = await Ticket.updateMany({
           trip: ObjectId(trip._id)
         }, {
           $set: { active: trip.active }
         });
+        // console.log(">>>>>>>>>>", res3)
       });
     }
 

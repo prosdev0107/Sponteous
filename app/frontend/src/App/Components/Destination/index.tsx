@@ -36,11 +36,26 @@ export default class Destination extends Component<IProps, IState> {
       end: []
     },
     startDates: [],
-    endDates: []
+    endDates: [],
+    divRef: React.createRef<HTMLDivElement>()
   }
+  node = React.createRef<HTMLDivElement>()
 
   componentDidMount() {
     this.setState({ calendar: this.props.isCalendarOpen })
+    document.addEventListener('mousedown', this.handleClickOutside, false)
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('mousedown', this.handleClickOutside, false)
+  }
+
+  handleClickOutside = (e: any) => {
+    if (this.node.current && this.state.calendar) {
+      if (!this.node.current.contains(e.target)) {
+        this.deselect()
+      }
+    }
   }
 
   CalendarBlock = () => {
@@ -403,7 +418,8 @@ export default class Destination extends Component<IProps, IState> {
       <div
         className={`destination ${calendar ? 'overlay' : ''} ${
           !selected && isMobile ? 'destination-when-not-selected' : ''
-        }`}>
+        }`}
+        ref={this.node}>
         <div
           className={`destination-top ${
             selected || deselect ? 'short' : isMobile ? 'short' : ''

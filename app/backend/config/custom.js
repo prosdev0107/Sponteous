@@ -31,7 +31,7 @@ module.exports.custom = {
   supportEmail: process.env.SUPPORT_EMAIL,
 
   ticket: {
-    type: ['Train', 'Bus'],
+    type: ['Train', 'Bus', 'Direct Flight'],
     bookingTime: (process.env.TICKET_BOOKING_TIME || 15) * 60, // it must be in UNIX timestamp
     chooseTimePrice: +process.env.TICKET_CHOOSE_TIME_PRICE || 1, // it must be in £
   },

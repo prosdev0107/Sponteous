@@ -442,8 +442,10 @@ export default class Destination extends Component<IProps, IState> {
                   <div
                     className={`destination-bottom-type ${
                       typeOfTransport === 'Train'
-                        ? 'destination-bottom-type--left'
-                        : 'destination-bottom-type--right'
+                        ? 'destination-bottom-type--train'
+                        : typeOfTransport === 'Bus'
+                          ? 'destination-bottom-type--bus'
+                          : 'destination-bottom-type--red'
                     }`}
                     style={{
                       borderColor: '#12b459',
@@ -460,8 +462,10 @@ export default class Destination extends Component<IProps, IState> {
                   <span
                     className={`destination-bottom-type ${
                       typeOfTransport === 'Train'
-                        ? 'destination-bottom-type--left'
-                        : 'destination-bottom-type--right'
+                        ? 'destination-bottom-type--train'
+                        : typeOfTransport === 'Bus'
+                          ? 'destination-bottom-type--bus'
+                          : 'destination-bottom-type--red'
                     }`}
                     style={{
                       borderColor: '#12b459',

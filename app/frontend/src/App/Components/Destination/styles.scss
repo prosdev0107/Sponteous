@@ -166,12 +166,17 @@
         margin-right: 1rem;
       }
 
-      &--left {
+      &--train {
         border-color: $violet-dark !important;
         color: $violet-dark !important;
       }
 
-      &--right {
+      &--bus {
+        border-color: $green !important;
+        color: $green !important;
+      }
+
+      &--red {
         border-color: $red !important;
         color: $red !important;
       }

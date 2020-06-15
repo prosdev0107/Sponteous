@@ -167,13 +167,18 @@
       }
 
       &--train {
-        border-color: $violet-dark !important;
-        color: $violet-dark !important;
+        border-color: $orange !important;
+        color: $orange !important;
       }
 
       &--bus {
         border-color: $green !important;
         color: $green !important;
+      }
+
+      &--flight {
+        border-color: $violet !important;
+        color: $violet !important;
       }
 
       &--red {

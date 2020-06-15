@@ -36,8 +36,7 @@ export default class Destination extends Component<IProps, IState> {
       end: []
     },
     startDates: [],
-    endDates: [],
-    divRef: React.createRef<HTMLDivElement>()
+    endDates: []
   }
   node = React.createRef<HTMLDivElement>()
 
@@ -445,7 +444,9 @@ export default class Destination extends Component<IProps, IState> {
                         ? 'destination-bottom-type--train'
                         : typeOfTransport === 'Bus'
                           ? 'destination-bottom-type--bus'
-                          : 'destination-bottom-type--red'
+                          : typeOfTransport === 'Direct Flight'
+                            ? 'destination-bottom-type--flight'
+                            : 'destination-bottom-type--red'
                     }`}
                     style={{
                       borderColor: '#12b459',
@@ -465,7 +466,9 @@ export default class Destination extends Component<IProps, IState> {
                         ? 'destination-bottom-type--train'
                         : typeOfTransport === 'Bus'
                           ? 'destination-bottom-type--bus'
-                          : 'destination-bottom-type--red'
+                          : typeOfTransport === 'Direct Flight'
+                            ? 'destination-bottom-type--flight'
+                            : 'destination-bottom-type--red'
                     }`}
                     style={{
                       borderColor: '#12b459',

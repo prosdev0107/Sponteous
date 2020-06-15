@@ -1,6 +1,5 @@
 import { ITrip, ISelectedData, IPassenger } from '../../Utils/appTypes'
 import { IOption } from '../Dropdown/types'
-import { RefObject } from 'react'
 
 export interface IProps {
   index: string
@@ -38,5 +37,4 @@ export interface IState {
 
   startDates: string[]
   endDates: string[]
-  divRef: RefObject<HTMLDivElement>
 }

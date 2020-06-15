@@ -292,6 +292,10 @@ const TripModal: React.SFC<IProps> = ({
                       {
                         _id: '2',
                         name: 'Bus'
+                      },
+                      {
+                        _id: '3',
+                        name: 'Direct Flight'
                       }
                     ]}
                     onChange={handleChange}

@@ -15,6 +15,10 @@
   cursor: pointer;
   outline: none;
 
+  &:hover {
+    opacity: 0.9;
+  }
+
   @include respond(tab) {
     max-width: inherit;
     height: 4rem;
@@ -52,17 +56,17 @@
     }
 
     div {
-      @include respond(mobile){
+      @include respond(mobile) {
         width: 23px !important;
         height: 23px !important;
       }
-      
+
       margin-left: auto;
       width: 25px;
       height: 25px;
 
-      img{
-        @include respond(mobile){
+      img {
+        @include respond(mobile) {
           width: 13px;
           height: 13px;
         }
@@ -109,9 +113,9 @@
 
     div {
       background-color: $green-dark;
-      img{
+      img {
         margin-left: 0.16rem;
-        @include respond(mobile){
+        @include respond(mobile) {
           margin-left: 0 !important;
         }
       }
@@ -263,7 +267,6 @@
   }
 
   &.undo-deselection {
-    
     @include respond(mobile) {
       margin-right: 0;
       width: 90%;

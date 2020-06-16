@@ -16,6 +16,8 @@ import {
 } from '../../../App/Utils/appTypes'
 import { IOption } from '../Dropdown/types'
 
+import messageInfo from '../../../Common/Utils/Media/message-info.svg'
+
 export default class Destination extends Component<IProps, IState> {
   readonly state: IState = {
     calendar: false,
@@ -393,7 +395,7 @@ export default class Destination extends Component<IProps, IState> {
     const { selected, deselect, data } = this.props
     const { discount, duration, destination, typeOfTransport } = data
     const { calendar, dates } = this.state
-    let finalCost
+    let finalCost, strippedCost
 
     if (data['destinationCharges']) {
       finalCost =
@@ -401,12 +403,44 @@ export default class Destination extends Component<IProps, IState> {
         data['destinationCharges'].childPrice * this.props.data['Youth'] +
         (data.adultPrice * this.props.data['Adult'] +
           data.childPrice * this.props.data['Youth'])
+      strippedCost = (
+        data['destinationCharges'].adultPrice * this.props.data['Adult'] +
+        data['destinationCharges'].childPrice * this.props.data['Youth'] +
+        ((data.adultPrice / (1 - data.discount / 100)) *
+          this.props.data['Adult'] +
+          (data.childPrice / (1 - data.discount / 100)) *
+            this.props.data['Youth'])
+      ).toFixed(2)
     } else {
       finalCost =
         2 *
         (data.adultPrice * this.props.data['Adult'] +
           data.childPrice * this.props.data['Youth'])
+      strippedCost = (
+        2 *
+        ((data.adultPrice / (1 - data.discount / 100)) *
+          this.props.data['Adult'] +
+          (data.childPrice / (1 - data.discount / 100)) *
+            this.props.data['Youth'])
+      ).toFixed(2)
     }
+
+    const { tickets } = this.props.data as ITripSelect
+
+    const ticketLessThanThree = tickets.filter(ticket => {
+      let availableTicket =
+        (ticket.quantity - ticket.soldTickets - ticket.reservedQuantity) | 0
+      return availableTicket < 3
+    })
+
+    const ticketLessThanTen = tickets.filter(ticket => {
+      let availableTicket =
+        (ticket.quantity - ticket.soldTickets - ticket.reservedQuantity) | 0
+      return availableTicket < 10
+    })
+
+    let isThree = ticketLessThanThree.length < 3
+    let isTen = ticketLessThanTen.length / tickets.length > 0.8
 
     const durationTime = moment.duration({ minutes: duration }) as IDuration
     const formatedDuration = durationTime.format('h[h] m[m]')
@@ -422,7 +456,7 @@ export default class Destination extends Component<IProps, IState> {
         <div
           className={`destination-top ${
             selected || deselect ? 'short' : isMobile ? 'short' : ''
-          }  ${calendar ? 'shortest' : ''}`}>
+          }  ${calendar ? 'shortest' : isThree || isTen ? 'medium' : ''}`}>
           <div>{`SAVE ${discount}%`}</div>
           <img
             src={destination.photo}
@@ -434,6 +468,37 @@ export default class Destination extends Component<IProps, IState> {
           />
         </div>
         <div className="destination-bottom">
+          {!calendar &&
+            (isThree || isTen) && (
+              <div className="destination-hurry-up-message">
+                <img
+                  src={messageInfo}
+                  alt=""
+                  srcSet=""
+                  width="15px"
+                  height="15px"
+                />
+
+                {isThree && (
+                  <div className="destination-hurry-up-message-text">
+                    Some{' '}
+                    {typeOfTransport === 'Direct Flight'
+                      ? 'flight'
+                      : 'departure'}
+                    s have no more than 3 seats available
+                  </div>
+                )}
+                {isTen && (
+                  <div className="destination-hurry-up-message-text">
+                    Less than 10 tickets per{' '}
+                    {typeOfTransport === 'Direct Flight'
+                      ? 'flight'
+                      : 'departure'}
+                    !
+                  </div>
+                )}
+              </div>
+            )}
           <div className="destination-bottom-row">
             {!deselect && (
               <div destination-bottom-types>
@@ -488,13 +553,17 @@ export default class Destination extends Component<IProps, IState> {
             this.props.data.destination.name
           }`}</p>
           <p className="destination-bottom-luggage">Luggage included</p>
-          <p className="destination-bottom-price">{`£ ${finalCost}${' '}
+          <div className="destination-bottom-price">
+            From{' '}
+            <span className="destination-bottom-price--stripped">{`£ ${strippedCost}`}</span>
+            {` £ ${finalCost}${' '}
                                                             /${' '}${
-            this.props.data['Adult'] + this.props.data['Youth'] > 1
-              ? `${this.props.data['Adult'] +
-                  this.props.data['Youth']} passengers`
-              : ' passenger'
-          }`}</p>
+              this.props.data['Adult'] + this.props.data['Youth'] > 1
+                ? `${this.props.data['Adult'] +
+                    this.props.data['Youth']} passengers`
+                : ' passenger'
+            }`}
+          </div>
           {calendar && <this.CalendarBlock />}
           {!selected &&
             !deselect && (

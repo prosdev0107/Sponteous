@@ -52,7 +52,7 @@ export default class Destination extends Component<IProps, IState> {
   }
 
   handleClickOutside = (e: any) => {
-    if (this.node.current && this.state.calendar) {
+    if (this.node.current && this.state.calendar && !this.props.isMapViewOn) {
       if (!this.node.current.contains(e.target)) {
         this.deselect()
       }

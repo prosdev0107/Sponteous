@@ -675,6 +675,7 @@ class SelectContainer extends Component<
         onCalendarOpen={this.calendarOpened}
         onCalendarClose={this.calendarClosed}
         isCalendarOpen={this.state.isCalendarOpen}
+        isMapViewOn={this.state.isMapViewOpen}
       />
     )
 
@@ -942,6 +943,7 @@ class SelectContainer extends Component<
                               onCalendarOpen={this.calendarOpened}
                               onCalendarClose={this.calendarClosed}
                               isCalendarOpen={false}
+                              isMapViewOn={this.state.isMapViewOpen}
                             />
                           )
                         })}

@@ -410,7 +410,7 @@ export default class Destination extends Component<IProps, IState> {
           this.props.data['Adult'] +
           (data.childPrice / (1 - data.discount / 100)) *
             this.props.data['Youth'])
-      ).toFixed(2)
+      ).toFixed(0)
     } else {
       finalCost =
         2 *
@@ -422,25 +422,29 @@ export default class Destination extends Component<IProps, IState> {
           this.props.data['Adult'] +
           (data.childPrice / (1 - data.discount / 100)) *
             this.props.data['Youth'])
-      ).toFixed(2)
+      ).toFixed(0)
     }
+
+    // Check hurry-up message based on ticket counts
 
     const { tickets } = this.props.data as ITripSelect
 
     const ticketLessThanThree = tickets.filter(ticket => {
       let availableTicket =
-        (ticket.quantity - ticket.soldTickets - ticket.reservedQuantity) | 0
-      return availableTicket < 3
+        ticket.quantity - ticket.soldTickets - ticket.reservedQuantity
+      return availableTicket <= 3
     })
 
-    const ticketLessThanTen = tickets.filter(ticket => {
+    const ticketLessThanFive = tickets.filter(ticket => {
       let availableTicket =
-        (ticket.quantity - ticket.soldTickets - ticket.reservedQuantity) | 0
-      return availableTicket < 10
+        ticket.quantity - ticket.soldTickets - ticket.reservedQuantity
+      return availableTicket <= 5
     })
 
-    let isThree = ticketLessThanThree.length < 3
-    let isTen = ticketLessThanTen.length / tickets.length > 0.8
+    let isThree = ticketLessThanThree.length >= 3
+    let isFive =
+      ticketLessThanFive.length / tickets.length >= 0.8 &&
+      this.props.data['Adult'] + this.props.data['Youth'] < 5
 
     const durationTime = moment.duration({ minutes: duration }) as IDuration
     const formatedDuration = durationTime.format('h[h] m[m]')
@@ -454,9 +458,13 @@ export default class Destination extends Component<IProps, IState> {
         }`}
         ref={this.node}>
         <div
-          className={`destination-top ${
-            selected || deselect ? 'short' : isMobile ? 'short' : ''
-          }  ${calendar ? 'shortest' : isThree || isTen ? 'medium' : ''}`}>
+          className={`destination-top ${selected || deselect ? 'short' : ''}  ${
+            calendar
+              ? 'shortest'
+              : isThree || (isFive && !selected)
+                ? 'medium'
+                : ''
+          }`}>
           <div>{`SAVE ${discount}%`}</div>
           <img
             src={destination.photo}
@@ -469,7 +477,8 @@ export default class Destination extends Component<IProps, IState> {
         </div>
         <div className="destination-bottom">
           {!calendar &&
-            (isThree || isTen) && (
+            (isThree || isFive) &&
+            !selected && (
               <div className="destination-hurry-up-message">
                 <img
                   src={messageInfo}
@@ -488,9 +497,9 @@ export default class Destination extends Component<IProps, IState> {
                     s have no more than 3 seats available
                   </div>
                 )}
-                {isTen && (
+                {isFive && (
                   <div className="destination-hurry-up-message-text">
-                    Less than 10 tickets per{' '}
+                    Less than 5 tickets per{' '}
                     {typeOfTransport === 'Direct Flight'
                       ? 'flight'
                       : 'departure'}
@@ -556,8 +565,8 @@ export default class Destination extends Component<IProps, IState> {
           <div className="destination-bottom-price">
             From{' '}
             <span className="destination-bottom-price--stripped">{`£ ${strippedCost}`}</span>
-            {` £ ${finalCost}${' '}
-                                                            /${' '}${
+            <span className="destination-bottom-price--final">{` £ ${finalCost}${' '}`}</span>
+            {`/${' '}${
               this.props.data['Adult'] + this.props.data['Youth'] > 1
                 ? `${this.props.data['Adult'] +
                     this.props.data['Youth']} passengers`

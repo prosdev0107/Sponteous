@@ -15,10 +15,6 @@
   cursor: pointer;
   outline: none;
 
-  &:hover {
-    opacity: 0.9;
-  }
-
   @include respond(tab) {
     max-width: inherit;
     height: 4rem;

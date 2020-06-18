@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 
 import moment from 'moment'
 import { connect } from 'react-redux'
+import { isMobileOnly } from 'react-device-detect'
 
 import MainBlock from '../../Components/MainBlock'
 import Search from '../../Components/Search'
@@ -632,10 +633,16 @@ class SelectContainer extends Component<
   }
 
   calendarOpened = () => {
-    this.setState({ isCalendarOpen: true })
+    this.setState({
+      isCalendarOpen: true,
+      scrollPosition: window.pageYOffset
+    })
   }
 
-  calendarClosed = () => this.setState({ isCalendarOpen: false })
+  calendarClosed = () => {
+    this.setState({ isCalendarOpen: false })
+    window.scrollTo(0, 400)
+  }
 
   openMapView = () => {
     this.setState((state: IState) => ({
@@ -742,10 +749,14 @@ class SelectContainer extends Component<
       lat = parseFloat(center.location.lat)
       lng = parseFloat(center.location.lng)
     }
+
     return (
       <div>
         {!isMapViewOpen ? (
-          <section className={`select-cnt ${isCalendarOpen ? 'calendar' : ''}`}>
+          <section
+            className={`select-cnt ${
+              isCalendarOpen ? (!isMobileOnly ? 'calendar' : '') : ''
+            }`}>
             <MainBlock className="select-cnt-block">
               <Search
                 departure={departure}
@@ -781,7 +792,12 @@ class SelectContainer extends Component<
               />
               <Steps />
             </MainBlock>
-            <section className="select-cnt-inner">
+            <section
+              className={`select-cnt-inner ${
+                isMobileOnly && isCalendarOpen && !this.state.isMapViewOpen
+                  ? 'mobile'
+                  : ''
+              }`}>
               <section className="select-cnt-inner-filters">
                 <Filters
                   ref={this.filters}

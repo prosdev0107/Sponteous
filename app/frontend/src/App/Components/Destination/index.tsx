@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import * as moment from 'moment'
 import { IDuration } from '../../../Common/Utils/globalTypes'
 import 'moment-duration-format'
+import { isMobileOnly } from 'react-device-detect'
 
 import Calendar from '../Calenadar'
 import Button from '../../../Common/Components/Button'
@@ -17,6 +18,7 @@ import {
 import { IOption } from '../Dropdown/types'
 
 import messageInfo from '../../../Common/Utils/Media/message-info.svg'
+import closeBtn from '../../Utils/Media/btn-close-mobile.svg'
 
 export default class Destination extends Component<IProps, IState> {
   readonly state: IState = {
@@ -449,13 +451,17 @@ export default class Destination extends Component<IProps, IState> {
     const durationTime = moment.duration({ minutes: duration }) as IDuration
     const formatedDuration = durationTime.format('h[h] m[m]')
 
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
-
     return (
       <div
-        className={`destination ${calendar ? 'overlay' : ''} ${
-          !selected && isMobile ? 'destination-when-not-selected' : ''
-        }`}
+        className={`destination ${
+          calendar
+            ? !isMobileOnly
+              ? 'overlay'
+              : !this.props.isMapViewOn
+                ? 'mobile'
+                : ''
+            : ''
+        } ${!selected && isMobileOnly ? 'destination-when-not-selected' : ''}`}
         ref={this.node}>
         <div
           className={`destination-top ${selected || deselect ? 'short' : ''}  ${
@@ -465,7 +471,15 @@ export default class Destination extends Component<IProps, IState> {
                 ? 'medium'
                 : ''
           }`}>
-          <div>{`SAVE ${discount}%`}</div>
+          {isMobileOnly &&
+            calendar && (
+              <div
+                className="destination-close-mobile"
+                onClick={this.closeCalendar}>
+                <img src={closeBtn} alt="" srcSet="" />
+              </div>
+            )}
+          <div className="badge">{`SAVE ${discount}%`}</div>
           <img
             src={destination.photo}
             alt="bg"

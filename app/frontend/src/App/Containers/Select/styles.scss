@@ -142,6 +142,10 @@
         margin-right: auto;
       }
     }
+    &.mobile {
+      height: 0;
+      overflow: hidden;
+    }
   }
 }
 .map-cnt {

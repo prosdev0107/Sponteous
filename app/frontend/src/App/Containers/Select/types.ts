@@ -36,6 +36,7 @@ export interface IState {
   selectedPlace: any
   isSorting: number
   filterVisible: boolean
+  scrollPosition?: number
 }
 
 export interface IProps {

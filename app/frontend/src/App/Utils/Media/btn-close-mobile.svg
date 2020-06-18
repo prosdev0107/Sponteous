@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="12px" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com -->
+    <title>burger button</title>
+    <desc>Created with Sketch.</desc>
+    <g id="-" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="9.-Results_grid_calendar" transform="translate(-277.000000, -99.000000)" fill="#4142A6" fill-rule="nonzero">
+            <g id="content" transform="translate(0.000000, 70.000000)">
+                <g id="Group-7-Copy-5">
+                    <g id="burger-button" transform="translate(277.000000, 29.000000)">
+                        <path d="M13.2700038,6.57142857 L-0.538446847,6.57142857 C-0.863898545,6.57142857 -1.14285714,6.28571429 -1.14285714,5.82857143 C-1.14285714,5.42857143 -0.863898545,5.14285714 -0.538446847,5.14285714 L13.2700038,5.14285714 C13.5954555,5.14285714 13.8744141,5.48571429 13.8744141,5.88571429 C13.827921,6.28571429 13.5954555,6.57142857 13.2700038,6.57142857 Z" id="Shape" transform="translate(6.365778, 5.857143) rotate(45.000000) translate(-6.365778, -5.857143) "></path>
+                        <path d="M13.2700038,6.57142857 L-0.538446847,6.57142857 C-0.863898545,6.57142857 -1.14285714,6.28571429 -1.14285714,5.88571429 C-1.14285714,5.48571429 -0.863898545,5.14285714 -0.538446847,5.14285714 L13.2700038,5.14285714 C13.5954555,5.14285714 13.8744141,5.48571429 13.8744141,5.88571429 C13.827921,6.28571429 13.5954555,6.57142857 13.2700038,6.57142857 Z" id="Shape" transform="translate(6.365778, 5.857143) rotate(-45.000000) translate(-6.365778, -5.857143) "></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

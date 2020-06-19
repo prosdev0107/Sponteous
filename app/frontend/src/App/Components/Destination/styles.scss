@@ -79,10 +79,16 @@
     }
 
     &.short {
-      height: 7rem;
+      height: 7.55rem;
 
+      @include respond(bigger) {
+        height: 7.7rem;
+      }
+      @include respond(big) {
+        height: 7.59rem;
+      }
       @include respond(tab) {
-        height: 13rem;
+        height: 13.5rem;
       }
     }
 

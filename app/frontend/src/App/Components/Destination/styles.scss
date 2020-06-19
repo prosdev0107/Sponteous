@@ -114,7 +114,7 @@
       top: 1rem;
       left: 1rem;
       @include respond(tab) {
-        font-size: 1.25rem;
+        font-size: 1.4rem;
       }
     }
     img {
@@ -162,7 +162,6 @@
     }
     .spon-btn.blue:hover {
       background-color: #1da4f0;
-      box-shadow: 0 9px 31px 0 rgba(93, 195, 253, 0.3);
     }
 
     .destination-hurry-up-message {
@@ -194,6 +193,7 @@
     &-row {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       padding-bottom: 1rem;
       @include respond(mobile) {
         padding-top: 1rem;
@@ -210,7 +210,7 @@
       font-weight: bold;
 
       @include respond(tab) {
-        font-size: 1.4rem;
+        font-size: 1.5rem;
         font-weight: 500;
       }
 
@@ -251,7 +251,7 @@
       margin-bottom: 0.5rem;
 
       @include respond(tab) {
-        font-size: 1.65rem;
+        font-size: 1.75rem;
       }
     }
 
@@ -262,7 +262,7 @@
       margin: 0;
 
       @include respond(mobile) {
-        font-size: 1.2rem;
+        font-size: 1.3rem;
       }
     }
 
@@ -273,7 +273,7 @@
       font-size: rc(14);
 
       @include respond(mobile) {
-        font-size: 1.2rem;
+        font-size: 1.3rem;
       }
     }
 
@@ -290,15 +290,18 @@
       font-size: 1rem;
       font-weight: 600;
       margin: 1rem 0 0 0;
-      min-height: 3.4rem;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
       @include respond(tab) {
-        font-size: 1.4rem;
+        font-size: 1.75rem;
       }
       &--stripped {
-        font-size: 0.8rem;
+        font-size: 0.9rem;
         text-decoration: line-through;
         @include respond(tab) {
-          font-size: 1.2rem;
+          font-size: 1.4rem;
         }
       }
 
@@ -337,7 +340,7 @@
       display: flex;
       flex-direction: column;
       margin-bottom: 1rem;
-      padding: 0 1rem 7rem 1rem;
+      padding: 0 1rem 0 1rem;
     }
 
     &-error {

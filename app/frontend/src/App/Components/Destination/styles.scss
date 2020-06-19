@@ -63,10 +63,11 @@
     background-color: #ffffff;
     z-index: 2;
     overflow: scroll;
+    -webkit-overflow-scrolling: touch;
   }
   &-top {
     position: relative;
-    height: 11rem;
+    height: 11.5rem;
     width: 100%;
 
     @include respond(tab) {
@@ -92,12 +93,12 @@
       }
     }
     &.medium {
-      height: 6.7rem;
+      height: 7.25rem;
       @include respond(bigger) {
-        height: 5.7rem;
+        height: 6.25rem;
       }
       @include respond(big) {
-        height: 4.85rem;
+        height: 5.35rem;
       }
       @include respond(tab) {
         height: 10rem;
@@ -341,6 +342,9 @@
       flex-direction: column;
       margin-bottom: 1rem;
       padding: 0 1rem 0 1rem;
+      @include respond(mobile) {
+        padding: 0 1rem 8rem 1rem;
+      }
     }
 
     &-error {

@@ -55,7 +55,7 @@
     }
   }
   &.mobile {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100vw;
@@ -63,7 +63,6 @@
     background-color: #ffffff;
     z-index: 2;
     overflow: scroll;
-    -webkit-overflow-scrolling: touch;
   }
   &-top {
     position: relative;
@@ -349,7 +348,7 @@
       margin-bottom: 1rem;
       padding: 0 1rem 0 1rem;
       @include respond(mobile) {
-        padding: 0 1rem 8rem 1rem;
+        padding: 0 1rem 4rem 1rem;
       }
     }
 

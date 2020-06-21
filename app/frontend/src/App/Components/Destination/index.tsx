@@ -429,24 +429,28 @@ export default class Destination extends Component<IProps, IState> {
 
     // Check hurry-up message based on ticket counts
 
+    let isThree = false,
+      isFive = false
     const { tickets } = this.props.data as ITripSelect
 
-    const ticketLessThanThree = tickets.filter(ticket => {
-      let availableTicket =
-        ticket.quantity - ticket.soldTickets - ticket.reservedQuantity
-      return availableTicket <= 3
-    })
+    if (tickets) {
+      const ticketLessThanThree = tickets.filter(ticket => {
+        let availableTicket =
+          ticket.quantity - ticket.soldTickets - ticket.reservedQuantity
+        return availableTicket <= 3
+      })
 
-    const ticketLessThanFive = tickets.filter(ticket => {
-      let availableTicket =
-        ticket.quantity - ticket.soldTickets - ticket.reservedQuantity
-      return availableTicket <= 5
-    })
+      const ticketLessThanFive = tickets.filter(ticket => {
+        let availableTicket =
+          ticket.quantity - ticket.soldTickets - ticket.reservedQuantity
+        return availableTicket <= 5
+      })
 
-    let isThree = ticketLessThanThree.length >= 3
-    let isFive =
-      ticketLessThanFive.length / tickets.length >= 0.8 &&
-      this.props.data['Adult'] + this.props.data['Youth'] < 5
+      isThree = ticketLessThanThree.length >= 3
+      isFive =
+        ticketLessThanFive.length / tickets.length >= 0.8 &&
+        this.props.data['Adult'] + this.props.data['Youth'] < 5
+    }
 
     const durationTime = moment.duration({ minutes: duration }) as IDuration
     const formatedDuration = durationTime.format('h[h] m[m]')

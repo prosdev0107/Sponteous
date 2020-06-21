@@ -194,10 +194,10 @@
 
   &__list-item {
     padding: 0 rc(10);
-    min-height: rc(64);
+    min-height: rc(40);
     display: flex;
     align-items: center;
-    font-size: rc(22);
+    font-size: rc(14);
     cursor: pointer;
 
     &:not(:first-child) {
@@ -205,6 +205,13 @@
     }
     &:hover {
       background: $gray;
+    }
+  }
+
+  @include respond(mobile) {
+    &__list-item {
+      min-height: rc(64);
+      font-size: rc(22);
     }
   }
 

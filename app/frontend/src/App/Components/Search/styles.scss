@@ -208,6 +208,13 @@
     }
   }
 
+  @include respond(mobile) {
+    &__list-item {
+      min-height: rc(64);
+      font-size: rc(22);
+    }
+  }
+
   &__list {
     position: absolute;
     top: 65.5%;

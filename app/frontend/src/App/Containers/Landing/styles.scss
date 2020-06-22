@@ -9,7 +9,7 @@
       height: 65vh;
     }
     @include respond(mobile) {
-      height: initial;
+      height: 80vh;
     }
 
     @media screen and (max-width: 767px) and (orientation: landscape) {

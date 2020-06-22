@@ -46,6 +46,7 @@ class TicketsContainer extends React.Component<
     isLoading: false,
     isModalLoading: false,
     isError: false,
+    showSplit: false,
     modal: {
       id: '',
       type: null,
@@ -236,12 +237,21 @@ class TicketsContainer extends React.Component<
   }
 
   handleOpenModal = (type: MODAL_TYPE, heading: string, id: string = '') => {
-    this.setState(
-      (state: IState) => ({ modal: { ...state.modal, heading, type, id } }),
-      () => {
-        this.modal.current!.open()
-      }
-    )
+    if(type === MODAL_TYPE.ADD_TICKET) {
+      this.setState(
+        (state: IState) => ({ modal: { ...state.modal, heading, type, id }, showSplit: true }),
+        () => {
+          this.modal.current!.open()
+        }
+      )
+    } else {
+      this.setState(
+        (state: IState) => ({ modal: { ...state.modal, heading, type, id }, showSplit: false }),
+        () => {
+          this.modal.current!.open()
+        }
+      )
+    }
     this.setState({
       destinations: [],
       carriers: [],
@@ -283,6 +293,51 @@ class TicketsContainer extends React.Component<
         this.props.showSuccess(message)
         this.handleCloseModal()
         this.handleFetchTicketsByDate(this.state.requestInfo)
+
+        return Promise.resolve()
+      })
+      .catch(err => {
+        this.setState({ isModalLoading: false })
+        this.props.showError(err, ERRORS.TICKET_FETCH)
+
+        return Promise.reject()
+      })
+  }
+
+  submitThenCreateReturn = (
+    ticketData: Pick<
+      ITicket,
+      Exclude<keyof ITicket, 'trip' | '_id' | 'date'>
+    > & {
+      trip: string
+      date: {
+        start: number
+        end: number
+      }
+      repeat?: {
+        dateEnd: number
+        days: number[]
+      }
+      departureHours?: any[]
+    }
+  ) => {
+    const token = getToken()
+
+    this.setState({ isModalLoading: true })
+    return createTicket(ticketData, token)
+      .then(res => {
+        let message = ''
+        if (res.data.updated) {
+          message = 'Tickets was overright'
+        } else if (!res.data.updated && res.data.dates) {
+          message = 'Ticket was updated'
+        } else {
+          message = SUCCESS.TICKET_ADD
+        }
+
+        this.props.showSuccess(message)
+        this.handleFetchTicketsByDate(this.state.requestInfo)
+        this.setState({ isModalLoading: false, showSplit: false })
 
         return Promise.resolve()
       })
@@ -559,6 +614,7 @@ class TicketsContainer extends React.Component<
       types,
       calendarFilter,
       pagination,
+      showSplit
     } = this.state
     const {
       filters,
@@ -612,9 +668,11 @@ class TicketsContainer extends React.Component<
               destinations={destinations}
               carriers={carriers}
               types={types}
+              showSplit={showSplit}
               isLoading={isModalLoading}
               closeModal={this.handleCloseModal}
               handleSubmit={this.handleAddTicket}
+              submitThenCreateReturn={this.submitThenCreateReturn}
               handleSelectDeparture={this.handleSelectDeparture}
               handleSelectDestination={this.handleSelectDestination}
               handleSelectCarrier={this.handleSelectCarrier}

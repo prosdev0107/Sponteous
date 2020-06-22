@@ -74,13 +74,21 @@ class TripsContainer extends React.Component<
       id: '',
       type: null,
       heading: ''
-    }
+    },
+    showSplit: false
   }
 
   handleOpenModal = (type: MODAL_TYPE, heading: string, id: string = '') => {
-    this.setState({ modal: { type, heading, id } }, () => {
-      this.modal.current!.open()
-    })
+    if(type == MODAL_TYPE.ADD_TRIP) {
+      this.setState({ modal: { type, heading, id }, showSplit: true }, () => {
+        this.modal.current!.open()
+      })
+    } else {
+      this.setState({ modal: { type, heading, id }, showSplit: false }, () => {
+        this.modal.current!.open()
+      })
+    }
+
   }
 
   handleCloseModal = () => {
@@ -293,6 +301,58 @@ class TripsContainer extends React.Component<
         this.handleFetchItems(currentPage, 10)
         this.props.showSuccess(SUCCESS.TRIP_ADD)
         this.handleRestartModalType()
+
+        return Promise.resolve()
+      })
+      .catch(err => {
+        this.setState({ isModalLoading: false })
+        this.props.showError(err, ERRORS.TRIP_ADD)
+
+        return Promise.reject()
+      })
+  }
+
+  submitThenCreateReturn = (data: INewData) => {
+    const token = getToken()
+    const { currentPage } = this.state
+
+    const destinationCity: ICity =
+      this.state.availableCities.find(city => {
+        return city._id == data.destination._id
+      }) || DEFAULT_CITY_DATA
+    const departureCity: ICity =
+      this.state.availableCities.find(city => {
+        return city._id == data.departure._id
+      }) || DEFAULT_CITY_DATA
+
+    const newTrip: INewData = {
+      ...data,
+      destination: destinationCity,
+      departure: departureCity,
+      timeSelection: {
+        defaultPrice: data.timeSelection.defaultPrice,
+        _0to6AM: data.timeSelection.defaultPrice,
+        _6to8AM: data.timeSelection.defaultPrice,
+        _8to10AM: data.timeSelection.defaultPrice,
+        _10to12PM: data.timeSelection.defaultPrice,
+        _12to2PM: data.timeSelection.defaultPrice,
+        _2to4PM: data.timeSelection.defaultPrice,
+        _4to6PM: data.timeSelection.defaultPrice,
+        _6to8PM: data.timeSelection.defaultPrice,
+        _8to10PM: data.timeSelection.defaultPrice,
+        _10to12AM: data.timeSelection.defaultPrice
+      },
+      isFromAPI: false
+    }
+
+    this.setState({ isModalLoading: true })
+    return addTrip(newTrip, token)
+      .then(res => {
+        // this.modal.current!.close()
+        this.handleFetchItems(currentPage, 10)
+        this.props.showSuccess(SUCCESS.TRIP_ADD)
+        this.setState({ isModalLoading: false, showSplit: false })
+        // this.handleRestartModalType()
 
         return Promise.resolve()
       })
@@ -1035,7 +1095,9 @@ class TripsContainer extends React.Component<
               isLoading={isModalLoading}
               closeModal={this.handleCloseModal}
               handleSubmit={this.handleAddTrip}
+              submitThenCreateReturn={this.submitThenCreateReturn}
               availableCities={availableCities}
+              showSplit={this.state.showSplit}
             />
           ) : null}
 

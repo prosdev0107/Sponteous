@@ -16,6 +16,7 @@ export interface IState {
   isModalLoading: boolean
   isLoading: boolean
   isError: boolean
+  showSplit: boolean
   modal: {
     id: string
     type: MODAL_TYPE | null

@@ -22,6 +22,7 @@ import { daysOfWeek, departureHours } from './_data'
 import { IProps, IState, IFormValues } from './types'
 import './styles.scss'
 import DropDownTicket from '../DropdownTicket';
+import SplitButton from 'src/Common/Components/SplitButton'
 
 class TicketModal extends React.Component<IProps, IState> {
   readonly state: IState = {
@@ -43,7 +44,9 @@ class TicketModal extends React.Component<IProps, IState> {
       handleSubmit,
       closeModal,
       isLoading,
-      departures
+      departures,
+      showSplit,
+      submitThenCreateReturn
     } = this.props
     const isRecurringClass = classnames('spon-ticket-modal__recurring', {
       'spon-ticket-modal__recurring--open': this.state.isRecurring
@@ -214,7 +217,9 @@ class TicketModal extends React.Component<IProps, IState> {
           render={({
             handleChange,
             values,
-            setFieldValue
+            setFieldValue,
+            validateForm,
+            resetForm
           }: FormikProps<IFormValues>) => (
             <Form noValidate>           
               <div className="spon-ticket-modal__row">
@@ -480,14 +485,109 @@ class TicketModal extends React.Component<IProps, IState> {
                     onClick={closeModal}
                     className="spon-ticket-modal__button"
                   />
-                  <Button
-                    text={editDate ? 'EDIT' : 'ADD'}
-                    type="submit"
-                    disabled={isLoading}
-                    isLoading={isLoading}
-                    variant="adminPrimary"
-                    className="spon-ticket-modal__button"
-                  />
+                  {
+                    showSplit && !editDate ?
+                    <SplitButton
+                      text={'ADD'}
+                      type="submit"
+                      disabled={isLoading}
+                      isLoading={isLoading}
+                      secondaryClick={() => {
+                        const offset = moment().utcOffset()
+                        const tempDepartureHours: any[] = []
+
+                        for (let hours of values.departureHours ? values.departureHours : []) {
+
+                          const splitedHours = hours!.split('-')
+                          const startHours = splitedHours[0]
+                          const endHour = splitedHours[1]
+                          const startDate = +moment
+                          .utc(values.date)
+                          .add(offset, 'minutes')
+                          .set({
+                            hour: +startHours,
+                            minute: 0,
+                            second: 0,
+                            millisecond: 0
+                          })
+                          .format('x')
+
+                        const endDate = +moment
+                        .utc(values.date)
+                        .add(offset, 'minutes')
+                        .set({
+                          hour: +endHour,
+                          minute: 0,
+                          second: 0,
+                          millisecond: 0
+                        })
+                        .format('x')
+
+                        const date = {
+                          start: startDate,
+                          end: endDate
+                        }
+
+                        tempDepartureHours.push(date)
+                        }
+
+                        const dataToSubmit = {
+                          trip: values.trip._id,
+                          departure: values.trip.departure,
+                          destination: values.trip.destination,
+                          carrier: values.trip.carrier,
+                          quantity: values.quantity,
+                          soldTickets: values.soldTickets,
+                          reservedQuantity: values.reservedQuantity,
+                          type: values.trip.type,
+                          date: {
+                            start: +tempDepartureHours[0].start,
+                            end: +tempDepartureHours[0].end
+                          },
+                          active: values.active,
+                          repeat: {
+                            dateEnd: +moment
+                              .utc(values.endDate)
+                              .add(offset, 'minutes')
+                              .format('x'),
+                            days: values.days as number[]
+                          },
+                          departureHours: tempDepartureHours,
+                          adultPrice: editDate ? editDate!.adultPrice : 0,
+                          childPrice: editDate ? editDate!.childPrice : 0
+                        }
+                        if (editDate || !values.isRecurring) {
+                          delete dataToSubmit.repeat
+                        }
+
+                        if(submitThenCreateReturn) {
+                          submitThenCreateReturn(dataToSubmit).then(() => {
+                            let departure = values.trip.departure
+                            let destination = values.trip.destination
+                            let trip = values.trip
+                            trip.departure = destination
+                            trip.destination = departure
+                            resetForm()
+                            setFieldValue('trip', trip)
+                            setFieldValue('date', undefined);
+                            setFieldValue('departure', destination)
+                            setFieldValue('destination', departure)
+                          })
+                        }
+                      }}
+                      secondaryText="Create & Add Return"
+                      variant="adminPrimary"
+                      className="spon-ticket-modal__button"
+                    />:
+                    <Button
+                      text={editDate ? 'EDIT' : 'ADD'}
+                      type="submit"
+                      disabled={isLoading}
+                      isLoading={isLoading}
+                      variant="adminPrimary"
+                      className="spon-ticket-modal__button"
+                    />
+                  }
                 </div>
               </div>
             </Form>

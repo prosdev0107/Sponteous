@@ -1,0 +1,314 @@
+@import '../../../Common/Utils/Styles/mixin.scss';
+@import '../../../Common/Utils/Styles/colors.scss';
+
+.split-btn {
+  width: 100%;
+  max-width: 25rem;
+  height: 3rem;
+  border: none;
+  border-radius: 3px;
+  display: block;
+  padding: 0;
+  position: relative;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  outline: none;
+
+  @include respond(tab) {
+    max-width: inherit;
+    height: 4rem;
+  }
+
+  .main-btn-text {
+    display: inline-flex;
+    width: 80%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+
+    button {
+      background: transparent;
+      border: none;
+      color: white;
+      width: 100%;
+      height: 100%;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-size: 0.8rem;
+
+      &:active, &:focus {
+        border: none !important;
+        outline: none;
+      }
+  
+      @include respond(tab) {
+        font-size: 1.2rem;
+      }
+    }
+
+    &:active {
+      background-color: #7b899f;
+    }
+  }
+
+  .right-down {
+    display: inline-flex;
+    align-items: center;
+    width: 20%;
+    justify-content: center;
+    height: 100%;
+
+    &:active {
+      background-color: #7b899f;
+    }
+  }
+  
+  .popup-btn {
+    position: absolute;
+    top: 3.2rem;
+    border: 1px grey solid;
+    width: 100%;
+    left: 0;
+    height: 2.5rem;
+    border-radius: .2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    button {
+      color: $black !important;
+      font-size: .9rem;
+      background: transparent;
+      border: none;
+      width: 100%;
+      height: 100%;
+
+      &:active, &:focus {
+        outline: none;
+      }
+    }
+
+    &:active {
+      background-color: #dddddd;
+    }
+  }
+
+  &.loading {
+    opacity: 0.35;
+  }
+
+  &.blue {
+    background-color: $blue-light;
+    padding: 0 1rem 0 2rem;
+
+    span {
+      color: $white;
+    }
+
+    &:disabled {
+      background-color: $inactive;
+      cursor: not-allowed;
+      div {
+        background-color: $label;
+      }
+    }
+  }
+
+  &.spon-trip-modal__button, &.spon-ticket-modal__button {
+    padding: 0;
+
+    &:active {
+      background-color: #5dc3fd;
+    }
+  }
+
+  &.green {
+    background-color: $green;
+    padding: 0 1rem;
+
+    span {
+      width: 100%;
+      text-align: center;
+      color: $white;
+    }
+
+    &:disabled {
+      background-color: $inactive;
+      cursor: not-allowed;
+    }
+  }
+
+  &.next {
+    background-color: $green;
+    padding: 0 1rem;
+
+    span {
+      color: $white;
+      font-weight: bold;
+    }
+
+    div {
+      background-color: $green-dark;
+      img {
+        margin-left: 0.16rem;
+        @include respond(mobile) {
+          margin-left: 0 !important;
+        }
+      }
+    }
+
+    &:disabled {
+      background-color: $green;
+      cursor: not-allowed;
+
+      div {
+        background-color: $green;
+      }
+    }
+  }
+
+  &.prev {
+    background-color: transparent;
+    padding: 0 1rem;
+    flex-direction: row-reverse;
+    justify-content: center;
+
+    span {
+      color: $label;
+      font-weight: bold;
+    }
+
+    div {
+      background-color: transparent;
+      transform: rotate(180deg);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  &.blue-select {
+    background-color: $blue-light;
+    padding: 0 1rem;
+
+    span {
+      width: 100%;
+      text-align: center;
+      color: $white;
+    }
+
+    &:disabled {
+      background-color: $inactive;
+      cursor: not-allowed;
+    }
+  }
+
+  &.white {
+    background-color: $white;
+    border: 1px solid $gray;
+    padding: 0 1rem;
+
+    span {
+      width: 100%;
+      text-align: center;
+      color: $input;
+    }
+
+    &:disabled {
+      background-color: $inactive;
+      cursor: not-allowed;
+    }
+  }
+
+  &.gray {
+    background-color: $white;
+    border: 1px solid $gray;
+    padding: 0 1rem;
+    justify-content: center;
+    flex-direction: row-reverse;
+
+    span {
+      color: $input;
+      font-weight: bold;
+      margin-right: auto;
+    }
+
+    div {
+      margin-left: auto;
+      height: auto;
+      width: auto;
+      margin-right: 1rem;
+      background-color: transparent;
+    }
+
+    &:disabled {
+      background-color: $inactive;
+      cursor: not-allowed;
+      div {
+        background-color: $label;
+      }
+    }
+  }
+
+  &.red {
+    background-color: $red;
+    padding: 0 1rem;
+    justify-content: center;
+    flex-direction: row-reverse;
+
+    span {
+      color: $white;
+      font-weight: bold;
+      margin-right: auto;
+    }
+
+    div {
+      margin-left: auto;
+      height: auto;
+      width: auto;
+      margin-right: 1rem;
+      background-color: transparent;
+    }
+
+    &:disabled {
+      background-color: $inactive;
+      cursor: not-allowed;
+
+      div {
+        background-color: transparent;
+      }
+    }
+  }
+
+  &.adminPrimary {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 10rem;
+    color: $white;
+    background-color: $blue;
+  }
+
+  &.adminSecondary {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 10rem;
+    color: $dark-blue;
+    background: transparent;
+    border: 1px solid $dark-blue;
+  }
+
+  &.undo-deselection {
+    @include respond(mobile) {
+      margin-right: 0;
+      width: 90%;
+      height: 50px;
+    }
+  }
+}

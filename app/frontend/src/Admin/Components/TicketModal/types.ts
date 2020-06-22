@@ -34,11 +34,25 @@ export interface IProps {
   destinations: IOptionTicket[]
   carriers: IOptionTicket[]
   types: IOptionTicket[]
+  showSplit?: boolean
   closeModal: () => void
   handleSelectDeparture: (departure: string) => void
   handleSelectDestination: (destination: string) => void
   handleSelectCarrier: (carrier: string) => void
   handleSubmit?: (
+    ticket: Pick<ITicket, Exclude<keyof ITicket, 'trip' | '_id' | 'date'>> & {
+      trip: string
+      date: {
+        start: number
+        end: number
+      }
+      repeat?: {
+        dateEnd: number
+        days: number[]
+      }
+    }
+  ) => Promise<void>
+  submitThenCreateReturn?: (
     ticket: Pick<ITicket, Exclude<keyof ITicket, 'trip' | '_id' | 'date'>> & {
       trip: string
       date: {

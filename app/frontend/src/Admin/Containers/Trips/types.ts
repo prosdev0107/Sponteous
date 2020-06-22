@@ -22,6 +22,7 @@ export interface  IState {
     type: MODAL_TYPE | null
     heading: string
   }
+  showSplit: boolean
 }
 
 export interface IProps {

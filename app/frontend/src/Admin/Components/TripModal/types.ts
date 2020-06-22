@@ -7,6 +7,8 @@ export interface IProps {
   closeModal: () => void
   handleSubmit?: (data: any) => Promise<void>
   handleEditTrip?: (data: IEditValues) => Promise<void>
+  submitThenCreateReturn?: (data: any) => Promise<void>
+  showSplit?: boolean
 }
 
 export interface IFormValues {

@@ -16,6 +16,7 @@ import { IProps, IFormValues, IEditValues } from './types'
 import './styles.scss'
 import { ICity } from 'src/Admin/Utils/adminTypes';
 import DropDownSelect from '../DropdownSelect'
+import SplitButton from 'src/Common/Components/SplitButton'
 
 const TripModal: React.SFC<IProps> = ({
   isLoading,
@@ -23,7 +24,9 @@ const TripModal: React.SFC<IProps> = ({
   closeModal,
   availableCities,
   handleEditTrip,
-  handleSubmit
+  handleSubmit,
+  submitThenCreateReturn,
+  showSplit
 }) => {
   let editableData = null
 
@@ -142,6 +145,9 @@ const TripModal: React.SFC<IProps> = ({
         }}
         render={({
           handleChange,
+          validateForm,
+          setFieldValue,
+          resetForm,
           values,
         }: FormikProps<IFormValues>) => (
             <Form noValidate>
@@ -381,14 +387,47 @@ const TripModal: React.SFC<IProps> = ({
                     onClick={closeModal}
                     className="spon-trip-modal__button"
                   />
-                  <Button
-                    text={editDate ? 'EDIT' : 'ADD'}
-                    disabled={isLoading}
-                    isLoading={isLoading}
-                    type="submit"
-                    variant="adminPrimary"
-                    className="spon-trip-modal__button"
-                  />
+                  { showSplit && !editDate ?
+                    <SplitButton
+                      text={editDate ? 'EDIT' : 'ADD'}
+                      disabled={isLoading}
+                      isLoading={isLoading}
+                      secondaryText={'Add & Create Return'}
+                      type="submit"
+                      secondaryClick={() => validateForm().then(() => {
+                          const departureCity: ICity = {
+                            _id: values.departure._id,
+                            name: ''
+                          }
+                          const destinationCity: ICity = {
+                            _id: values.destination._id,
+                            name: ''
+                          }
+                          const dataToSubmit: any = {
+                            ...values,
+                            departure: departureCity,
+                            destination: destinationCity
+                          }
+                          if(submitThenCreateReturn) {
+                            submitThenCreateReturn(dataToSubmit).then((res) => {
+                              resetForm()
+                              let departure = values.departure
+                              setFieldValue('departure', values.destination)
+                              setFieldValue('destination', departure)
+                            })
+                          }
+                        }
+                      )}
+                      variant="adminPrimary"
+                      className="spon-trip-modal__button"
+                    /> : 
+                    <Button
+                      text={editDate ? 'EDIT' : 'ADD'}
+                      variant="adminPrimary"
+                      type="submit"
+                      className="spon-trip-modal__button"
+                    />
+                    }
                 </div>
               </div>
             </Form>

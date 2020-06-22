@@ -50,7 +50,8 @@ class MainContainer extends Component<
     const isAdminPage = location.pathname.includes('admin')
     const isDestination =
       location.pathname.includes('destinations/select') ||
-      location.pathname.includes('destinations/deselect')
+      location.pathname.includes('destinations/deselect') ||
+      location.pathname.includes('destinations/editSelection')
     const isGdprAccepted = getFromLS('gdpr')
 
     return (

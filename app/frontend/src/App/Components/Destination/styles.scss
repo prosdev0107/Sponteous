@@ -166,9 +166,6 @@
         }
       }
     }
-    .spon-btn.blue:hover {
-      background-color: #1da4f0;
-    }
 
     .destination-hurry-up-message {
       display: flex;
@@ -257,7 +254,7 @@
       margin-bottom: 0.5rem;
 
       @include respond(tab) {
-        font-size: 1.75rem;
+        font-size: 18px;
       }
     }
 
@@ -268,7 +265,7 @@
       margin: 0;
 
       @include respond(mobile) {
-        font-size: 1.3rem;
+        font-size: 12px;
       }
     }
 
@@ -279,7 +276,7 @@
       font-size: rc(14);
 
       @include respond(mobile) {
-        font-size: 1.3rem;
+        font-size: 14px;
       }
     }
 
@@ -293,13 +290,12 @@
     }
     &-price {
       color: $violet;
-      font-size: 1rem;
+      font-size: 16px;
       font-weight: 600;
       margin: 1rem 0 0 0;
       overflow: hidden;
-      display: -webkit-box;
-      -webkit-line-clamp: 1;
-      -webkit-box-orient: vertical;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       @include respond(tab) {
         font-size: 1.75rem;
       }
@@ -349,6 +345,9 @@
       padding: 0 1rem 0 1rem;
       @include respond(mobile) {
         padding: 0 1rem 4rem 1rem;
+      }
+      .blue-select:hover {
+        background-color: #1da4f0;
       }
     }
 

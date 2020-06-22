@@ -13,7 +13,7 @@
   background: $violet;
   color: $white;
   font-size: rc(16);
-  z-index: 9999;
+  z-index: 3;
 
   @include respond(mobile) {
     flex-direction: column;
@@ -34,5 +34,13 @@
   button {
     width: 10rem;
     margin: 0;
+  }
+
+  &.spon-gdpr--is-destination {
+    bottom: 5rem;
+
+    @include respond(mobile) {
+      bottom: 6.5rem;
+    }
   }
 }

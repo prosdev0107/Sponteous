@@ -37,6 +37,7 @@
       text-transform: uppercase;
       letter-spacing: 1px;
       font-size: 0.8rem;
+      cursor: pointer;
 
       &:active, &:focus {
         border: none !important;
@@ -51,6 +52,10 @@
     &:active {
       background-color: #7b899f;
     }
+    
+    &:hover {
+      background-color: #1da4f0;
+    }
   }
 
   .right-down {
@@ -59,16 +64,22 @@
     width: 20%;
     justify-content: center;
     height: 100%;
+    color: white;
+    border-left: 1px #0f8ab3d9 solid;
 
     &:active {
       background-color: #7b899f;
+    }
+
+    &:hover {
+      background-color: #1da4f0;
     }
   }
   
   .popup-btn {
     position: absolute;
     top: 3.2rem;
-    border: 1px grey solid;
+    border: 1px #cccccc solid;
     width: 100%;
     left: 0;
     height: 2.5rem;
@@ -84,14 +95,25 @@
       border: none;
       width: 100%;
       height: 100%;
+      cursor: pointer;
 
       &:active, &:focus {
         outline: none;
+        color: white !important;
+      }
+      &:hover {
+        outline: none;
+        color: white !important;
       }
     }
 
     &:active {
       background-color: #dddddd;
+    }
+
+    &:hover {
+      background-color: #5dc3fd;
+      border: none;
     }
   }
 

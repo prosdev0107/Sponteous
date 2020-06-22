@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, RefObject } from 'react'
 import { IProps, IState } from './types'
 import people from '../../Utils/Media/people.svg'
 import arrow from '../../../Common/Utils/Media/arrow.svg'
@@ -23,6 +23,8 @@ export default class Search extends Component<IProps, IState> {
     searchResults: [],
     isListVisible: false
   }
+
+  wrapperRef : RefObject<HTMLDivElement> = React.createRef();
 
   changeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { setDeparture } = this.props
@@ -124,11 +126,22 @@ export default class Search extends Component<IProps, IState> {
   }
 
   // componentWillMount() {
-  //   this.handleFetchTripsNames()
+    // this.handleFetchTripsNames()
   // }
 
   componentDidMount() {
     this.handleFetchTripsNames()
+    document.addEventListener('mousedown', this.handleClickOutside)
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('mousedown', this.handleClickOutside)
+  }
+
+  handleClickOutside : { (event: MouseEvent): void } = (event: MouseEvent) => {
+    if (this.wrapperRef && !(this.wrapperRef.current! as any).contains(event.target)) {
+        this.setState({ buttons: false })
+    }
   }
 
   selectDecrement = (e: React.MouseEvent<HTMLButtonElement>, id: string) => {
@@ -304,7 +317,7 @@ export default class Search extends Component<IProps, IState> {
 
   render() {
     return (
-      <div className="search">
+      <div className="search" ref={this.wrapperRef}>
         <this.Input />
         <this.Select />
         <this.Button />

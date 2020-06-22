@@ -13,7 +13,7 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  z-index: 10000;
+  z-index: 2;
 
   @include respond(mobile) {
     padding: 0 0 0 1rem;

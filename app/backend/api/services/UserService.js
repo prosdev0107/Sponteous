@@ -36,6 +36,26 @@ module.exports = {
     }
 
   },
+  async changePassword(data, oldPassword, newPassword) {
+    try {
+      const user = await User.findOne({ email: data.email });
+      if(!user) throw { status: 404, message: 'USER.EMAIL.NOT_FOUND'};
+
+      if(user.isDeleted || !user.active) {
+        throw { status: 404, message: 'USER.NOT.AUTHORIZED'}
+      }
+      await User.comparePassword(oldPassword, user);
+      
+      data.password = await User.createPasswordHash(newPassword);
+      await User.findByIdAndUpdate(data._id, data, { new:true });
+
+      return {
+        success: true
+      }
+    } catch(err) {
+      throw err
+    }
+  },
   async create (data) {
 
     try {

@@ -6,6 +6,19 @@ export interface ILoginForm {
   password: string
 }
 
+export interface IChangePasswordForm {
+  user: {
+    active: boolean,
+    createdAt: Date,
+    email: string,
+    name: string,
+    password: string,
+    isDeleted: boolean,
+    _id: string,
+    role: string
+  }
+}
+
 export interface ITrip {
   destination: ICity
   departure: ICity

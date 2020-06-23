@@ -13,6 +13,7 @@ export interface IProps {
 export interface IState {
   isLoading: boolean
   error: {
+    isError: boolean,
     msg: string
   }
 }

@@ -12,6 +12,7 @@ import { loginUser } from '../../../Common/Redux/Services/user'
 import { IFormValues, IProps, IState } from './types'
 import './styles.scss'
 import { getUserData } from 'src/Common/Utils/helpers';
+import { changePassword } from 'src/Admin/Utils/api'
 
 class AccountContainer extends React.Component<
   RouteComponentProps<{}> & IProps,
@@ -20,6 +21,7 @@ class AccountContainer extends React.Component<
   state: Readonly<IState> = {
     isLoading: false,
     error: {
+      isError: false,
       msg: ''
     }
   }
@@ -58,30 +60,46 @@ class AccountContainer extends React.Component<
             values: IFormValues,
             { setSubmitting }: FormikActions<IFormValues>
           ) => {
-            // this.setState({ isLoading: true })
-            // loginUser(values)
-            //   .then(() => {
-            //     setSubmitting(false)
-            //     this.props.history.push(
-            //       `${ADMIN_ROUTING.MAIN}${ADMIN_ROUTING.TRIPS}`
-            //     )
-            //   })
-            //   .catch((errorMessage: string) => {
-            //     setSubmitting(false)
-            //     this.setState(
-            //       {
-            //         isLoading: false,
-            //         error: {
-            //           msg: errorMessage
-            //         }
-            //       },
-            //       () =>
-            //         setTimeout(
-            //           () => this.setState({ error: { msg: '' } }),
-            //           5000
-            //         )
-            //     )
-            //   })
+            this.setState({ isLoading: true })
+            let submitData = {
+              user: userData.user,
+              oldPassword: values.oldPassword,
+              newPassword: values.newPassword
+            }
+            changePassword(submitData, userData.token)
+              .then(() => {
+                setSubmitting(false)
+                this.setState({
+                  isLoading: false,
+                  error: {
+                    isError: false,
+                    msg: 'Password updated successfully'
+                  }
+                },
+                () => {
+                  setTimeout(
+                    () => this.setState({ error: { isError: false, msg: ''}}),
+                    5000
+                  )
+                })
+              })
+              .catch((errorMessage: Error) => {
+                setSubmitting(false)
+                this.setState(
+                  {
+                    isLoading: false,
+                    error: {
+                      isError: true,
+                      msg: 'Current password does not match'
+                    }
+                  },
+                  () =>
+                    setTimeout(
+                      () => this.setState({ error: { isError: true, msg: '' } }),
+                      5000
+                    )
+                )
+              })
           }}
           render={({ handleSubmit }: FormikProps<IFormValues>) => (
             <div className="spon-account__card">
@@ -141,7 +159,7 @@ class AccountContainer extends React.Component<
                   />
                 </div>
 
-                <Info isError>{this.state.error.msg}</Info>
+                <Info isError={this.state.error.isError}>{this.state.error.msg}</Info>
 
                 <div className="spon-account__submit">
                   <Button

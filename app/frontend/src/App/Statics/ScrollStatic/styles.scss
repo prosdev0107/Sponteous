@@ -11,7 +11,7 @@
   }
 
   @include respond(mobile) {
-    transform: translateY(-3rem);
+    transform: translateY(-0.5rem);
   }
 
   span {

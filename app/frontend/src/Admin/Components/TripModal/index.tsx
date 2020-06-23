@@ -147,6 +147,7 @@ const TripModal: React.SFC<IProps> = ({
           handleChange,
           validateForm,
           setFieldValue,
+          setTouched,
           resetForm,
           values,
         }: FormikProps<IFormValues>) => (
@@ -394,7 +395,11 @@ const TripModal: React.SFC<IProps> = ({
                       isLoading={isLoading}
                       secondaryText={'Add & Create Return'}
                       type="submit"
-                      secondaryClick={() => validateForm().then(() => {
+                      secondaryClick={() => validateForm().then((res: any) => {
+                        if(Object.keys(res).length > 0) {
+                          setTouched(res)
+                          return
+                        }
                           const departureCity: ICity = {
                             _id: values.departure._id,
                             name: ''

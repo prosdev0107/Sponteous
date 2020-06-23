@@ -58,7 +58,7 @@ class AccountContainer extends React.Component<
           })}
           onSubmit={(
             values: IFormValues,
-            { setSubmitting }: FormikActions<IFormValues>
+            { setSubmitting, resetForm }: FormikActions<IFormValues>,
           ) => {
             this.setState({ isLoading: true })
             let submitData = {
@@ -68,6 +68,7 @@ class AccountContainer extends React.Component<
             }
             changePassword(submitData, userData.token)
               .then(() => {
+                resetForm()
                 setSubmitting(false)
                 this.setState({
                   isLoading: false,

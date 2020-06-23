@@ -49,7 +49,7 @@
   "401": {
     "USER": {
       "PASSWORD": {
-        "INVALID": "Password not match"
+        "INVALID": "Invalid Email or Password"
       },
       "HASH": {
         "FAIL": "Hash missmatch"
@@ -76,6 +76,9 @@
       "NOT": {
         "FOUND": "User not found",
         "AUTHORIZED": "your account have been deleted"
+      },
+      "EMAIL": {
+        "NOT_FOUND": "Invalid Email or Password"
       }
     },
     "TRIP": {

@@ -42,7 +42,7 @@ userSchema.statics.comparePassword = function (password, user) {
       if (err) return reject(err);
       if (match) return resolve(user);
 
-      return reject({ status: 401, message : 'USER.PASSWORD.INVALID' });
+      return reject({ status: 404, message : 'USER.EMAIL.NOT_FOUND' });
     });
   });
 };

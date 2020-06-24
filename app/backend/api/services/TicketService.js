@@ -1183,7 +1183,7 @@ module.exports = {
             {
               $match: { "meta.availableTickets.0": { $exists: true } },
             },
-            { $project: { _id: 1, meta: 1 } },
+            { $project: { _id: 1, meta: 1, discount: 1 } },
             { $limit: 1 },
           ],
           as: "opposite",
@@ -1238,6 +1238,7 @@ module.exports = {
             destinationCharges = {
               adultPrice: destination.adultPrice,
               childPrice: destination.childPrice,
+              discount: opposite[0].discount
             };
           }
         });

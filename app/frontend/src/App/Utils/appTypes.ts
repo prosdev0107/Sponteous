@@ -15,6 +15,7 @@ export interface ITrip {
   dateEnd?: number
   departure: ICity
   destination: ICity
+  destinationCharges: IdestinationCharge,
   info?: {
     arrivalTicketsQty: number
     departureTicketsQty: number
@@ -46,6 +47,7 @@ export interface ISelectedData {
 export interface IdestinationCharge {
   adultPrice: number
   childPrice: number
+  discount: number
 }
 
 export interface IFinalSelected {

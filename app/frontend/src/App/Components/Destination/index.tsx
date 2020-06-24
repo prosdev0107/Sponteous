@@ -291,7 +291,8 @@ class Destination extends Component<IProps, IState> {
         dateStart: +moment.utc(dates.start).add(offset, 'minutes'),
         destinationCharges: {
           adultPrice: data['destinationCharges'].adultPrice || 0,
-          childPrice: data['destinationCharges'].childPrice || 0
+          childPrice: data['destinationCharges'].childPrice || 0,
+          discount: data['destinationCharges'].discount || 0
         },
         dateEnd: +moment
           .utc(dates.end)
@@ -476,10 +477,10 @@ class Destination extends Component<IProps, IState> {
 
   render() {
     const { isSelected, deselect, data, selected } = this.props
-    const { discount, duration, destination, typeOfTransport } = data
+    const { duration, destination, typeOfTransport } = data
     const { calendar, dates } = this.state
     let finalCost, strippedCost
-
+    let discount = data.discount
     if (data['destinationCharges']) {
       finalCost =
         data['destinationCharges'].adultPrice * this.props.data['Adult'] +
@@ -487,13 +488,18 @@ class Destination extends Component<IProps, IState> {
         (data.adultPrice * this.props.data['Adult'] +
           data.childPrice * this.props.data['Youth'])
       strippedCost = (
-        data['destinationCharges'].adultPrice * this.props.data['Adult'] +
-        data['destinationCharges'].childPrice * this.props.data['Youth'] +
+        (data['destinationCharges'].adultPrice /
+          (1 - data['destinationCharges'].discount / 100)) *
+          this.props.data['Adult'] +
+        (data['destinationCharges'].childPrice /
+          (1 - data['destinationCharges'].discount / 100)) *
+          this.props.data['Youth'] +
         ((data.adultPrice / (1 - data.discount / 100)) *
           this.props.data['Adult'] +
           (data.childPrice / (1 - data.discount / 100)) *
             this.props.data['Youth'])
       ).toFixed(0)
+      discount = (discount + data['destinationCharges'].discount) / 2
     } else {
       finalCost =
         2 *
@@ -527,10 +533,12 @@ class Destination extends Component<IProps, IState> {
         return availableTicket <= 5
       })
 
-      isThree = ticketLessThanThree.length >= 3
+      isThree =
+        ticketLessThanThree.length >= 3 &&
+        this.props.data['Adult'] + this.props.data['Youth'] <= 3
       isFive =
         ticketLessThanFive.length / tickets.length >= 0.8 &&
-        this.props.data['Adult'] + this.props.data['Youth'] < 5
+        this.props.data['Adult'] + this.props.data['Youth'] <= 5
     }
 
     const durationTime = moment.duration({ minutes: duration }) as IDuration
@@ -601,7 +609,7 @@ class Destination extends Component<IProps, IState> {
                 <img src={closeBtn} alt="" srcSet="" />
               </div>
             )}
-          <div className="badge">{`SAVE ${discount}%`}</div>
+          <div className="badge">{`SAVE ${discount.toFixed(0)}%`}</div>
           <img
             src={destination.photo}
             alt="bg"
@@ -633,15 +641,16 @@ class Destination extends Component<IProps, IState> {
                     s have no more than 3 seats available
                   </div>
                 )}
-                {isFive && (
-                  <div className="destination-hurry-up-message-text">
-                    Less than 5 tickets per{' '}
-                    {typeOfTransport === 'Direct Flight'
-                      ? 'flight'
-                      : 'departure'}
-                    !
-                  </div>
-                )}
+                {!isThree &&
+                  isFive && (
+                    <div className="destination-hurry-up-message-text">
+                      Less than 5 tickets per{' '}
+                      {typeOfTransport === 'Direct Flight'
+                        ? 'flight'
+                        : 'departure'}
+                      !
+                    </div>
+                  )}
               </div>
             )}
           <div className="destination-bottom-row">

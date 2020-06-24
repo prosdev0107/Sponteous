@@ -396,7 +396,15 @@ class SelectContainer extends Component<
     priceStart: any,
     priceEnd: any
   ) => {
-    const totalPrice = 2 * (trip.adultPrice * adult + trip.childPrice * youth)
+    let totalPrice = 0
+    if (trip['destinationCharges']) {
+      totalPrice =
+        trip['destinationCharges'].adultPrice * adult +
+        trip['destinationCharges'].childPrice * youth +
+        (trip.adultPrice * adult + trip.childPrice * youth)
+    } else {
+      totalPrice = 2 * (trip.adultPrice * adult + trip.childPrice * youth)
+    }
     return totalPrice <= priceEnd && totalPrice >= priceStart
   }
   isInDateRange = (tickets: any, dateStart: any, dateEnd: any) => {

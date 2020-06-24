@@ -504,7 +504,7 @@ class EditSelectContainer extends Component<
                       index={trip._id}
                       data={trip}
                       quantity={quantity}
-                      selected={isSelected}
+                      isSelected={isSelected}
                       onSelect={this.onSelect}
                       onDeselect={this.onDeselect}
                       isMax={isMax}

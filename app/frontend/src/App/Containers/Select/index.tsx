@@ -675,7 +675,7 @@ class SelectContainer extends Component<
         index={_id}
         data={data}
         quantity={quantity}
-        selected={isSelected}
+        isSelected={isSelected}
         onSelect={this.onSelect}
         onDeselect={this.onDeselect}
         isMax={isMax}
@@ -952,7 +952,7 @@ class SelectContainer extends Component<
                               index={trip._id}
                               data={trip}
                               quantity={quantity}
-                              selected={isSelected}
+                              isSelected={isSelected}
                               onSelect={this.onSelect}
                               onDeselect={this.onDeselect}
                               isMax={isMax}

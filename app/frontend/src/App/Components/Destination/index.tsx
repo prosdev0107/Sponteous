@@ -2,6 +2,9 @@ import React, { Component } from 'react'
 import * as moment from 'moment'
 import { IDuration } from '../../../Common/Utils/globalTypes'
 import 'moment-duration-format'
+import { IStore } from '../../../Common/Redux/types'
+import { connect } from 'react-redux'
+import { selectSelected } from '../../../Common/Redux/Services/trips'
 import { isMobileOnly } from 'react-device-detect'
 
 import Calendar from '../Calenadar'
@@ -20,7 +23,7 @@ import { IOption } from '../Dropdown/types'
 import messageInfo from '../../../Common/Utils/Media/message-info.svg'
 import closeBtn from '../../Utils/Media/btn-close-mobile.svg'
 
-export default class Destination extends Component<IProps, IState> {
+class Destination extends Component<IProps, IState> {
   readonly state: IState = {
     calendar: false,
     error: {
@@ -40,13 +43,88 @@ export default class Destination extends Component<IProps, IState> {
       end: []
     },
     startDates: [],
-    endDates: []
+    endDates: [],
+    firstDate: {
+      start: null,
+      end: null
+    },
+    secondDate: {
+      start: null,
+      end: null
+    },
+    DateRadio: ''
   }
   node = React.createRef<HTMLDivElement>()
 
   componentDidMount() {
     this.setState({ calendar: this.props.isCalendarOpen })
     document.addEventListener('mousedown', this.handleClickOutside, false)
+
+    const { data, quantity } = this.props
+    const tmpDate = new Date(new Date().setHours(0, 0, 0, 0))
+    if (data.type === 'trip' && data.tickets !== undefined) {
+      const startDates =
+        data.type === 'trip'
+          ? data.tickets
+              .filter(
+                (item: ITicket) =>
+                  item.departure === data.departure.name &&
+                  item.destination === data.destination.name &&
+                  moment
+                    .utc(item.date.start)
+                    .set({ hour: 0, minutes: 0, seconds: 0, milliseconds: 0 })
+                    .isAfter(
+                      tmpDate.getFullYear() +
+                        '-' +
+                        (tmpDate.getMonth() + 1).toString().padStart(2, '0') +
+                        '-' +
+                        tmpDate
+                          .getDate()
+                          .toString()
+                          .padStart(2, '0')
+                    ) &&
+                  item.adultPrice + item.childPrice >=
+                    quantity!.Adult + quantity!.Youth
+              )
+              .map((item: ITicket) =>
+                moment.utc(item.date.start).format('YYYY-MM-DD')
+              )
+              .filter((item, index, array) => array.indexOf(item) === index)
+          : []
+      const endDates =
+        data.type === 'trip'
+          ? data.tickets
+              .filter(
+                (item: ITicket) =>
+                  item.departure === data.destination.name &&
+                  item.destination === data.departure.name &&
+                  moment
+                    .utc(item.date.start)
+                    .set({ hour: 0, minutes: 0, seconds: 0, milliseconds: 0 })
+                    .isAfter(
+                      tmpDate.getFullYear() +
+                        '-' +
+                        (tmpDate.getMonth() + 1).toString().padStart(2, '0') +
+                        '-' +
+                        tmpDate
+                          .getDate()
+                          .toString()
+                          .padStart(2, '0')
+                    ) &&
+                  item.adultPrice + item.childPrice >=
+                    quantity!.Adult + quantity!.Youth
+              )
+              .map((item: ITicket) =>
+                moment.utc(item.date.start).format('YYYY-MM-DD')
+              )
+              .filter((item, index, array) => array.indexOf(item) === index)
+          : []
+
+      this.setState({
+        startDates,
+        endDates
+      })
+    }
   }
 
   componentWillUnmount() {
@@ -67,6 +145,7 @@ export default class Destination extends Component<IProps, IState> {
       hours,
       hoursToSelect: { start, end }
     } = this.state
+    const { selected } = this.props
     this.state.hoursToSelect.start.sort(
       (a, b) => parseInt(a.name.split(':')[0]) - parseInt(b.name.split(':')[0])
     )
@@ -74,74 +153,45 @@ export default class Destination extends Component<IProps, IState> {
       (a, b) => parseInt(a.name.split(':')[0]) - parseInt(b.name.split(':')[0])
     )
 
-    const { data, quantity } = this.props
     const HOURS_SET_PRICE = process.env.REACT_APP_TICKET_CHOOSE_TIME_PRICE
-
-    const tmpDate = new Date(new Date().setHours(0, 0, 0, 0))
-
-    const startDates =
-      data.type === 'trip'
-        ? data.tickets
-            .filter(
-              (item: ITicket) =>
-                item.departure === data.departure.name &&
-                item.destination === data.destination.name &&
-                moment
-                  .utc(item.date.start)
-                  .set({ hour: 0, minutes: 0, seconds: 0, milliseconds: 0 })
-                  .isAfter(
-                    tmpDate.getFullYear() +
-                      '-' +
-                      (tmpDate.getMonth() + 1).toString().padStart(2, '0') +
-                      '-' +
-                      tmpDate
-                        .getDate()
-                        .toString()
-                        .padStart(2, '0')
-                  ) &&
-                item.adultPrice + item.childPrice >=
-                  quantity!.Adult + quantity!.Youth
-            )
-            .map((item: ITicket) =>
-              moment.utc(item.date.start).format('YYYY-MM-DD')
-            )
-            .filter((item, index, array) => array.indexOf(item) === index)
-        : []
-    const endDates =
-      data.type === 'trip'
-        ? data.tickets
-            .filter(
-              (item: ITicket) =>
-                item.departure === data.destination.name &&
-                item.destination === data.departure.name &&
-                moment
-                  .utc(item.date.start)
-                  .set({ hour: 0, minutes: 0, seconds: 0, milliseconds: 0 })
-                  .isAfter(
-                    tmpDate.getFullYear() +
-                      '-' +
-                      (tmpDate.getMonth() + 1).toString().padStart(2, '0') +
-                      '-' +
-                      tmpDate
-                        .getDate()
-                        .toString()
-                        .padStart(2, '0')
-                  ) &&
-                item.adultPrice + item.childPrice >=
-                  quantity!.Adult + quantity!.Youth
-            )
-            .map((item: ITicket) =>
-              moment.utc(item.date.start).format('YYYY-MM-DD')
-            )
-            .filter((item, index, array) => array.indexOf(item) === index)
-        : []
-
+    const uniqueAvailableLength =
+      selected.length === 0
+        ? -1
+        : selected
+            .reduce((unique: ISelectedData[], other: any) => {
+              if (
+                !unique.some(
+                  (item: any) =>
+                    item.dateStart === other.dateStart &&
+                    item.dateEnd === other.dateEnd
+                )
+              ) {
+                unique.push(other)
+              }
+              return unique
+            }, [])
+            .filter(item => {
+              const { startDates, endDates } = this.state
+              const dateStartString = moment
+                .utc(item.dateStart)
+                .format('YYYY-MM-DD')
+              const dateEndString = moment
+                .utc(item.dateEnd)
+                .format('YYYY-MM-DD')
+              if (startDates && endDates) {
+                return (
+                  startDates.includes(dateStartString) &&
+                  endDates.includes(dateEndString)
+                )
+              }
+              return false
+            }).length
     return (
-      <div className="destination-calendar">
+      <div className={`destination-calendar calendar-${uniqueAvailableLength}`}>
         <Calendar
           selectRange
-          startDates={startDates}
-          endDates={endDates}
+          startDates={this.state.startDates}
+          endDates={this.state.endDates}
           onChange={this.handleSelectDates}
         />
 
@@ -201,7 +251,8 @@ export default class Destination extends Component<IProps, IState> {
       hoursToSelect: {
         start: [],
         end: []
-      }
+      },
+      DateRadio: ''
     })
   }
 
@@ -392,9 +443,39 @@ export default class Destination extends Component<IProps, IState> {
       }
     }))
   }
+  getPrice = (start: number, end: number) => {
+    let startDate = moment.utc(start).format('YYYY-MM-DD')
+    let endDate = moment.utc(end).format('YYYY-MM-DD')
+    const { tickets } = this.props.data as ITripSelect
+    const { departure, destination } = this.props.data
+    let startDateFilteredTickets = tickets.filter(item => {
+      let itemStartDate = moment.utc(item.date.start).format('YYYY-MM-DD')
+      return startDate === itemStartDate && departure.name === item.departure
+    })
+    let endDateFilteredTickets = tickets.filter(item => {
+      let itemEndDate = moment.utc(item.date.end).format('YYYY-MM-DD')
+      return endDate === itemEndDate && destination.name === item.departure
+    })
+    let startCosts = [],
+      endCosts = []
+    for (const item of startDateFilteredTickets) {
+      let cost =
+        item.adultPrice * this.props.data['Adult'] +
+        item.childPrice * this.props.data['Youth']
+      startCosts.push(cost)
+    }
+    for (const item of endDateFilteredTickets) {
+      let cost =
+        item.adultPrice * this.props.data['Adult'] +
+        item.childPrice * this.props.data['Youth']
+      endCosts.push(cost)
+    }
+    let finalCost = Math.max(...startCosts) + Math.max(...endCosts)
+    return finalCost
+  }
 
   render() {
-    const { selected, deselect, data } = this.props
+    const { isSelected, deselect, data, selected } = this.props
     const { discount, duration, destination, typeOfTransport } = data
     const { calendar, dates } = this.state
     let finalCost, strippedCost
@@ -455,6 +536,39 @@ export default class Destination extends Component<IProps, IState> {
     const durationTime = moment.duration({ minutes: duration }) as IDuration
     const formatedDuration = durationTime.format('h[h] m[m]')
 
+    const uniqueAvailableLength =
+      selected.length === 0
+        ? -1
+        : selected
+            .reduce((unique: ISelectedData[], other: any) => {
+              if (
+                !unique.some(
+                  (item: any) =>
+                    item.dateStart === other.dateStart &&
+                    item.dateEnd === other.dateEnd
+                )
+              ) {
+                unique.push(other)
+              }
+              return unique
+            }, [])
+            .filter(item => {
+              const { startDates, endDates } = this.state
+              const dateStartString = moment
+                .utc(item.dateStart)
+                .format('YYYY-MM-DD')
+              const dateEndString = moment
+                .utc(item.dateEnd)
+                .format('YYYY-MM-DD')
+              if (startDates && endDates) {
+                return (
+                  startDates.includes(dateStartString) &&
+                  endDates.includes(dateEndString)
+                )
+              }
+              return false
+            }).length
+
     return (
       <div
         className={`destination ${
@@ -465,13 +579,17 @@ export default class Destination extends Component<IProps, IState> {
                 ? 'mobile'
                 : ''
             : ''
-        } ${!selected && isMobileOnly ? 'destination-when-not-selected' : ''}`}
+        } ${
+          !isSelected && isMobileOnly ? 'destination-when-not-selected' : ''
+        }`}
         ref={this.node}>
         <div
-          className={`destination-top ${selected || deselect ? 'short' : ''}  ${
+          className={`destination-top ${
+            isSelected || deselect ? 'short' : ''
+          }  ${
             calendar
               ? 'shortest'
-              : isThree || (isFive && !selected)
+              : isThree || (isFive && !isSelected)
                 ? 'medium'
                 : ''
           }`}>
@@ -493,10 +611,10 @@ export default class Destination extends Component<IProps, IState> {
             }}
           />
         </div>
-        <div className="destination-bottom">
+        <div className={`destination-bottom ${calendar ? 'opened' : ''}`}>
           {!calendar &&
             (isThree || isFive) &&
-            !selected && (
+            !isSelected && (
               <div className="destination-hurry-up-message">
                 <img
                   src={messageInfo}
@@ -591,9 +709,112 @@ export default class Destination extends Component<IProps, IState> {
                 : ' passenger'
             }`}
           </div>
-          {calendar && <this.CalendarBlock />}
-          {!selected &&
-            !deselect && (
+          {calendar &&
+            selected.length >= 1 && (
+              <div className="destination-bottom-travel-dates">
+                <p className="destination-bottom-travel-dates-title">
+                  Choose your travel dates:
+                </p>
+                {selected
+                  .reduce((unique: ISelectedData[], other: any) => {
+                    if (
+                      !unique.some(
+                        (item: any) =>
+                          item.dateStart === other.dateStart &&
+                          item.dateEnd === other.dateEnd
+                      )
+                    ) {
+                      unique.push(other)
+                    }
+                    return unique
+                  }, [])
+                  .filter(item => {
+                    const { startDates, endDates } = this.state
+                    const dateStartString = moment
+                      .utc(item.dateStart)
+                      .format('YYYY-MM-DD')
+                    const dateEndString = moment
+                      .utc(item.dateEnd)
+                      .format('YYYY-MM-DD')
+                    if (startDates && endDates) {
+                      return (
+                        startDates.includes(dateStartString) &&
+                        endDates.includes(dateEndString)
+                      )
+                    }
+                    return false
+                  })
+                  .map((item, index) => {
+                    return (
+                      <div
+                        key={index}
+                        className={`destination-bottom-travel-dates-block ${
+                          this.state.DateRadio === index + '' ? 'selected' : ''
+                        }`}>
+                        <input
+                          type="radio"
+                          name="radio-group"
+                          id={`radio${index}_${this.props.data._id}`}
+                          value={index}
+                          checked={this.state.DateRadio === index + ''}
+                          onChange={e => {
+                            this.setState({ DateRadio: e.target.value })
+                            this.handleSelectDates([
+                              new Date(
+                                moment
+                                  .utc(item.dateStart)
+                                  .format('DD MMM YYYY HH:mm:ss')
+                              ),
+                              new Date(
+                                moment
+                                  .utc(item.dateEnd)
+                                  .format('DD MMM YYYY HH:mm:ss')
+                              )
+                            ])
+                          }}
+                        />
+                        <label htmlFor={`radio${index}_${this.props.data._id}`}>
+                          {moment.utc(item.dateStart).format('DD MMM')} -
+                          {moment.utc(item.dateEnd).format('DD MMM')}
+                          <span className="destination-bottom-duration">
+                            £ {this.getPrice(item.dateStart, item.dateEnd)}{' '}
+                            {`/${' '}${
+                              this.props.data['Adult'] +
+                                this.props.data['Youth'] >
+                              1
+                                ? `${this.props.data['Adult'] +
+                                    this.props.data['Youth']} passengers`
+                                : ' passenger'
+                            }`}
+                          </span>
+                        </label>
+                      </div>
+                    )
+                  })}
+                <div
+                  className={`destination-bottom-travel-dates-block ${
+                    this.state.DateRadio === 'pickDate' ? 'selected' : ''
+                  }`}>
+                  <input
+                    type="radio"
+                    name="radio-group"
+                    id={`pickradio_${this.props.data._id}`}
+                    value="pickDate"
+                    checked={this.state.DateRadio === 'pickDate'}
+                    onChange={e => this.setState({ DateRadio: e.target.value })}
+                  />
+                  <label htmlFor={`pickradio_${this.props.data._id}`}>
+                    PICK DATES ON THE CALENDAR
+                  </label>
+                </div>
+              </div>
+            )}
+          {calendar &&
+            ((selected.length >= 1 && this.state.DateRadio === 'pickDate') ||
+              selected.length < 1) && <this.CalendarBlock />}
+          {!isSelected &&
+            !deselect &&
+            (!calendar ? (
               <Button
                 text="SELECT THIS TRIP"
                 icon="plus"
@@ -601,18 +822,43 @@ export default class Destination extends Component<IProps, IState> {
                 disabled={this.props.isMax}
                 onClick={this.openCalendar}
               />
-            )}
-          {selected &&
+            ) : selected.length >= 1 && this.state.DateRadio !== 'pickDate' ? (
+              <div
+                className={`destination-calendar calendar-${uniqueAvailableLength}`}>
+                <div className="destination-calendar-bottom">
+                  <Button
+                    text="select"
+                    onClick={this.select}
+                    variant="blue-select"
+                  />
+                  <Button
+                    text="clear dates"
+                    variant="gray"
+                    icon="cross"
+                    onClick={this.deselect}
+                  />
+                </div>
+              </div>
+            ) : (
+              ''
+            ))}
+          {isSelected &&
             !deselect && (
               <>
                 <Button
-                  text={`selected for ${moment(
+                  text={`selected for ${
                     dates.start
-                      ? dates.start
-                      : (data as ISelectedData).dateStart
-                  ).format('DD MMM')} - ${moment(
-                    dates.end ? dates.end : (data as ISelectedData).dateEnd
-                  ).format('DD MMM')}`}
+                      ? moment(dates.start).format('DD MMM')
+                      : moment
+                          .utc((data as ISelectedData).dateStart)
+                          .format('DD MMM')
+                  } - ${
+                    dates.end
+                      ? moment(dates.end).format('DD MMM')
+                      : moment
+                          .utc((data as ISelectedData).dateEnd)
+                          .format('DD MMM')
+                  }`}
                   variant="green"
                 />
                 <Button
@@ -623,7 +869,7 @@ export default class Destination extends Component<IProps, IState> {
                 />
               </>
             )}
-          {!selected &&
+          {!isSelected &&
             deselect &&
             data.type === 'selectedTrid' && (
               <>
@@ -648,3 +894,12 @@ export default class Destination extends Component<IProps, IState> {
     )
   }
 }
+
+const mapStateToProps = (state: IStore) => ({
+  selected: selectSelected(state)
+})
+
+export default connect(
+  mapStateToProps,
+  {}
+)(Destination)

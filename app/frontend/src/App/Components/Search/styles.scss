@@ -108,6 +108,10 @@
       display: flex;
       justify-content: center;
       align-items: center;
+
+      @include respond(mobile) {
+        justify-content: flex-start;
+      }
     }
     span {
       margin: 0 0.5rem;
@@ -126,6 +130,7 @@
 
       @include respond(mobile) {
         width: auto;
+        flex: 1;
       }
     }
 
@@ -138,6 +143,11 @@
 
       &:focus {
         outline: 0;
+      }
+
+      @include respond(mobile) {
+        flex: 2;
+        text-align: right;
       }
     }
 

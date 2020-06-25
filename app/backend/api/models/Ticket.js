@@ -57,6 +57,7 @@ ticketSchema.statics.refreshTripMeta = async function (ticket) {
             quantity: "$quantity",
             soldTickets: "$soldTickets",
             reservedQuantity: "$reservedQuantity",
+            trip: "$trip",
           },
         },
       },

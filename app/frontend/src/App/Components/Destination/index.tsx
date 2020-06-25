@@ -487,7 +487,7 @@ class Destination extends Component<IProps, IState> {
         data['destinationCharges'].childPrice * this.props.data['Youth'] +
         (data.adultPrice * this.props.data['Adult'] +
           data.childPrice * this.props.data['Youth'])
-      strippedCost = (
+      strippedCost =
         (data['destinationCharges'].adultPrice /
           (1 - data['destinationCharges'].discount / 100)) *
           this.props.data['Adult'] +
@@ -498,20 +498,18 @@ class Destination extends Component<IProps, IState> {
           this.props.data['Adult'] +
           (data.childPrice / (1 - data.discount / 100)) *
             this.props.data['Youth'])
-      ).toFixed(0)
-      discount = (discount + data['destinationCharges'].discount) / 2
+      discount = (1 - finalCost / strippedCost) * 100
     } else {
       finalCost =
         2 *
         (data.adultPrice * this.props.data['Adult'] +
           data.childPrice * this.props.data['Youth'])
-      strippedCost = (
+      strippedCost =
         2 *
         ((data.adultPrice / (1 - data.discount / 100)) *
           this.props.data['Adult'] +
           (data.childPrice / (1 - data.discount / 100)) *
             this.props.data['Youth'])
-      ).toFixed(0)
     }
 
     // Check hurry-up message based on ticket counts
@@ -709,7 +707,9 @@ class Destination extends Component<IProps, IState> {
           <p className="destination-bottom-luggage">Luggage included</p>
           <div className="destination-bottom-price">
             From{' '}
-            <span className="destination-bottom-price--stripped">{`£ ${strippedCost}`}</span>
+            <span className="destination-bottom-price--stripped">{`£ ${strippedCost.toFixed(
+              0
+            )}`}</span>
             <span className="destination-bottom-price--final">{` £ ${finalCost}${' '}`}</span>
             {`/${' '}${
               this.props.data['Adult'] + this.props.data['Youth'] > 1

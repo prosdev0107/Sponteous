@@ -79,7 +79,6 @@
     position: relative;
     height: 4.2rem;
     width: 14rem;
-    padding: 0 1.5rem;
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -101,6 +100,14 @@
       &.buttons {
         margin-bottom: 5rem;
       }
+    }
+    &-body {
+      width: 1000%;
+      height: 100%;
+      padding: 0 1.5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
     span {
       margin: 0 0.5rem;
@@ -134,7 +141,7 @@
       }
     }
 
-    div {
+    &-dropdown {
       width: 326px;
       display: flex;
       flex-direction: column;

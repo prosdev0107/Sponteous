@@ -278,16 +278,18 @@ export default class Search extends Component<IProps, IState> {
 
     return (
       <div className={`search-select ${buttons ? 'buttons' : ''}`}>
-        <img src={people} alt="people" />
-        <span onClick={this.toggleButtons}>{`${quantity.Adult +
-          quantity.Youth} passenger${
-          quantity.Adult > 1 || quantity.Youth > 1 ? 's' : ''
-        }`}</span>
-        <button onClick={this.toggleButtons}>
-          <img src={arrow} alt="change passanger quantity" />
-        </button>
+        <div onClick={this.toggleButtons} className="search-select-body">
+          <img src={people} alt="people" />
+          <span>{`${quantity.Adult +
+            quantity.Youth} passenger${
+            quantity.Adult > 1 || quantity.Youth > 1 ? 's' : ''
+          }`}</span>
+          <button>
+            <img src={arrow} alt="change passanger quantity" />
+          </button>
+        </div>
         {buttons && (
-          <div>
+          <div className="search-select-dropdown">
             <li>
               <label>{`Adult${passengers.Adult > 1 ? 's' : ''}`}</label>
               <button onClick={e => this.selectDecrement(e, 'Adult')}>

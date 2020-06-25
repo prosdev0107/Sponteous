@@ -130,7 +130,9 @@
 
       @include respond(mobile) {
         width: auto;
-        flex: 1;
+        flex: 2;
+        text-align: left;
+        padding-left: 1rem;
       }
     }
 

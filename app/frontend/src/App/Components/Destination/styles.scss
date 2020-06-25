@@ -41,12 +41,12 @@
   @include respond(tab) {
     width: 300px;
     margin-right: 0;
-    height: 35rem;
+    height: 37rem;
   }
 
   @include respond(mobile) {
     width: 100%;
-    height: 41rem;
+    height: 42rem;
     margin: 0 auto 4rem auto;
   }
   &.overlay {
@@ -143,11 +143,13 @@
     background-color: $white;
     position: relative;
 
+    @include respond(tab) {
+      height: 30rem;
+    }
     @include respond(mobile) {
       height: 30rem;
       padding-bottom: 1rem;
     }
-
     .spon-btn {
       @include respond(tab) {
         justify-content: center;
@@ -268,7 +270,7 @@
       font-size: rc(12);
       margin: 0;
 
-      @include respond(mobile) {
+      @include respond(tab) {
         font-size: 12px;
       }
     }
@@ -279,7 +281,7 @@
       font-weight: 400;
       font-size: rc(14);
 
-      @include respond(mobile) {
+      @include respond(tab) {
         font-size: 14px;
       }
     }
@@ -315,6 +317,94 @@
         color: $red;
       }
     }
+    &-travel-dates {
+      &-title {
+        color: #2e333b;
+        font-size: 14px;
+      }
+      &-block {
+        display: flex;
+        align-items: center;
+        height: 50px;
+        padding: 0 15px;
+        margin-bottom: 10px;
+        border-radius: 3px;
+        border: solid 1px #dadce9;
+        background: rgba(255, 255, 255, 0.13);
+      }
+      &-block.selected {
+        border: solid 1px #4142a6;
+      }
+      [type='radio']:checked {
+        box-shadow: inset 0px 0px 3px #9ea1b9;
+      }
+
+      [type='radio']:checked,
+      [type='radio']:not(:checked) {
+        position: absolute;
+        left: -9999px;
+        box-shadow: inset 0px 0px 3px #9ea1b9;
+      }
+      [type='radio']:checked + label,
+      [type='radio']:not(:checked) + label {
+        position: relative;
+        padding-left: 28px;
+        cursor: pointer;
+        line-height: 20px;
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: #2e333b;
+        font-weight: 600;
+        line-height: 18px;
+        text-transform: uppercase;
+        width: 100%;
+        span {
+          text-transform: initial;
+        }
+      }
+      [type='radio']:checked + label:before,
+      [type='radio']:not(:checked) + label:before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 18px;
+        height: 18px;
+        border: 1px solid #ddd;
+        border-radius: 100%;
+        background: #fff;
+        box-shadow: inset 0 0 3px #9ea1b9;
+      }
+      [type='radio']:checked + label:after,
+      [type='radio']:not(:checked) + label:after {
+        content: '';
+        width: 12px;
+        height: 12px;
+        background: #4142a6;
+        position: absolute;
+        top: 4px;
+        left: 4px;
+        border-radius: 100%;
+        -webkit-transition: all 0.2s ease;
+        transition: all 0.2s ease;
+      }
+      [type='radio']:not(:checked) + label:after {
+        opacity: 0;
+        -webkit-transform: scale(0);
+        transform: scale(0);
+      }
+      [type='radio']:checked + label:after {
+        opacity: 1;
+        -webkit-transform: scale(1);
+        transform: scale(1);
+      }
+    }
+  }
+  &-bottom.opened {
+    @include respond(mobile) {
+      border: none;
+    }
   }
   &-calendar {
     z-index: 7 !important;
@@ -333,8 +423,13 @@
       top: 100px;
     }
 
+    @include respond(tab) {
+      top: 255px;
+    }
+
     @include respond(mobile) {
       top: 140px;
+      border: none;
     }
 
     .calendar {
@@ -348,7 +443,7 @@
       margin-bottom: 1rem;
       padding: 0 1rem 0 1rem;
       @include respond(mobile) {
-        padding: 0 1rem 4rem 1rem;
+        padding: 0 1rem 3rem 1rem;
       }
       .blue-select:hover {
         background-color: #1da4f0;
@@ -413,6 +508,62 @@
           margin: 0;
         }
       }
+    }
+  }
+  &-calendar.calendar-0 {
+    top: 270px;
+    @include respond(bigger) {
+      top: 245px;
+    }
+
+    @include respond(tab) {
+      top: 255px;
+    }
+  }
+  &-calendar.calendar-1 {
+    top: 320px;
+    @include respond(bigger) {
+      top: 300px;
+    }
+    @include respond(big) {
+      top: 285px;
+    }
+
+    @include respond(tab) {
+      top: 300px;
+    }
+  }
+  &-calendar.calendar-2 {
+    top: 380px;
+    @include respond(bigger) {
+      top: 355px;
+    }
+
+    @include respond(tab) {
+      top: 345px;
+    }
+  }
+  &-calendar.calendar-3 {
+    top: 440px;
+    @include respond(bigger) {
+      top: 410px;
+    }
+
+    @include respond(tab) {
+      top: 295px;
+    }
+  }
+  &-calendar.calendar-4 {
+    top: 500px;
+    @include respond(bigger) {
+      top: 480px;
+    }
+    @include respond(bigger) {
+      top: 460px;
+    }
+
+    @include respond(tab) {
+      top: 310px;
     }
   }
   &-btn {

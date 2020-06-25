@@ -3,7 +3,8 @@ import { IOption } from '../Dropdown/types'
 
 export interface IProps {
   index: string
-  selected?: boolean
+  selected: ISelectedData[]
+  isSelected?: boolean
   deselect?: boolean
   data: ITrip | ISelectedData
   isMax: boolean
@@ -38,4 +39,13 @@ export interface IState {
 
   startDates: string[]
   endDates: string[]
+  firstDate: {
+    start: Date | null
+    end: Date | null
+  }
+  secondDate: {
+    start: Date | null
+    end: Date | null
+  }
+  DateRadio: string
 }

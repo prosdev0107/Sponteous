@@ -25,6 +25,7 @@ export default class Filters extends React.Component<IProps, IState> {
   }
 
   setDepartureValue = ([start, end]: [Date, Date]) => {
+    console.log('date filter change')
     this.setState({ calendarTouched: true })
     this.props.onChange({ start, end }, () => {
       this.props.fetchTrips()

@@ -423,6 +423,7 @@ class SelectContainer extends Component<
     )
   }
   handleFetchInitialTripsWithFilter = () => {
+    console.log('fetch Trips')
     const {
       tripsLocal,
       filters: { min, max, start, end }
@@ -434,15 +435,18 @@ class SelectContainer extends Component<
     pricefilter = tripsLocal.filter((trip: any) =>
       this.isInPriceRange(trip, trip.Adult, trip.Youth, min, max)
     )
+    console.log(pricefilter)
     this.setState({ trips: pricefilter })
     if (start && end) {
       pricefilter.filter((trip: any) => {
         let ticket = this.isInDateRange(trip.tickets, start, end)
         pricefilter.forEach((item: any) => {
+          console.log('before dateFilter', ticket)
           if (ticket.length !== 0)
             if (item._id === ticket[0].trip) dateFilter.push(item)
         })
       })
+      console.log(dateFilter)
       this.setState({ trips: dateFilter })
     }
   }

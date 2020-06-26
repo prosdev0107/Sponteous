@@ -302,6 +302,12 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      @include respond(bigger) {
+        font-size: 14px;
+      }
+      @include respond(big) {
+        font-size: 12px;
+      }
       @include respond(tab) {
         font-size: 1.75rem;
       }

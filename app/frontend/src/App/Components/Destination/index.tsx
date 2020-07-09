@@ -21,7 +21,6 @@ import {
 import { IOption } from '../Dropdown/types'
 
 import messageInfo from '../../../Common/Utils/Media/message-info.svg'
-import closeBtn from '../../Utils/Media/btn-close-mobile.svg'
 
 class Destination extends Component<IProps, IState> {
   readonly state: IState = {
@@ -66,58 +65,58 @@ class Destination extends Component<IProps, IState> {
       const startDates =
         data.type === 'trip'
           ? data.tickets
-              .filter(
-                (item: ITicket) =>
-                  item.departure === data.departure.name &&
-                  item.destination === data.destination.name &&
-                  moment
-                    .utc(item.date.start)
-                    .set({ hour: 0, minutes: 0, seconds: 0, milliseconds: 0 })
-                    .isAfter(
-                      tmpDate.getFullYear() +
-                        '-' +
-                        (tmpDate.getMonth() + 1).toString().padStart(2, '0') +
-                        '-' +
-                        tmpDate
-                          .getDate()
-                          .toString()
-                          .padStart(2, '0')
-                    ) &&
-                  item.adultPrice + item.childPrice >=
-                    quantity!.Adult + quantity!.Youth
-              )
-              .map((item: ITicket) =>
-                moment.utc(item.date.start).format('YYYY-MM-DD')
-              )
-              .filter((item, index, array) => array.indexOf(item) === index)
+            .filter(
+              (item: ITicket) =>
+                item.departure === data.departure.name &&
+                item.destination === data.destination.name &&
+                moment
+                  .utc(item.date.start)
+                  .set({ hour: 0, minutes: 0, seconds: 0, milliseconds: 0 })
+                  .isAfter(
+                    tmpDate.getFullYear() +
+                    '-' +
+                    (tmpDate.getMonth() + 1).toString().padStart(2, '0') +
+                    '-' +
+                    tmpDate
+                      .getDate()
+                      .toString()
+                      .padStart(2, '0')
+                  ) &&
+                item.adultPrice + item.childPrice >=
+                quantity!.Adult + quantity!.Youth
+            )
+            .map((item: ITicket) =>
+              moment.utc(item.date.start).format('YYYY-MM-DD')
+            )
+            .filter((item, index, array) => array.indexOf(item) === index)
           : []
       const endDates =
         data.type === 'trip'
           ? data.tickets
-              .filter(
-                (item: ITicket) =>
-                  item.departure === data.destination.name &&
-                  item.destination === data.departure.name &&
-                  moment
-                    .utc(item.date.start)
-                    .set({ hour: 0, minutes: 0, seconds: 0, milliseconds: 0 })
-                    .isAfter(
-                      tmpDate.getFullYear() +
-                        '-' +
-                        (tmpDate.getMonth() + 1).toString().padStart(2, '0') +
-                        '-' +
-                        tmpDate
-                          .getDate()
-                          .toString()
-                          .padStart(2, '0')
-                    ) &&
-                  item.adultPrice + item.childPrice >=
-                    quantity!.Adult + quantity!.Youth
-              )
-              .map((item: ITicket) =>
-                moment.utc(item.date.start).format('YYYY-MM-DD')
-              )
-              .filter((item, index, array) => array.indexOf(item) === index)
+            .filter(
+              (item: ITicket) =>
+                item.departure === data.destination.name &&
+                item.destination === data.departure.name &&
+                moment
+                  .utc(item.date.start)
+                  .set({ hour: 0, minutes: 0, seconds: 0, milliseconds: 0 })
+                  .isAfter(
+                    tmpDate.getFullYear() +
+                    '-' +
+                    (tmpDate.getMonth() + 1).toString().padStart(2, '0') +
+                    '-' +
+                    tmpDate
+                      .getDate()
+                      .toString()
+                      .padStart(2, '0')
+                  ) &&
+                item.adultPrice + item.childPrice >=
+                quantity!.Adult + quantity!.Youth
+            )
+            .map((item: ITicket) =>
+              moment.utc(item.date.start).format('YYYY-MM-DD')
+            )
+            .filter((item, index, array) => array.indexOf(item) === index)
           : []
 
       this.setState({
@@ -158,34 +157,34 @@ class Destination extends Component<IProps, IState> {
       selected.length === 0
         ? -1
         : selected
-            .reduce((unique: ISelectedData[], other: any) => {
-              if (
-                !unique.some(
-                  (item: any) =>
-                    item.dateStart === other.dateStart &&
-                    item.dateEnd === other.dateEnd
-                )
-              ) {
-                unique.push(other)
-              }
-              return unique
-            }, [])
-            .filter(item => {
-              const { startDates, endDates } = this.state
-              const dateStartString = moment
-                .utc(item.dateStart)
-                .format('YYYY-MM-DD')
-              const dateEndString = moment
-                .utc(item.dateEnd)
-                .format('YYYY-MM-DD')
-              if (startDates && endDates) {
-                return (
-                  startDates.includes(dateStartString) &&
-                  endDates.includes(dateEndString)
-                )
-              }
-              return false
-            }).length
+          .reduce((unique: ISelectedData[], other: any) => {
+            if (
+              !unique.some(
+                (item: any) =>
+                  item.dateStart === other.dateStart &&
+                  item.dateEnd === other.dateEnd
+              )
+            ) {
+              unique.push(other)
+            }
+            return unique
+          }, [])
+          .filter(item => {
+            const { startDates, endDates } = this.state
+            const dateStartString = moment
+              .utc(item.dateStart)
+              .format('YYYY-MM-DD')
+            const dateEndString = moment
+              .utc(item.dateEnd)
+              .format('YYYY-MM-DD')
+            if (startDates && endDates) {
+              return (
+                startDates.includes(dateStartString) &&
+                endDates.includes(dateEndString)
+              )
+            }
+            return false
+          }).length
     return (
       <div className={`destination-calendar calendar-${uniqueAvailableLength}`}>
         <Calendar
@@ -372,8 +371,8 @@ class Destination extends Component<IProps, IState> {
             name: `${moment
               .utc(ticket.date.start)
               .format('HH:mm')} - ${moment
-              .utc(ticket.date.end)
-              .format('HH:mm')}`
+                .utc(ticket.date.end)
+                .format('HH:mm')}`
           })
         } else if (
           ticket.departure === destination.name &&
@@ -385,8 +384,8 @@ class Destination extends Component<IProps, IState> {
             name: `${moment
               .utc(ticket.date.start)
               .format('HH:mm')} - ${moment
-              .utc(ticket.date.end)
-              .format('HH:mm')}`
+                .utc(ticket.date.end)
+                .format('HH:mm')}`
           })
         }
         return total
@@ -490,14 +489,14 @@ class Destination extends Component<IProps, IState> {
       strippedCost =
         (data['destinationCharges'].adultPrice /
           (1 - data['destinationCharges'].discount / 100)) *
-          this.props.data['Adult'] +
+        this.props.data['Adult'] +
         (data['destinationCharges'].childPrice /
           (1 - data['destinationCharges'].discount / 100)) *
-          this.props.data['Youth'] +
+        this.props.data['Youth'] +
         ((data.adultPrice / (1 - data.discount / 100)) *
           this.props.data['Adult'] +
           (data.childPrice / (1 - data.discount / 100)) *
-            this.props.data['Youth'])
+          this.props.data['Youth'])
       discount = (1 - finalCost / strippedCost) * 100
     } else {
       finalCost =
@@ -509,7 +508,7 @@ class Destination extends Component<IProps, IState> {
         ((data.adultPrice / (1 - data.discount / 100)) *
           this.props.data['Adult'] +
           (data.childPrice / (1 - data.discount / 100)) *
-            this.props.data['Youth'])
+          this.props.data['Youth'])
     }
 
     // Check hurry-up message based on ticket counts
@@ -546,34 +545,34 @@ class Destination extends Component<IProps, IState> {
       selected.length === 0
         ? -1
         : selected
-            .reduce((unique: ISelectedData[], other: any) => {
-              if (
-                !unique.some(
-                  (item: any) =>
-                    item.dateStart === other.dateStart &&
-                    item.dateEnd === other.dateEnd
-                )
-              ) {
-                unique.push(other)
-              }
-              return unique
-            }, [])
-            .filter(item => {
-              const { startDates, endDates } = this.state
-              const dateStartString = moment
-                .utc(item.dateStart)
-                .format('YYYY-MM-DD')
-              const dateEndString = moment
-                .utc(item.dateEnd)
-                .format('YYYY-MM-DD')
-              if (startDates && endDates) {
-                return (
-                  startDates.includes(dateStartString) &&
-                  endDates.includes(dateEndString)
-                )
-              }
-              return false
-            }).length
+          .reduce((unique: ISelectedData[], other: any) => {
+            if (
+              !unique.some(
+                (item: any) =>
+                  item.dateStart === other.dateStart &&
+                  item.dateEnd === other.dateEnd
+              )
+            ) {
+              unique.push(other)
+            }
+            return unique
+          }, [])
+          .filter(item => {
+            const { startDates, endDates } = this.state
+            const dateStartString = moment
+              .utc(item.dateStart)
+              .format('YYYY-MM-DD')
+            const dateEndString = moment
+              .utc(item.dateEnd)
+              .format('YYYY-MM-DD')
+            if (startDates && endDates) {
+              return (
+                startDates.includes(dateStartString) &&
+                endDates.includes(dateEndString)
+              )
+            }
+            return false
+          }).length
 
     return (
       <div
@@ -585,26 +584,26 @@ class Destination extends Component<IProps, IState> {
                 ? 'mobile'
                 : ''
             : ''
-        } ${
+          } ${
           !isSelected && isMobileOnly ? 'destination-when-not-selected' : ''
-        }`}
+          }`}
         ref={this.node}>
         <div
           className={`destination-top ${
             isSelected || deselect ? 'short' : ''
-          }  ${
+            }  ${
             calendar
               ? 'shortest'
               : isThree || (isFive && !isSelected)
                 ? 'medium'
                 : ''
-          }`}>
+            }`}>
           {isMobileOnly &&
             calendar && (
               <div
                 className="destination-close-mobile"
                 onClick={this.closeCalendar}>
-                <img src={closeBtn} alt="" srcSet="" />
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z" /></svg>
               </div>
             )}
           <div className="badge">{`SAVE ${discount.toFixed(0)}%`}</div>
@@ -664,7 +663,7 @@ class Destination extends Component<IProps, IState> {
                           : typeOfTransport === 'Direct Flight'
                             ? 'destination-bottom-type--flight'
                             : 'destination-bottom-type--red'
-                    }`}
+                      }`}
                     style={{
                       borderColor: '#12b459',
                       color: '#12b459'
@@ -686,7 +685,7 @@ class Destination extends Component<IProps, IState> {
                           : typeOfTransport === 'Direct Flight'
                             ? 'destination-bottom-type--flight'
                             : 'destination-bottom-type--red'
-                    }`}
+                      }`}
                     style={{
                       borderColor: '#12b459',
                       color: '#12b459'
@@ -703,7 +702,7 @@ class Destination extends Component<IProps, IState> {
 
           <p className="destination-bottom-title">{`${
             this.props.data.destination.name
-          }`}</p>
+            }`}</p>
           <p className="destination-bottom-luggage">Luggage included</p>
           <div className="destination-bottom-price">
             From{' '}
@@ -714,9 +713,9 @@ class Destination extends Component<IProps, IState> {
             {`/${' '}${
               this.props.data['Adult'] + this.props.data['Youth'] > 1
                 ? `${this.props.data['Adult'] +
-                    this.props.data['Youth']} passengers`
+                this.props.data['Youth']} passengers`
                 : ' passenger'
-            }`}
+              }`}
           </div>
           {calendar &&
             selected.length >= 1 && (
@@ -759,7 +758,7 @@ class Destination extends Component<IProps, IState> {
                         key={index}
                         className={`destination-bottom-travel-dates-block ${
                           this.state.DateRadio === index + '' ? 'selected' : ''
-                        }`}>
+                          }`}>
                         <input
                           type="radio"
                           name="radio-group"
@@ -790,11 +789,11 @@ class Destination extends Component<IProps, IState> {
                             {`/${' '}${
                               this.props.data['Adult'] +
                                 this.props.data['Youth'] >
-                              1
+                                1
                                 ? `${this.props.data['Adult'] +
-                                    this.props.data['Youth']} passengers`
+                                this.props.data['Youth']} passengers`
                                 : ' passenger'
-                            }`}
+                              }`}
                           </span>
                         </label>
                       </div>
@@ -803,7 +802,7 @@ class Destination extends Component<IProps, IState> {
                 <div
                   className={`destination-bottom-travel-dates-block ${
                     this.state.DateRadio === 'pickDate' ? 'selected' : ''
-                  }`}>
+                    }`}>
                   <input
                     type="radio"
                     name="radio-group"
@@ -849,8 +848,8 @@ class Destination extends Component<IProps, IState> {
                 </div>
               </div>
             ) : (
-              ''
-            ))}
+                  ''
+                ))}
           {isSelected &&
             !deselect && (
               <>
@@ -859,15 +858,15 @@ class Destination extends Component<IProps, IState> {
                     dates.start
                       ? moment(dates.start).format('DD MMM')
                       : moment
-                          .utc((data as ISelectedData).dateStart)
-                          .format('DD MMM')
-                  } - ${
+                        .utc((data as ISelectedData).dateStart)
+                        .format('DD MMM')
+                    } - ${
                     dates.end
                       ? moment(dates.end).format('DD MMM')
                       : moment
-                          .utc((data as ISelectedData).dateEnd)
-                          .format('DD MMM')
-                  }`}
+                        .utc((data as ISelectedData).dateEnd)
+                        .format('DD MMM')
+                    }`}
                   variant="green"
                 />
                 <Button
@@ -886,8 +885,8 @@ class Destination extends Component<IProps, IState> {
                   text={`selected for ${moment
                     .utc(data.dateStart)
                     .format('DD MMM')} - ${moment
-                    .utc(data.dateEnd)
-                    .format('DD MMM')}`}
+                      .utc(data.dateEnd)
+                      .format('DD MMM')}`}
                 />
                 <Button
                   text={`delete for £ ${data.deselectionPrice}`}

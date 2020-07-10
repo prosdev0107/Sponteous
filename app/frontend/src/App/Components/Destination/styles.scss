@@ -59,10 +59,10 @@
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100vh !important;
+    height: calc(100vh + 160px) !important;
     background-color: #ffffff;
     z-index: 2;
-    overflow: scroll;
+    overflow: auto;
   }
   &-top {
     position: relative;
@@ -435,7 +435,6 @@
 
     @include respond(mobile) {
       top: 150px;
-      margin-bottom: 180px;
       border: none;
     }
 

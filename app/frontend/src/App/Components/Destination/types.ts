@@ -48,4 +48,5 @@ export interface IState {
     end: Date | null
   }
   DateRadio: string
+  gdprUpdated: boolean
 }

@@ -14,6 +14,7 @@ import Dropdown from '../Dropdown'
 import { IProps, IState } from './types'
 import './styles.scss'
 import { ITicket } from '../../../Common/Utils/globalTypes'
+import { getFromLS } from '../../../Common/Utils/helpers'
 import {
   ISelectedData,
   ITrip as ITripSelect
@@ -51,7 +52,8 @@ class Destination extends Component<IProps, IState> {
       start: null,
       end: null
     },
-    DateRadio: ''
+    DateRadio: '',
+    gdprUpdated: false,
   }
   node = React.createRef<HTMLDivElement>()
 
@@ -131,8 +133,10 @@ class Destination extends Component<IProps, IState> {
   }
 
   handleClickOutside = (e: any) => {
+    this.setState({ gdprUpdated: true })
     if (this.node.current && this.state.calendar && !this.props.isMapViewOn) {
       if (!this.node.current.contains(e.target)) {
+        if (isMobileOnly) return;
         this.deselect()
       }
     }
@@ -478,6 +482,7 @@ class Destination extends Component<IProps, IState> {
     const { isSelected, deselect, data, selected } = this.props
     const { duration, destination, typeOfTransport } = data
     const { calendar, dates } = this.state
+    const isGDPR = getFromLS('gdpr')
     let finalCost, strippedCost
     let discount = data.discount
     if (data['destinationCharges']) {
@@ -586,7 +591,7 @@ class Destination extends Component<IProps, IState> {
             : ''
           } ${
           !isSelected && isMobileOnly ? 'destination-when-not-selected' : ''
-          }`}
+          } ${isGDPR ? '' : 'gdpr-set'}`}
         ref={this.node}>
         <div
           className={`destination-top ${
@@ -603,7 +608,7 @@ class Destination extends Component<IProps, IState> {
               <div
                 className="destination-close-mobile"
                 onClick={this.closeCalendar}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path fill="#4142A6" d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z" /></svg>
               </div>
             )}
           <div className="badge">{`SAVE ${discount.toFixed(0)}%`}</div>

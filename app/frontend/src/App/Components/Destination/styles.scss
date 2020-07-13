@@ -64,6 +64,10 @@
     z-index: 2;
     overflow: auto;
     overflow-x: hidden;
+
+    &.gdpr-set {
+      height: calc(100vh - 160px) !important;
+    }
   }
   &-top {
     position: relative;
@@ -300,7 +304,6 @@
       font-size: 16px;
       font-weight: 600;
       margin: 1rem 0 0 0;
-      overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
       @include respond(bigger) {
@@ -427,17 +430,30 @@
     border-color: $gray;
 
     @include respond(bigger) {
-      top: 140px;
+      position: relative;
+      left: 0px;
+      right: 0px;
+      top: 0px;
+      padding: 0px;
+      border: none;
     }
 
     @include respond(tab) {
-      top: 255px;
+      position: relative;
+      left: 0px;
+      right: 0px;
+      top: 0px;
+      padding: 0px;
+      border: none;
     }
 
     @include respond(mobile) {
-      top: 150px;
+      position: relative;
+      left: 0px;
+      right: 0px;
+      top: 0px;
+      padding: 0px;
       border: none;
-      padding-bottom: 120px;
     }
 
     .calendar {
@@ -521,57 +537,93 @@
   &-calendar.calendar-0 {
     top: 270px;
     @include respond(bigger) {
-      top: 245px;
+      position: relative;
+      top: 0px;
+      left: 0px;
+      right: 0px;
     }
 
     @include respond(tab) {
-      top: 255px;
+      position: relative;
+      top: 0px;
+      left: 0px;
+      right: 0px;
     }
   }
   &-calendar.calendar-1 {
     top: 320px;
     @include respond(bigger) {
-      top: 300px;
+      position: relative;
+      top: 0px;
+      left: 0px;
+      right: 0px;
     }
     @include respond(big) {
-      top: 285px;
+      position: relative;
+      top: 0px;
+      left: 0px;
+      right: 0px;
     }
 
     @include respond(tab) {
-      top: 300px;
+      position: relative;
+      top: 0px;
+      left: 0px;
+      right: 0px;
     }
   }
   &-calendar.calendar-2 {
     top: 380px;
     @include respond(bigger) {
-      top: 355px;
+      position: relative;
+      top: 0px;
+      left: 0px;
+      right: 0px;
     }
 
     @include respond(tab) {
-      top: 345px;
+      position: relative;
+      top: 0px;
+      left: 0px;
+      right: 0px;
     }
   }
   &-calendar.calendar-3 {
     top: 440px;
     @include respond(bigger) {
-      top: 410px;
+      position: relative;
+      top: 0px;
+      left: 0px;
+      right: 0px;
     }
 
     @include respond(tab) {
-      top: 295px;
+      position: relative;
+      top: 0px;
+      left: 0px;
+      right: 0px;
     }
   }
   &-calendar.calendar-4 {
     top: 500px;
     @include respond(bigger) {
-      top: 480px;
+      position: relative;
+      top: 0px;
+      left: 0px;
+      right: 0px;
     }
     @include respond(bigger) {
-      top: 460px;
+      position: relative;
+      top: 0px;
+      left: 0px;
+      right: 0px;
     }
 
     @include respond(tab) {
-      top: 310px;
+      position: relative;
+      top: 0px;
+      left: 0px;
+      right: 0px;
     }
   }
   &-btn {

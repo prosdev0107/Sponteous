@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import * as moment from 'moment'
+import classnames from 'classnames'
 import { IDuration } from '../../../Common/Utils/globalTypes'
 import 'moment-duration-format'
 import { IStore } from '../../../Common/Redux/types'
@@ -149,6 +150,7 @@ class Destination extends Component<IProps, IState> {
       hoursToSelect: { start, end }
     } = this.state
     const { selected } = this.props
+    const isGDPR = getFromLS('gdpr')
     this.state.hoursToSelect.start.sort(
       (a, b) => parseInt(a.name.split(':')[0]) - parseInt(b.name.split(':')[0])
     )
@@ -227,7 +229,7 @@ class Destination extends Component<IProps, IState> {
           </div>
         ) : null}
 
-        <div className="destination-calendar-bottom">
+        <div className={classnames('destination-calendar-bottom', { ['gdpr']: !isGDPR })}>
           <Button text="select" onClick={this.select} variant="blue-select" />
           <Button
             text="clear dates"
@@ -482,7 +484,6 @@ class Destination extends Component<IProps, IState> {
     const { isSelected, deselect, data, selected } = this.props
     const { duration, destination, typeOfTransport } = data
     const { calendar, dates } = this.state
-    const isGDPR = getFromLS('gdpr')
     let finalCost, strippedCost
     let discount = data.discount
     if (data['destinationCharges']) {
@@ -521,7 +522,7 @@ class Destination extends Component<IProps, IState> {
     let isThree = false,
       isFive = false
     const { tickets } = this.props.data as ITripSelect
-
+    
     if (tickets) {
       const ticketLessThanThree = tickets.filter(ticket => {
         let availableTicket =
@@ -591,7 +592,7 @@ class Destination extends Component<IProps, IState> {
             : ''
           } ${
           !isSelected && isMobileOnly ? 'destination-when-not-selected' : ''
-          } ${isGDPR ? '' : 'gdpr-set'}`}
+          }`}
         ref={this.node}>
         <div
           className={`destination-top ${
@@ -602,24 +603,29 @@ class Destination extends Component<IProps, IState> {
               : isThree || (isFive && !isSelected)
                 ? 'medium'
                 : ''
-            }`}>
+            }`}
+          style={{ backgroundImage: `url(${destination.photo})` }}>
           {isMobileOnly &&
             calendar && (
               <div
                 className="destination-close-mobile"
                 onClick={this.closeCalendar}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path fill="#4142A6" d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                  <g fill="none" stroke="#4142A6">
+                    <path strokeWidth="1" d="M12 11.293l10.293-10.293.707.707-10.293 10.293 10.293 10.293-.707.707-10.293-10.293-10.293 10.293-.707-.707 10.293-10.293-10.293-10.293.707-.707 10.293 10.293z" />
+                  </g>
+                </svg>
               </div>
             )}
           <div className="badge">{`SAVE ${discount.toFixed(0)}%`}</div>
-          <img
+          {/* <img
             src={destination.photo}
             alt="bg"
             style={{
               minHeight: '18rem',
               maxHeight: '18rem'
             }}
-          />
+          /> */}
         </div>
         <div className={`destination-bottom ${calendar ? 'opened' : ''}`}>
           {!calendar &&
@@ -838,7 +844,7 @@ class Destination extends Component<IProps, IState> {
             ) : selected.length >= 1 && this.state.DateRadio !== 'pickDate' ? (
               <div
                 className={`destination-calendar calendar-${uniqueAvailableLength}`}>
-                <div className="destination-calendar-bottom">
+                <div className='destination-calendar-bottom'>
                   <Button
                     text="select"
                     onClick={this.select}

@@ -285,7 +285,11 @@ class Destination extends Component<IProps, IState> {
 
   clickPickDate() {
     this.setState({
-      DateRadio: 'pickDate'
+      DateRadio: 'pickDate',
+      hoursToSelect: {
+        start: [],
+        end: []
+      },
     })
   }
 
@@ -499,7 +503,12 @@ class Destination extends Component<IProps, IState> {
   render() {
     const { isSelected, deselect, data, selected } = this.props
     const { duration, destination, typeOfTransport } = data
-    const { calendar, dates } = this.state
+    const {
+      calendar,
+      dates,
+      hours,
+      hoursToSelect: { start, end }
+    } = this.state
     let finalCost, strippedCost
     let discount = data.discount
     if (data['destinationCharges']) {
@@ -596,7 +605,7 @@ class Destination extends Component<IProps, IState> {
             }
             return false
           }).length
-
+    const HOURS_SET_PRICE = process.env.REACT_APP_TICKET_CHOOSE_TIME_PRICE
     return (
       <div
         className={`destination ${
@@ -794,7 +803,13 @@ class Destination extends Component<IProps, IState> {
                           value={index}
                           checked={this.state.DateRadio === index + ''}
                           onChange={e => {
-                            this.setState({ DateRadio: e.target.value })
+                            this.setState({
+                              DateRadio: e.target.value,
+                              hoursToSelect: {
+                                start: [],
+                                end: []
+                              },
+                            })
                             this.handleSelectDates([
                               new Date(
                                 moment
@@ -837,7 +852,13 @@ class Destination extends Component<IProps, IState> {
                     id={`pickradio_${this.props.data._id}`}
                     value="pickDate"
                     checked={this.state.DateRadio === 'pickDate'}
-                    onChange={e => this.setState({ DateRadio: e.target.value })}
+                    onChange={e => this.setState({
+                      DateRadio: e.target.value,
+                      hoursToSelect: {
+                        start: [],
+                        end: []
+                      },
+                    })}
                   />
                   <label htmlFor={`pickradio_${this.props.data._id}`}>
                     PICK DATES ON THE CALENDAR
@@ -870,6 +891,30 @@ class Destination extends Component<IProps, IState> {
             ) : selected.length >= 1 && this.state.DateRadio !== 'pickDate' ? (
               <div
                 className={`destination-calendar calendar-bottom-${uniqueAvailableLength}`}>
+                {this.state.DateRadio !== 'pickDate' && start.length > 0 && end.length > 0 ? (
+                  <div className="destination-calendar-dropdowns">
+                    <p className="heading">
+                      You can select trip hours for extra price (+ £{HOURS_SET_PRICE})
+                    </p>
+                    <Dropdown
+                      label="Departure hours"
+                      id="start"
+                      placeholder="Select"
+                      options={start}
+                      selectedValue={hours.start!}
+                      onChange={this.handleSelectHour}
+                    />
+
+                    <Dropdown
+                      label="Return hours"
+                      id="end"
+                      placeholder="Select"
+                      options={end}
+                      selectedValue={hours.end!}
+                      onChange={this.handleSelectHour}
+                    />
+                  </div>
+                ) : null}
                 <div className='destination-calendar-bottom'>
                   <Button
                     text="select"

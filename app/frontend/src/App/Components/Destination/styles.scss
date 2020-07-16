@@ -355,6 +355,9 @@
         border-radius: 3px;
         border: solid 1px #dadce9;
         background: rgba(255, 255, 255, 0.13);
+        &:hover {
+          border: solid 1px #4142a6;
+        }
       }
       &-block.selected {
         border: solid 1px #4142a6;

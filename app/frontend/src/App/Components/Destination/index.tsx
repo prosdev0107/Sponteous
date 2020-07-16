@@ -240,6 +240,18 @@ class Destination extends Component<IProps, IState> {
     )
   }
 
+  PickCalendarBlock = () => {
+    return (
+      <div className={`destination-calendar-pick`}>
+        <Calendar
+          selectRange
+          startDates={this.state.startDates}
+          endDates={this.state.endDates}
+        />
+      </div>
+    )
+  }
+
   setInitialState = () => {
     this.setState({
       calendar: false,
@@ -273,7 +285,7 @@ class Destination extends Component<IProps, IState> {
 
   clickPickDate() {
     this.setState({
-      DateRadio: 'pickDate-1'
+      DateRadio: 'pickDate'
     })
   }
 
@@ -836,10 +848,10 @@ class Destination extends Component<IProps, IState> {
           {calendar && selected.length >= 1 && this.state.DateRadio !== 'pickDate' &&
             <div className="destination-pick-calendar-wrapper">
               <div
-                className={this.state.DateRadio === 'pickDate-1' ? '' : "destination-pick-calendar"}
+                className={this.state.DateRadio === 'pickDate' ? '' : "destination-pick-calendar"}
                 onClick={() => this.clickPickDate()}
               >
-                <this.CalendarBlock />
+                <this.PickCalendarBlock />
               </div>
             </div>}
           {calendar &&
@@ -855,7 +867,7 @@ class Destination extends Component<IProps, IState> {
                 disabled={this.props.isMax}
                 onClick={this.openCalendar}
               />
-            ) : selected.length >= 1 && this.state.DateRadio !== 'pickDate' && this.state.DateRadio !== 'pickDate-1' ? (
+            ) : selected.length >= 1 && this.state.DateRadio !== 'pickDate' ? (
               <div
                 className={`destination-calendar calendar-bottom-${uniqueAvailableLength}`}>
                 <div className='destination-calendar-bottom'>

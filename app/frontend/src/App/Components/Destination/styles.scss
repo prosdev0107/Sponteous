@@ -22,7 +22,19 @@
   background-color: $white;
   margin-bottom: 2rem;
   margin-right: 1rem;
-
+  &-calendar-pick {
+    .calendar {
+      .react-calendar {
+        padding: 0;
+        &__navigation {
+          margin-bottom: 0;
+          &__label {
+            font-weight: 100;
+          }
+        }
+      }
+    }
+  }
   &.gdpr {
     padding-bottom: 15rem;
   }

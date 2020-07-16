@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import * as moment from 'moment'
-import classnames from 'classnames'
 import { IDuration } from '../../../Common/Utils/globalTypes'
 import 'moment-duration-format'
 import { IStore } from '../../../Common/Redux/types'
@@ -150,7 +149,6 @@ class Destination extends Component<IProps, IState> {
       hoursToSelect: { start, end }
     } = this.state
     const { selected } = this.props
-    const isGDPR = getFromLS('gdpr')
     this.state.hoursToSelect.start.sort(
       (a, b) => parseInt(a.name.split(':')[0]) - parseInt(b.name.split(':')[0])
     )
@@ -229,7 +227,7 @@ class Destination extends Component<IProps, IState> {
           </div>
         ) : null}
 
-        <div className={classnames('destination-calendar-bottom', { ['gdpr']: !isGDPR })}>
+        <div className='destination-calendar-bottom'>
           <Button text="select" onClick={this.select} variant="blue-select" />
           <Button
             text="clear dates"
@@ -271,6 +269,12 @@ class Destination extends Component<IProps, IState> {
           this.setState({ error: { state: false, msg: '' } })
         }, 5000)
     )
+  }
+
+  clickPickDate() {
+    this.setState({
+      DateRadio: 'pickDate-1'
+    })
   }
 
   select = () => {
@@ -522,7 +526,7 @@ class Destination extends Component<IProps, IState> {
     let isThree = false,
       isFive = false
     const { tickets } = this.props.data as ITripSelect
-    
+
     if (tickets) {
       const ticketLessThanThree = tickets.filter(ticket => {
         let availableTicket =
@@ -544,6 +548,7 @@ class Destination extends Component<IProps, IState> {
         this.props.data['Adult'] + this.props.data['Youth'] <= 5
     }
 
+    const isGDPR = getFromLS('gdpr')
     const durationTime = moment.duration({ minutes: duration }) as IDuration
     const formatedDuration = durationTime.format('h[h] m[m]')
 
@@ -587,7 +592,7 @@ class Destination extends Component<IProps, IState> {
             ? !isMobileOnly
               ? 'overlay'
               : !this.props.isMapViewOn
-                ? 'mobile'
+                ? isGDPR ? 'mobile' : 'mobile gdpr'
                 : ''
             : ''
           } ${
@@ -828,6 +833,15 @@ class Destination extends Component<IProps, IState> {
                 </div>
               </div>
             )}
+          {calendar && selected.length >= 1 && this.state.DateRadio !== 'pickDate' &&
+            <div className="destination-pick-calendar-wrapper">
+              <div
+                className={this.state.DateRadio === 'pickDate-1' ? '' : "destination-pick-calendar"}
+                onClick={() => this.clickPickDate()}
+              >
+                <this.CalendarBlock />
+              </div>
+            </div>}
           {calendar &&
             ((selected.length >= 1 && this.state.DateRadio === 'pickDate') ||
               selected.length < 1) && <this.CalendarBlock />}
@@ -841,9 +855,9 @@ class Destination extends Component<IProps, IState> {
                 disabled={this.props.isMax}
                 onClick={this.openCalendar}
               />
-            ) : selected.length >= 1 && this.state.DateRadio !== 'pickDate' ? (
+            ) : selected.length >= 1 && this.state.DateRadio !== 'pickDate' && this.state.DateRadio !== 'pickDate-1' ? (
               <div
-                className={`destination-calendar calendar-${uniqueAvailableLength}`}>
+                className={`destination-calendar calendar-bottom-${uniqueAvailableLength}`}>
                 <div className='destination-calendar-bottom'>
                   <Button
                     text="select"

@@ -23,6 +23,10 @@
   margin-bottom: 2rem;
   margin-right: 1rem;
 
+  &.gdpr {
+    padding-bottom: 15rem;
+  }
+
   @media (max-width: 575.98px) {
     .destination {
       width: 290px;
@@ -412,6 +416,32 @@
       border: none;
     }
   }
+  &-pick-calendar-wrapper {
+    border: 1px solid rgba(0, 0, 0, 0);
+  }
+  &-pick-calendar {
+    position: relative;
+    height: 110px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0);
+    -webkit-mask-image: -webkit-gradient(
+      linear,
+      left 50%,
+      left bottom,
+      from(rgba(0, 0, 0, 1)),
+      to(rgba(0, 0, 0, 0))
+    );
+    mask-image: -webkit-gradient(
+      linear,
+      left 50%,
+      left bottom,
+      from(rgba(0, 0, 0, 1)),
+      to(rgba(0, 0, 0, 0))
+    );
+    .destination-calendar {
+      top: 0px !important;
+    }
+  }
   &-calendar {
     z-index: 7 !important;
     background-color: white;
@@ -469,9 +499,6 @@
       .blue-select:hover {
         background-color: #1da4f0;
       }
-    }
-    .gdpr {
-      padding: 0 1rem 15rem 1rem;
     }
 
     &-error {
@@ -606,6 +633,98 @@
   }
   &-calendar.calendar-4 {
     top: 500px;
+    @include respond(bigger) {
+      position: relative;
+      top: 0px;
+      left: 0px;
+      right: 0px;
+    }
+    @include respond(bigger) {
+      position: relative;
+      top: 0px;
+      left: 0px;
+      right: 0px;
+    }
+
+    @include respond(tab) {
+      position: relative;
+      top: 0px;
+      left: 0px;
+      right: 0px;
+    }
+  }
+  &-calendar.calendar-bottom-0 {
+    top: 390px;
+    @include respond(bigger) {
+      position: relative;
+      top: 0px;
+      left: 0px;
+      right: 0px;
+    }
+
+    @include respond(tab) {
+      position: relative;
+      top: 0px;
+      left: 0px;
+      right: 0px;
+    }
+  }
+  &-calendar.calendar-bottom-1 {
+    top: 440px;
+    @include respond(bigger) {
+      position: relative;
+      top: 0px;
+      left: 0px;
+      right: 0px;
+    }
+    @include respond(big) {
+      position: relative;
+      top: 0px;
+      left: 0px;
+      right: 0px;
+    }
+
+    @include respond(tab) {
+      position: relative;
+      top: 0px;
+      left: 0px;
+      right: 0px;
+    }
+  }
+  &-calendar.calendar-bottom-2 {
+    top: 490px;
+    @include respond(bigger) {
+      position: relative;
+      top: 0px;
+      left: 0px;
+      right: 0px;
+    }
+
+    @include respond(tab) {
+      position: relative;
+      top: 0px;
+      left: 0px;
+      right: 0px;
+    }
+  }
+  &-calendar.calendar-bottom-3 {
+    top: 540px;
+    @include respond(bigger) {
+      position: relative;
+      top: 0px;
+      left: 0px;
+      right: 0px;
+    }
+
+    @include respond(tab) {
+      position: relative;
+      top: 0px;
+      left: 0px;
+      right: 0px;
+    }
+  }
+  &-calendar.calendar-bottom-4 {
+    top: 590px;
     @include respond(bigger) {
       position: relative;
       top: 0px;

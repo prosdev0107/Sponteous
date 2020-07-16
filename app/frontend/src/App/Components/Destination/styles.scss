@@ -8,8 +8,10 @@
 }
 
 .react-calendar__navigation__label {
+  font-weight: 100 !important;
   @include respond(mobile) {
     font-size: 1.2rem !important;
+    font-weight: 100 !important;
   }
 }
 

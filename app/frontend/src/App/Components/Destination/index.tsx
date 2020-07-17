@@ -635,7 +635,7 @@ class Destination extends Component<IProps, IState> {
             calendar && (
               <div
                 className="destination-close-mobile"
-                onClick={this.closeCalendar}>
+                onClick={this.deselect}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
                   <g fill="none" stroke="#4142A6">
                     <path strokeWidth="1" d="M12 11.293l10.293-10.293.707.707-10.293 10.293 10.293 10.293-.707.707-10.293-10.293-10.293 10.293-.707-.707 10.293-10.293-10.293-10.293.707-.707 10.293 10.293z" />

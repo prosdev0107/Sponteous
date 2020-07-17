@@ -888,6 +888,7 @@ class Destination extends Component<IProps, IState> {
                       className={this.state.DateRadio === 'pickDate' ? '' : "destination-pick-calendar"}
                       onClick={() => this.clickPickDate()}
                     >
+                      <div className="destination-pick-calendar-panel" />
                       <this.PickCalendarBlock />
                     </div>
                   </div>}

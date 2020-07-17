@@ -439,6 +439,7 @@
   }
   &-pick-calendar-wrapper {
     border: 1px solid rgba(0, 0, 0, 0);
+    cursor: pointer;
   }
   &-pick-calendar {
     position: relative;
@@ -459,6 +460,13 @@
       from(rgba(0, 0, 0, 1)),
       to(rgba(0, 0, 0, 0))
     );
+    &-panel {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0);
+      z-index: 7 !important;
+    }
     .destination-calendar {
       top: 0px !important;
     }

@@ -866,15 +866,6 @@ class Destination extends Component<IProps, IState> {
                 </div>
               </div>
             )}
-          {calendar && selected.length >= 1 && this.state.DateRadio !== 'pickDate' &&
-            <div className="destination-pick-calendar-wrapper">
-              <div
-                className={this.state.DateRadio === 'pickDate' ? '' : "destination-pick-calendar"}
-                onClick={() => this.clickPickDate()}
-              >
-                <this.PickCalendarBlock />
-              </div>
-            </div>}
           {calendar &&
             ((selected.length >= 1 && this.state.DateRadio === 'pickDate') ||
               selected.length < 1) && <this.CalendarBlock />}
@@ -891,6 +882,15 @@ class Destination extends Component<IProps, IState> {
             ) : selected.length >= 1 && this.state.DateRadio !== 'pickDate' ? (
               <div
                 className={`destination-calendar calendar-bottom-${uniqueAvailableLength}`}>
+                {calendar && selected.length >= 1 && this.state.DateRadio !== 'pickDate' &&
+                  <div className="destination-pick-calendar-wrapper">
+                    <div
+                      className={this.state.DateRadio === 'pickDate' ? '' : "destination-pick-calendar"}
+                      onClick={() => this.clickPickDate()}
+                    >
+                      <this.PickCalendarBlock />
+                    </div>
+                  </div>}
                 {this.state.DateRadio !== 'pickDate' && start.length > 0 && end.length > 0 ? (
                   <div className="destination-calendar-dropdowns">
                     <p className="heading">

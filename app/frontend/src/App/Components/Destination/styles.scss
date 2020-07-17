@@ -15,6 +15,10 @@
   }
 }
 
+.react-calendar__month-view__weekdays {
+  padding-bottom: 0 !important;
+}
+
 .destination {
   width: 18.2rem;
   min-height: 25rem;
@@ -671,7 +675,7 @@
     }
   }
   &-calendar.calendar-bottom-0 {
-    top: 390px;
+    top: 280px;
     @include respond(bigger) {
       position: relative;
       top: 0px;
@@ -687,7 +691,7 @@
     }
   }
   &-calendar.calendar-bottom-1 {
-    top: 440px;
+    top: 330px;
     @include respond(bigger) {
       position: relative;
       top: 0px;
@@ -709,7 +713,7 @@
     }
   }
   &-calendar.calendar-bottom-2 {
-    top: 490px;
+    top: 380px;
     @include respond(bigger) {
       position: relative;
       top: 0px;
@@ -725,7 +729,7 @@
     }
   }
   &-calendar.calendar-bottom-3 {
-    top: 540px;
+    top: 430px;
     @include respond(bigger) {
       position: relative;
       top: 0px;
@@ -741,7 +745,7 @@
     }
   }
   &-calendar.calendar-bottom-4 {
-    top: 590px;
+    top: 480px;
     @include respond(bigger) {
       position: relative;
       top: 0px;

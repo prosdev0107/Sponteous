@@ -77,6 +77,14 @@
       z-index: 6;
     }
   }
+  &-wrapper {
+    position: relative;
+    width: 100%;
+    top: 0px;
+  }
+  &-wrapper-opened {
+    position: absolute;
+  }
   &.mobile {
     position: absolute;
     top: 0;
@@ -108,7 +116,7 @@
         height: 7.7rem;
       }
       @include respond(big) {
-        height: 7.59rem;
+        height: 7.46rem;
       }
       @include respond(tab) {
         height: 13.5rem;
@@ -470,14 +478,6 @@
     }
     .destination-calendar {
       top: 0px !important;
-    }
-  }
-  &-wrapper {
-    position: absolute;
-    width: 100%;
-    top: 0px;
-    @include respond(mobile) {
-      position: relative;
     }
   }
   &-calendar {

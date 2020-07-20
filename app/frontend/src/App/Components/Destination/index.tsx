@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import * as moment from 'moment'
+import classnames from 'classnames'
 import { IDuration } from '../../../Common/Utils/globalTypes'
 import 'moment-duration-format'
 import { IStore } from '../../../Common/Redux/types'
@@ -620,17 +621,9 @@ class Destination extends Component<IProps, IState> {
           !isSelected && isMobileOnly ? 'destination-when-not-selected' : ''
           }`}
         ref={this.node}>
-        <div className="destination-wrapper">
+        <div className={classnames("destination-wrapper", { "destination-wrapper-opened": calendar && !isMobileOnly })}>
           <div
-            className={`destination-top ${
-              isSelected || deselect ? 'short' : ''
-              }  ${
-              calendar
-                ? 'shortest'
-                : isThree || (isFive && !isSelected)
-                  ? 'medium'
-                  : ''
-              }`}
+            className={classnames('destination-top', { 'short': isSelected || deselect, 'shortest': calendar, 'medium': !isSelected && !calendar && (isThree || (isFive && !isSelected)) })}
             style={{ backgroundImage: `url(${destination.photo})` }}>
             {isMobileOnly &&
               calendar && (
@@ -983,7 +976,7 @@ class Destination extends Component<IProps, IState> {
               )}
           </div>
         </div>
-      </div>
+      </div >
     )
   }
 }

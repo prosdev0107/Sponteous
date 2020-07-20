@@ -620,31 +620,32 @@ class Destination extends Component<IProps, IState> {
           !isSelected && isMobileOnly ? 'destination-when-not-selected' : ''
           }`}
         ref={this.node}>
-        <div
-          className={`destination-top ${
-            isSelected || deselect ? 'short' : ''
-            }  ${
-            calendar
-              ? 'shortest'
-              : isThree || (isFive && !isSelected)
-                ? 'medium'
-                : ''
-            }`}
-          style={{ backgroundImage: `url(${destination.photo})` }}>
-          {isMobileOnly &&
-            calendar && (
-              <div
-                className="destination-close-mobile"
-                onClick={this.deselect}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
-                  <g fill="none" stroke="#4142A6">
-                    <path strokeWidth="1" d="M12 11.293l10.293-10.293.707.707-10.293 10.293 10.293 10.293-.707.707-10.293-10.293-10.293 10.293-.707-.707 10.293-10.293-10.293-10.293.707-.707 10.293 10.293z" />
-                  </g>
-                </svg>
-              </div>
-            )}
-          <div className="badge">{`SAVE ${discount.toFixed(0)}%`}</div>
-          {/* <img
+        <div className="destination-wrapper">
+          <div
+            className={`destination-top ${
+              isSelected || deselect ? 'short' : ''
+              }  ${
+              calendar
+                ? 'shortest'
+                : isThree || (isFive && !isSelected)
+                  ? 'medium'
+                  : ''
+              }`}
+            style={{ backgroundImage: `url(${destination.photo})` }}>
+            {isMobileOnly &&
+              calendar && (
+                <div
+                  className="destination-close-mobile"
+                  onClick={this.deselect}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
+                    <g fill="none" stroke="#4142A6">
+                      <path strokeWidth="1" d="M12 11.293l10.293-10.293.707.707-10.293 10.293 10.293 10.293-.707.707-10.293-10.293-10.293 10.293-.707-.707 10.293-10.293-10.293-10.293.707-.707 10.293 10.293z" />
+                    </g>
+                  </svg>
+                </div>
+              )}
+            <div className="badge">{`SAVE ${discount.toFixed(0)}%`}</div>
+            {/* <img
             src={destination.photo}
             alt="bg"
             style={{
@@ -652,275 +653,305 @@ class Destination extends Component<IProps, IState> {
               maxHeight: '18rem'
             }}
           /> */}
-        </div>
-        <div className={`destination-bottom ${calendar ? 'opened' : ''}`}>
-          {!calendar &&
-            (isThree || isFive) &&
-            !isSelected && (
-              <div className="destination-hurry-up-message">
-                <img
-                  src={messageInfo}
-                  alt=""
-                  srcSet=""
-                  width="15px"
-                  height="15px"
-                />
+          </div>
+          <div className={`destination-bottom ${calendar ? 'opened' : ''}`}>
+            {!calendar &&
+              (isThree || isFive) &&
+              !isSelected && (
+                <div className="destination-hurry-up-message">
+                  <img
+                    src={messageInfo}
+                    alt=""
+                    srcSet=""
+                    width="15px"
+                    height="15px"
+                  />
 
-                {isThree && (
-                  <div className="destination-hurry-up-message-text">
-                    Some{' '}
-                    {typeOfTransport === 'Direct Flight'
-                      ? 'flight'
-                      : 'departure'}
-                    s have no more than 3 seats available
-                  </div>
-                )}
-                {!isThree &&
-                  isFive && (
+                  {isThree && (
                     <div className="destination-hurry-up-message-text">
-                      Less than 5 tickets per{' '}
+                      Some{' '}
                       {typeOfTransport === 'Direct Flight'
                         ? 'flight'
                         : 'departure'}
-                      !
+                    s have no more than 3 seats available
                     </div>
                   )}
-              </div>
-            )}
-          <div className="destination-bottom-row">
-            {!deselect && (
-              <div destination-bottom-types>
-                {
-                  <div
-                    className={`destination-bottom-type ${
-                      typeOfTransport === 'Train'
-                        ? 'destination-bottom-type--train'
-                        : typeOfTransport === 'Bus'
-                          ? 'destination-bottom-type--bus'
-                          : typeOfTransport === 'Direct Flight'
-                            ? 'destination-bottom-type--flight'
-                            : 'destination-bottom-type--red'
-                      }`}
-                    style={{
-                      borderColor: '#12b459',
-                      color: '#12b459'
-                    }}>
-                    {typeOfTransport}
-                  </div>
-                }
-              </div>
-            )}
-            {deselect && (
-              <div destination-bottom-types>
-                {
-                  <span
-                    className={`destination-bottom-type ${
-                      typeOfTransport === 'Train'
-                        ? 'destination-bottom-type--train'
-                        : typeOfTransport === 'Bus'
-                          ? 'destination-bottom-type--bus'
-                          : typeOfTransport === 'Direct Flight'
-                            ? 'destination-bottom-type--flight'
-                            : 'destination-bottom-type--red'
-                      }`}
-                    style={{
-                      borderColor: '#12b459',
-                      color: '#12b459'
-                    }}>
-                    {typeOfTransport}
-                  </span>
-                }
-              </div>
-            )}
-            <p className="destination-bottom-duration">
-              approx. {formatedDuration}
-            </p>
-          </div>
-
-          <p className="destination-bottom-title">{`${
-            this.props.data.destination.name
-            }`}</p>
-          <p className="destination-bottom-luggage">Luggage included</p>
-          <div className="destination-bottom-price">
-            From{' '}
-            <span className="destination-bottom-price--stripped">{`£ ${strippedCost.toFixed(
-              0
-            )}`}</span>
-            <span className="destination-bottom-price--final">{` £ ${finalCost}${' '}`}</span>
-            {`/${' '}${
-              this.props.data['Adult'] + this.props.data['Youth'] > 1
-                ? `${this.props.data['Adult'] +
-                this.props.data['Youth']} passengers`
-                : ' passenger'
-              }`}
-          </div>
-          {calendar &&
-            selected.length >= 1 && (
-              <div className="destination-bottom-travel-dates">
-                <p className="destination-bottom-travel-dates-title">
-                  Choose your travel dates:
-                </p>
-                {selected
-                  .reduce((unique: ISelectedData[], other: any) => {
-                    if (
-                      !unique.some(
-                        (item: any) =>
-                          item.dateStart === other.dateStart &&
-                          item.dateEnd === other.dateEnd
-                      )
-                    ) {
-                      unique.push(other)
-                    }
-                    return unique
-                  }, [])
-                  .filter(item => {
-                    const { startDates, endDates } = this.state
-                    const dateStartString = moment
-                      .utc(item.dateStart)
-                      .format('YYYY-MM-DD')
-                    const dateEndString = moment
-                      .utc(item.dateEnd)
-                      .format('YYYY-MM-DD')
-                    if (startDates && endDates) {
-                      return (
-                        startDates.includes(dateStartString) &&
-                        endDates.includes(dateEndString)
-                      )
-                    }
-                    return false
-                  })
-                  .map((item, index) => {
-                    return (
-                      <div
-                        key={index}
-                        className={`destination-bottom-travel-dates-block ${
-                          this.state.DateRadio === index + '' ? 'selected' : ''
-                          }`}>
-                        <input
-                          type="radio"
-                          name="radio-group"
-                          id={`radio${index}_${this.props.data._id}`}
-                          value={index}
-                          checked={this.state.DateRadio === index + ''}
-                          onChange={e => {
-                            this.setState({
-                              DateRadio: e.target.value,
-                              hoursToSelect: {
-                                start: [],
-                                end: []
-                              },
-                            })
-                            this.handleSelectDates([
-                              new Date(
-                                moment
-                                  .utc(item.dateStart)
-                                  .format('DD MMM YYYY HH:mm:ss')
-                              ),
-                              new Date(
-                                moment
-                                  .utc(item.dateEnd)
-                                  .format('DD MMM YYYY HH:mm:ss')
-                              )
-                            ])
-                          }}
-                        />
-                        <label htmlFor={`radio${index}_${this.props.data._id}`}>
-                          {moment.utc(item.dateStart).format('DD MMM')} -
-                          {moment.utc(item.dateEnd).format('DD MMM')}
-                          <span className="destination-bottom-duration">
-                            £ {this.getPrice(item.dateStart, item.dateEnd)}{' '}
-                            {`/${' '}${
-                              this.props.data['Adult'] +
-                                this.props.data['Youth'] >
-                                1
-                                ? `${this.props.data['Adult'] +
-                                this.props.data['Youth']} passengers`
-                                : ' passenger'
-                              }`}
-                          </span>
-                        </label>
+                  {!isThree &&
+                    isFive && (
+                      <div className="destination-hurry-up-message-text">
+                        Less than 5 tickets per{' '}
+                        {typeOfTransport === 'Direct Flight'
+                          ? 'flight'
+                          : 'departure'}
+                      !
                       </div>
-                    )
-                  })}
-                <div
-                  className={`destination-bottom-travel-dates-block ${
-                    this.state.DateRadio === 'pickDate' ? 'selected' : ''
-                    }`}>
-                  <input
-                    type="radio"
-                    name="radio-group"
-                    id={`pickradio_${this.props.data._id}`}
-                    value="pickDate"
-                    checked={this.state.DateRadio === 'pickDate'}
-                    onChange={e => this.setState({
-                      DateRadio: e.target.value,
-                      hoursToSelect: {
-                        start: [],
-                        end: []
-                      },
-                    })}
-                  />
-                  <label htmlFor={`pickradio_${this.props.data._id}`}>
-                    PICK DATES ON THE CALENDAR
-                  </label>
+                    )}
                 </div>
-              </div>
-            )}
-          {calendar &&
-            ((selected.length >= 1 && this.state.DateRadio === 'pickDate') ||
-              selected.length < 1) && <this.CalendarBlock />}
-          {!isSelected &&
-            !deselect &&
-            (!calendar ? (
-              <Button
-                text="SELECT THIS TRIP"
-                icon="plus"
-                variant="blue"
-                disabled={this.props.isMax}
-                onClick={this.openCalendar}
-              />
-            ) : selected.length >= 1 && this.state.DateRadio !== 'pickDate' ? (
-              <div
-                className={`destination-calendar calendar-bottom-${uniqueAvailableLength}`}>
-                {calendar && selected.length >= 1 && this.state.DateRadio !== 'pickDate' &&
-                  <div className="destination-pick-calendar-wrapper">
+              )}
+            <div className="destination-bottom-row">
+              {!deselect && (
+                <div destination-bottom-types>
+                  {
                     <div
-                      className={this.state.DateRadio === 'pickDate' ? '' : "destination-pick-calendar"}
-                      onClick={() => this.clickPickDate()}
-                    >
-                      <div className="destination-pick-calendar-panel" />
-                      <this.PickCalendarBlock />
+                      className={`destination-bottom-type ${
+                        typeOfTransport === 'Train'
+                          ? 'destination-bottom-type--train'
+                          : typeOfTransport === 'Bus'
+                            ? 'destination-bottom-type--bus'
+                            : typeOfTransport === 'Direct Flight'
+                              ? 'destination-bottom-type--flight'
+                              : 'destination-bottom-type--red'
+                        }`}
+                      style={{
+                        borderColor: '#12b459',
+                        color: '#12b459'
+                      }}>
+                      {typeOfTransport}
                     </div>
-                  </div>}
-                {this.state.DateRadio !== 'pickDate' && start.length > 0 && end.length > 0 ? (
-                  <div className="destination-calendar-dropdowns">
-                    <p className="heading">
-                      You can select trip hours for extra price (+ £{HOURS_SET_PRICE})
-                    </p>
-                    <Dropdown
-                      label="Departure hours"
-                      id="start"
-                      placeholder="Select"
-                      options={start}
-                      selectedValue={hours.start!}
-                      onChange={this.handleSelectHour}
-                    />
+                  }
+                </div>
+              )}
+              {deselect && (
+                <div destination-bottom-types>
+                  {
+                    <span
+                      className={`destination-bottom-type ${
+                        typeOfTransport === 'Train'
+                          ? 'destination-bottom-type--train'
+                          : typeOfTransport === 'Bus'
+                            ? 'destination-bottom-type--bus'
+                            : typeOfTransport === 'Direct Flight'
+                              ? 'destination-bottom-type--flight'
+                              : 'destination-bottom-type--red'
+                        }`}
+                      style={{
+                        borderColor: '#12b459',
+                        color: '#12b459'
+                      }}>
+                      {typeOfTransport}
+                    </span>
+                  }
+                </div>
+              )}
+              <p className="destination-bottom-duration">
+                approx. {formatedDuration}
+              </p>
+            </div>
 
-                    <Dropdown
-                      label="Return hours"
-                      id="end"
-                      placeholder="Select"
-                      options={end}
-                      selectedValue={hours.end!}
-                      onChange={this.handleSelectHour}
+            <p className="destination-bottom-title">{`${
+              this.props.data.destination.name
+              }`}</p>
+            <p className="destination-bottom-luggage">Luggage included</p>
+            <div className="destination-bottom-price">
+              From{' '}
+              <span className="destination-bottom-price--stripped">{`£ ${strippedCost.toFixed(
+                0
+              )}`}</span>
+              <span className="destination-bottom-price--final">{` £ ${finalCost}${' '}`}</span>
+              {`/${' '}${
+                this.props.data['Adult'] + this.props.data['Youth'] > 1
+                  ? `${this.props.data['Adult'] +
+                  this.props.data['Youth']} passengers`
+                  : ' passenger'
+                }`}
+            </div>
+            {calendar &&
+              selected.length >= 1 && (
+                <div className="destination-bottom-travel-dates">
+                  <p className="destination-bottom-travel-dates-title">
+                    Choose your travel dates:
+                </p>
+                  {selected
+                    .reduce((unique: ISelectedData[], other: any) => {
+                      if (
+                        !unique.some(
+                          (item: any) =>
+                            item.dateStart === other.dateStart &&
+                            item.dateEnd === other.dateEnd
+                        )
+                      ) {
+                        unique.push(other)
+                      }
+                      return unique
+                    }, [])
+                    .filter(item => {
+                      const { startDates, endDates } = this.state
+                      const dateStartString = moment
+                        .utc(item.dateStart)
+                        .format('YYYY-MM-DD')
+                      const dateEndString = moment
+                        .utc(item.dateEnd)
+                        .format('YYYY-MM-DD')
+                      if (startDates && endDates) {
+                        return (
+                          startDates.includes(dateStartString) &&
+                          endDates.includes(dateEndString)
+                        )
+                      }
+                      return false
+                    })
+                    .map((item, index) => {
+                      return (
+                        <div
+                          key={index}
+                          className={`destination-bottom-travel-dates-block ${
+                            this.state.DateRadio === index + '' ? 'selected' : ''
+                            }`}>
+                          <input
+                            type="radio"
+                            name="radio-group"
+                            id={`radio${index}_${this.props.data._id}`}
+                            value={index}
+                            checked={this.state.DateRadio === index + ''}
+                            onChange={e => {
+                              this.setState({
+                                DateRadio: e.target.value,
+                                hoursToSelect: {
+                                  start: [],
+                                  end: []
+                                },
+                              })
+                              this.handleSelectDates([
+                                new Date(
+                                  moment
+                                    .utc(item.dateStart)
+                                    .format('DD MMM YYYY HH:mm:ss')
+                                ),
+                                new Date(
+                                  moment
+                                    .utc(item.dateEnd)
+                                    .format('DD MMM YYYY HH:mm:ss')
+                                )
+                              ])
+                            }}
+                          />
+                          <label htmlFor={`radio${index}_${this.props.data._id}`}>
+                            {moment.utc(item.dateStart).format('DD MMM')} -
+                          {moment.utc(item.dateEnd).format('DD MMM')}
+                            <span className="destination-bottom-duration">
+                              £ {this.getPrice(item.dateStart, item.dateEnd)}{' '}
+                              {`/${' '}${
+                                this.props.data['Adult'] +
+                                  this.props.data['Youth'] >
+                                  1
+                                  ? `${this.props.data['Adult'] +
+                                  this.props.data['Youth']} passengers`
+                                  : ' passenger'
+                                }`}
+                            </span>
+                          </label>
+                        </div>
+                      )
+                    })}
+                  <div
+                    className={`destination-bottom-travel-dates-block ${
+                      this.state.DateRadio === 'pickDate' ? 'selected' : ''
+                      }`}>
+                    <input
+                      type="radio"
+                      name="radio-group"
+                      id={`pickradio_${this.props.data._id}`}
+                      value="pickDate"
+                      checked={this.state.DateRadio === 'pickDate'}
+                      onChange={e => this.setState({
+                        DateRadio: e.target.value,
+                        hoursToSelect: {
+                          start: [],
+                          end: []
+                        },
+                      })}
+                    />
+                    <label htmlFor={`pickradio_${this.props.data._id}`}>
+                      PICK DATES ON THE CALENDAR
+                  </label>
+                  </div>
+                </div>
+              )}
+            {calendar &&
+              ((selected.length >= 1 && this.state.DateRadio === 'pickDate') ||
+                selected.length < 1) && <this.CalendarBlock />}
+            {!isSelected &&
+              !deselect &&
+              (!calendar ? (
+                <Button
+                  text="SELECT THIS TRIP"
+                  icon="plus"
+                  variant="blue"
+                  disabled={this.props.isMax}
+                  onClick={this.openCalendar}
+                />
+              ) : selected.length >= 1 && this.state.DateRadio !== 'pickDate' ? (
+                <div
+                  className={`destination-calendar calendar-bottom-${uniqueAvailableLength}`}>
+                  {calendar && selected.length >= 1 && this.state.DateRadio !== 'pickDate' &&
+                    <div className="destination-pick-calendar-wrapper">
+                      <div
+                        className={this.state.DateRadio === 'pickDate' ? '' : "destination-pick-calendar"}
+                        onClick={() => this.clickPickDate()}
+                      >
+                        <div className="destination-pick-calendar-panel" />
+                        <this.PickCalendarBlock />
+                      </div>
+                    </div>}
+                  {this.state.DateRadio !== 'pickDate' && start.length > 0 && end.length > 0 ? (
+                    <div className="destination-calendar-dropdowns">
+                      <p className="heading">
+                        You can select trip hours for extra price (+ £{HOURS_SET_PRICE})
+                    </p>
+                      <Dropdown
+                        label="Departure hours"
+                        id="start"
+                        placeholder="Select"
+                        options={start}
+                        selectedValue={hours.start!}
+                        onChange={this.handleSelectHour}
+                      />
+
+                      <Dropdown
+                        label="Return hours"
+                        id="end"
+                        placeholder="Select"
+                        options={end}
+                        selectedValue={hours.end!}
+                        onChange={this.handleSelectHour}
+                      />
+                    </div>
+                  ) : null}
+                  <div className='destination-calendar-bottom'>
+                    <Button
+                      text="select"
+                      onClick={this.select}
+                      variant="blue-select"
+                    />
+                    <Button
+                      text="clear dates"
+                      variant="gray"
+                      icon="cross"
+                      onClick={this.deselect}
                     />
                   </div>
-                ) : null}
-                <div className='destination-calendar-bottom'>
+                </div>
+              ) : (
+                    ''
+                  ))}
+            {isSelected &&
+              !deselect && (
+                <>
                   <Button
-                    text="select"
-                    onClick={this.select}
-                    variant="blue-select"
+                    text={`selected for ${
+                      dates.start
+                        ? moment(dates.start).format('DD MMM')
+                        : moment
+                          .utc((data as ISelectedData).dateStart)
+                          .format('DD MMM')
+                      } - ${
+                      dates.end
+                        ? moment(dates.end).format('DD MMM')
+                        : moment
+                          .utc((data as ISelectedData).dateEnd)
+                          .format('DD MMM')
+                      }`}
+                    variant="green"
                   />
                   <Button
                     text="clear dates"
@@ -928,58 +959,29 @@ class Destination extends Component<IProps, IState> {
                     icon="cross"
                     onClick={this.deselect}
                   />
-                </div>
-              </div>
-            ) : (
-                  ''
-                ))}
-          {isSelected &&
-            !deselect && (
-              <>
-                <Button
-                  text={`selected for ${
-                    dates.start
-                      ? moment(dates.start).format('DD MMM')
-                      : moment
-                        .utc((data as ISelectedData).dateStart)
-                        .format('DD MMM')
-                    } - ${
-                    dates.end
-                      ? moment(dates.end).format('DD MMM')
-                      : moment
-                        .utc((data as ISelectedData).dateEnd)
-                        .format('DD MMM')
-                    }`}
-                  variant="green"
-                />
-                <Button
-                  text="clear dates"
-                  variant="gray"
-                  icon="cross"
-                  onClick={this.deselect}
-                />
-              </>
-            )}
-          {!isSelected &&
-            deselect &&
-            data.type === 'selectedTrid' && (
-              <>
-                <Button
-                  text={`selected for ${moment
-                    .utc(data.dateStart)
-                    .format('DD MMM')} - ${moment
-                      .utc(data.dateEnd)
-                      .format('DD MMM')}`}
-                />
-                <Button
-                  text={`delete for £ ${data.deselectionPrice}`}
-                  variant="red"
-                  icon="crossWhite"
-                  onClick={this.deselect}
-                  disabled={this.props.isMax}
-                />
-              </>
-            )}
+                </>
+              )}
+            {!isSelected &&
+              deselect &&
+              data.type === 'selectedTrid' && (
+                <>
+                  <Button
+                    text={`selected for ${moment
+                      .utc(data.dateStart)
+                      .format('DD MMM')} - ${moment
+                        .utc(data.dateEnd)
+                        .format('DD MMM')}`}
+                  />
+                  <Button
+                    text={`delete for £ ${data.deselectionPrice}`}
+                    variant="red"
+                    icon="crossWhite"
+                    onClick={this.deselect}
+                    disabled={this.props.isMax}
+                  />
+                </>
+              )}
+          </div>
         </div>
       </div>
     )

@@ -20,6 +20,7 @@
 }
 
 .destination {
+  position: relative;
   width: 18.2rem;
   min-height: 25rem;
   border-radius: 3px;
@@ -469,6 +470,14 @@
     }
     .destination-calendar {
       top: 0px !important;
+    }
+  }
+  &-wrapper {
+    position: absolute;
+    width: 100%;
+    top: 0px;
+    @include respond(mobile) {
+      position: relative;
     }
   }
   &-calendar {

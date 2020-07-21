@@ -90,6 +90,7 @@
     "semi": false,
     "rcVerbose": true
   },
+  "proxy": "http://localhost:3001",
   "devDependencies": {
     "@types/classnames": "^2.2.6",
     "@types/events": "^3.0.0",

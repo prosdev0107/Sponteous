@@ -30,7 +30,7 @@ function connect () {
 //  return mongoose.connect(`mongodb+srv://user:password@sponteous-dev-rjoqe.mongodb.net/Sponteous`, options);
  
 
- return mongoose.connect(`mongodb+srv://sponteous-dev-rjoqe.mongodb.net/Sponteous`, {
+ return mongoose.connect(`mongodb+srv://sponteous-dev-rjoqe.mongodb.net`, {
   useNewUrlParser: true,
   user: user,
   pass: password,
